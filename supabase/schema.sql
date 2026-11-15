@@ -227,3 +227,116 @@ on conflict (id) do nothing;
 -- ---------- make yourself an admin ----------
 -- After you sign in on the site once, run this with your email so you can add, edit and remove shoes on everyone's rack:
 -- insert into public.admins (user_id) select id from auth.users where email = 'you@example.com' on conflict do nothing;
+
+-- ---------- posts: Instagram-style feed (photos, lift videos, reviews, review videos, tier lists, talk) ----------
+create table if not exists public.posts (
+  id          uuid primary key default gen_random_uuid(),
+  author      uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  author_name text,
+  kind        text not null check (kind in ('lift', 'review', 'review_video', 'photo', 'video', 'tierlist', 'text')),
+  shoe_id     text references public.shoes (id) on delete set null,
+  caption     text check (caption is null or char_length(caption) <= 2000),
+  rating      smallint check (rating is null or rating between 1 and 5),
+  media_url   text check (media_url is null or (char_length(media_url) <= 600 and media_url ~ '^https://')),
+  media_type  text check (media_type is null or media_type in ('image', 'video', 'youtube', 'link')),
+  tiers       jsonb check (tiers is null or pg_column_size(tiers) < 20000),
+  created_at  timestamptz not null default now()
+);
+create index if not exists posts_created_idx on public.posts (created_at desc);
+create index if not exists posts_shoe_idx on public.posts (shoe_id);
+alter table public.posts enable row level security;
+drop policy if exists "posts are public" on public.posts;
+create policy "posts are public" on public.posts for select using (true);
+drop policy if exists "post as yourself" on public.posts;
+create policy "post as yourself" on public.posts for insert to authenticated
+  with check (author = auth.uid() and exists (select 1 from public.lists l where l.user_id = auth.uid() and l.username is not null));
+drop policy if exists "edit own posts" on public.posts;
+create policy "edit own posts" on public.posts for update to authenticated using (author = auth.uid()) with check (author = auth.uid());
+drop policy if exists "delete own posts" on public.posts;
+create policy "delete own posts" on public.posts for delete to authenticated using (author = auth.uid() or public.is_admin());
+
+create or replace function public.set_post_author() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.author := coalesce(auth.uid(), new.author);
+  select username into new.author_name from public.lists where user_id = new.author;
+  if tg_op = 'INSERT' and auth.uid() is not null then new.created_at := now(); end if;
+  return new;
+end $$;
+drop trigger if exists posts_author on public.posts;
+create trigger posts_author before insert or update on public.posts for each row execute function public.set_post_author();
+
+create table if not exists public.post_likes (
+  post_id    uuid not null references public.posts (id) on delete cascade,
+  user_id    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (post_id, user_id)
+);
+alter table public.post_likes enable row level security;
+drop policy if exists "likes are public" on public.post_likes;
+create policy "likes are public" on public.post_likes for select using (true);
+drop policy if exists "like as yourself" on public.post_likes;
+create policy "like as yourself" on public.post_likes for insert to authenticated with check (user_id = auth.uid());
+drop policy if exists "unlike yourself" on public.post_likes;
+create policy "unlike yourself" on public.post_likes for delete to authenticated using (user_id = auth.uid());
+
+create table if not exists public.post_comments (
+  id          bigint generated always as identity primary key,
+  post_id     uuid not null references public.posts (id) on delete cascade,
+  author      uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  author_name text,
+  body        text not null check (char_length(body) between 1 and 500),
+  created_at  timestamptz not null default now()
+);
+create index if not exists post_comments_post_idx on public.post_comments (post_id);
+alter table public.post_comments enable row level security;
+drop policy if exists "post comments are public" on public.post_comments;
+create policy "post comments are public" on public.post_comments for select using (true);
+drop policy if exists "comment as yourself" on public.post_comments;
+create policy "comment as yourself" on public.post_comments for insert to authenticated
+  with check (author = auth.uid() and exists (select 1 from public.lists l where l.user_id = auth.uid() and l.username is not null));
+drop policy if exists "delete own post comments" on public.post_comments;
+create policy "delete own post comments" on public.post_comments for delete to authenticated
+  using (author = auth.uid() or public.is_admin() or exists (select 1 from public.posts p where p.id = post_id and p.author = auth.uid()));
+create or replace function public.set_post_comment_author() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.author := coalesce(auth.uid(), new.author);
+  select username into new.author_name from public.lists where user_id = new.author;
+  new.created_at := now();
+  return new;
+end $$;
+drop trigger if exists post_comments_author on public.post_comments;
+create trigger post_comments_author before insert on public.post_comments for each row execute function public.set_post_comment_author();
+
+-- photos and videos people post (50 MB max per file; each user writes only inside their own folder)
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('post-media', 'post-media', true, 52428800, array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
+on conflict (id) do update set public = true, file_size_limit = 52428800,
+  allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'];
+drop policy if exists "post media upload own folder" on storage.objects;
+create policy "post media upload own folder" on storage.objects for insert to authenticated
+  with check (bucket_id = 'post-media' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "post media delete own" on storage.objects;
+create policy "post media delete own" on storage.objects for delete to authenticated
+  using (bucket_id = 'post-media' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- carry over lists that were already posted, as tier list posts
+insert into public.posts (author, author_name, kind, caption, tiers, created_at)
+select l.user_id, l.username, 'tierlist', nullif(l.caption, ''), l.tiers, l.updated_at
+from public.lists l
+where l.published and l.username is not null
+  and not exists (select 1 from public.posts p where p.author = l.user_id and p.kind = 'tierlist');
+
+
+-- 10 more lifters (November 2026)
+insert into public.shoes (id, brand, model, heel, heel_label, weight, price, price_label, closure, fit, type, notes, photo_url) values
+  ('legacy4', 'Reebok', 'Legacy Lifter IV', null, 'Not listed yet', null, 225, null, 'Laces + 1 wide strap', 'Too new to say', 'lifter', 'Reebok''s 2026 lifter: a 33 mm TPU heel clip, a wide Evo midfoot strap that Reebok says holds with twice the force, and a padded collar. Reebok hasn''t published the heel drop yet.', 'images/legacy4.jpg'),
+  ('lifterpr2', 'Reebok', 'Lifter PR II', 15, null, null, 100, null, 'Laces + 1 strap', 'Neutral', 'lifter', 'A budget lifter with a 15 mm high-density EVA heel and a breathable textile upper. A good first pair or a hybrid shoe. Heavy lifters may want a firmer heel.', 'images/lifterpr2.jpg'),
+  ('lifterpr3', 'Reebok', 'Lifter PR III', 18, null, null, 100, null, 'Laces + 1 strap', 'Neutral', 'lifter', 'The 2024 update to Reebok''s budget lifter. The drop goes up to 18 mm and the price stays around $100. Light enough to wear for a whole class.', 'images/lifterpr3.jpg'),
+  ('fastlift360', 'Inov-8', 'Fastlift 360', 16.5, '16.5 mm', 360, 190, null, 'Laces + 1 strap', 'Narrow', 'lifter', 'Named for its weight of 360 g. It has a TPU POWERTRUSS heel cage under a 16.5 mm drop and a flexible forefoot, so it also works as a hybrid shoe on CrossFit days. Slim fit.', 'images/fastlift360.jpg'),
+  ('nobull', 'NOBULL', 'Lifter', 18.5, '18.5 mm', 499, null, 'Discontinued', 'Laces + 1 strap', 'Narrow', 'lifter', 'Handmade with a stacked leather heel and a SuperFabric upper. It sold for $299, but NOBULL''s site no longer lists it, so look for used pairs.', null),
+  ('powerperfect3', 'Adidas', 'Power Perfect III', 19, null, null, 120, null, 'Laces + 1 strap', 'Neutral', 'lifter', 'Adidas''s budget lifter. It has a high-density die-cut wedge with a ¾-inch heel, a synthetic leather upper and a strap that sits high, near the ankle. Tough and cheap.', 'images/powerperfect3.jpg'),
+  ('strake', 'Velaasa', 'Strake', 22, null, 450, 199, null, 'Laces + 1 strap', 'Narrow toe box', 'lifter', 'A modern lifter with a real wooden heel (22 mm), from a small Minnesota brand. Reviewers love the crack of wood on the platform. It runs small and narrow, so size up.', 'images/strake.jpg'),
+  ('position', 'Position USA', 'P3 / Eastwood', 25.4, '1 inch', 502, 189, '~$189 last seen', 'Laces + 1 wide strap', 'Neutral', 'lifter', 'Handmade in California with a hand-carved, stained wood heel a full inch tall, one of the tallest you can buy. Suede upper with one wide strap.', null),
+  ('anta', 'ANTA', 'National Team Lifter', 20, null, null, null, '~$210–350 imported', 'Laces + 2 straps', 'Snug', 'lifter', 'The shoe ANTA makes for China''s national weightlifting team, sold abroad without the flag. It has a 20 mm TPU heel, two straps and a heavy, leather-style upper. Shops compare it to the Romaleos 2.', 'images/anta.jpg'),
+  ('lxjlifter1', 'LUXIAOJUN', 'Lifter 1.0 Professional', 20, null, null, null, 'Discontinued', 'Laces + 2 straps', 'Roomy', 'lifter', 'LUXIAOJUN''s first lifter, before the PowerPro. It has a 20 mm TPU heel (95 Shore A) and two straps, and the inside is roomy. You can still find leftover stock.', 'images/lxjlifter1.jpg')
+on conflict (id) do update set brand=excluded.brand, model=excluded.model, heel=excluded.heel, heel_label=excluded.heel_label, weight=excluded.weight, price=excluded.price, price_label=excluded.price_label, closure=excluded.closure, fit=excluded.fit, notes=excluded.notes, photo_url=excluded.photo_url;

@@ -23,6 +23,7 @@
     <p class="ld-status" id="ld-status">Loading shoes…</p>
   </div>
 </div>
+<div class="veil" id="veil" aria-hidden="true"><div class="veil-in"><div class="ld-plates"><span data-k="S">S</span><span data-k="A">A</span><span data-k="B">B</span><span data-k="C">C</span><span data-k="D">D</span><span data-k="F">F</span></div><p class="veil-label" id="veil-label"></p></div></div>
 <script>setTimeout(function(){var l=document.getElementById("loader");if(l){l.remove();document.body.classList.remove("is-loading");}},9000);</script>
 <header class="topbar" id="top">
   <a class="brand" href="#/">Lifter Tiers<span>.</span></a>
@@ -69,6 +70,7 @@
       <div class="board" id="board" aria-label="Tier board"></div>
       <div class="insight" id="insight" aria-live="polite"></div>
       <div class="social" id="social" hidden></div>
+      <div class="user-posts" id="user-posts" hidden></div>
     </section>
   </div>
 
@@ -107,7 +109,20 @@
 
   <!-- POSTS -->
   <div class="page" data-page="posts" hidden>
-    <section id="feed-sec" aria-labelledby="feed-h" class="sec">
+    <section class="sec feed-wrap" aria-labelledby="posts-h">
+      <div class="sec-head">
+        <div><p class="kicker">Community</p><h2 id="posts-h">Posts.</h2></div>
+        <button class="btn red" type="button" id="btn-new-post">+ New post</button>
+      </div>
+      <div class="feed-tabs" role="tablist" aria-label="Feed">
+        <button type="button" role="tab" data-tab="fyp" aria-selected="true">For you</button>
+        <button type="button" role="tab" data-tab="new" aria-selected="false">Latest</button>
+        <button type="button" role="tab" data-tab="top" aria-selected="false">Top this week</button>
+      </div>
+      <div class="cat-chips" id="cat-chips" role="group" aria-label="Category"></div>
+      <div class="ig-feed" id="ig-feed"></div>
+    </section>
+    <section id="feed-sec" aria-labelledby="feed-h" class="sec" hidden>
       <div class="sec-head">
         <div><p class="kicker">Community</p><h2 id="feed-h">Posted lists.</h2></div>
         <div class="toolbar"><button class="btn ghost sm" type="button" id="sort-top" aria-pressed="true">Top</button><button class="btn ghost sm" type="button" id="sort-new" aria-pressed="false">New</button></div>
@@ -115,6 +130,9 @@
       <div class="feed" id="feed"></div>
     </section>
   </div>
+
+  <!-- ONE POST -->
+  <div class="page" data-page="post" hidden><div id="post-page"></div></div>
 
   <!-- PROFILE -->
   <div class="page" data-page="profile" hidden><div id="profile-page"></div></div>
@@ -126,6 +144,26 @@
 </main>
 
 <!-- Shoe detail (a bottom sheet on phones) -->
+<dialog id="post-dlg" class="sheet" aria-labelledby="pc-title">
+  <form id="pc-form" class="dlg" novalidate>
+    <div class="dlg-head"><div class="titles"><span class="kicker">New post</span><h3 id="pc-title">What are you posting?</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="pc-kinds" id="pc-kinds" role="group" aria-label="Post type"></div>
+    <p class="sub" id="pc-hint"></p>
+    <label id="pc-shoe-row"><span id="pc-shoe-label">Tag a shoe</span><select id="pc-shoe"></select></label>
+    <p class="sub" id="pc-tier-note" hidden>Posts a snapshot of your board as it is right now.</p>
+    <div id="pc-rate-row" hidden><span class="move-label">Your rating</span><div class="rv-stars" id="pc-stars"></div></div>
+    <div id="pc-media-row" class="pc-media">
+      <label class="btn">📎 Add photo or video<input type="file" id="pc-file" accept="image/*,video/mp4,video/quicktime,video/webm" hidden></label>
+      <span class="sub">or</span>
+      <input type="url" id="pc-link" placeholder="Paste a YouTube, TikTok or Instagram link" inputmode="url" autocomplete="off">
+      <div class="pc-preview" id="pc-preview"></div>
+      <p class="sub small">Photos are resized automatically. Videos up to 50 MB.</p>
+    </div>
+    <label>Caption<textarea id="pc-caption" maxlength="2000" rows="3"></textarea></label>
+    <p class="err" id="pc-err" role="alert"></p>
+    <div class="row"><span class="sub" id="pc-status"></span><span style="flex:1"></span><button class="btn red" type="submit" id="pc-submit">Post</button></div>
+  </form>
+</dialog>
 <dialog id="detail" class="sheet" aria-labelledby="d-title"><div class="dlg" id="detail-body"></div></dialog>
 
 <!-- Add or edit a shoe -->

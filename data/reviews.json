@@ -81,10 +81,10 @@
    {
     "source": "RunRepeat",
     "kind": "expert",
-    "score": null,
-    "outOf": null,
-    "url": "https://runrepeat.com/nike-romaleos-4",
-    "summary": "Lab-tested as the stiffest lifting shoe they've measured; most buyers say it fits about a half size small."
+    "score": 85,
+    "outOf": 100,
+    "url": "https://runrepeat.com/uk/nike-romaleos-4",
+    "summary": "Lab-tested as the most stable, least compressible lifter they've measured; fits half a size small."
    },
    {
     "source": "Rogue Fitness shoppers",
@@ -94,6 +94,15 @@
     "count": 19,
     "url": "https://www.roguefitness.com/nike-romaleos-4-mens-shoes",
     "summary": "Customer star rating on Rogue."
+   },
+   {
+    "source": "Nike.com shoppers",
+    "kind": "store",
+    "score": 4.5,
+    "outOf": 5,
+    "url": "https://www.nike.com/t/romaleos-4-training-shoe-LbfmXt/CD3463-010",
+    "summary": "Customer star rating on Nike.com; buyers repeat that it runs small.",
+    "count": 133
    }
   ],
   "videos": [
@@ -127,7 +136,19 @@
    ],
    "bestFor": "Narrow-footed lifters who want to feel bolted down",
    "updated": "2026-11-15"
-  }
+  },
+  "lifters": [
+   {
+    "name": "Noah Ohlsen",
+    "note": "Nike athlete and CrossFit Games regular, seen in the Romaleos 4 'I Am Not A Robot' pack.",
+    "url": "https://www.wit-fitness.com/blogs/news/nike_i_am_not_a_robot_romaleos_metcon"
+   },
+   {
+    "name": "Chandler Smith",
+    "note": "Won an event at the online Rogue Invitational in white Romaleos 4s.",
+    "url": "https://www.wit-fitness.com/blogs/news/nike_i_am_not_a_robot_romaleos_metcon"
+   }
+  ]
  },
  "romaleos2": {
   "reviews": [
@@ -159,6 +180,16 @@
     "id": "LrR7VUxIBDY",
     "title": "Nike Romaleos 2 video review",
     "channel": "The Gym Revolution"
+   },
+   {
+    "id": "vhJPeT283_w",
+    "title": "Nike Romaleos 2 expert review",
+    "channel": "WODReview"
+   },
+   {
+    "id": "XfC_k1y6gPM",
+    "title": "Nike Romaleos 2 close-up",
+    "channel": "Workout.eu"
    }
   ],
   "summary": {
@@ -175,7 +206,19 @@
    "bestFor": "Anyone who can find a pair in their size",
    "updated": "2026-11-15"
   },
-  "buyQuery": "nike romaleos 2"
+  "buyQuery": "nike romaleos 2",
+  "lifters": [
+   {
+    "name": "Mia Åkerlund",
+    "note": "Snatched 104 kg at the 2018 CrossFit Games in Romaleos 2s, the first woman over 100 kg in a CrossFit event.",
+    "url": "https://www.wit-fitness.com/blogs/news/nike_i_am_not_a_robot_romaleos_metcon"
+   },
+   {
+    "name": "Mattie Rogers",
+    "note": "Made history at the 2019 IWF World Championships in Romaleos 2s.",
+    "url": "https://www.wit-fitness.com/blogs/news/nike_i_am_not_a_robot_romaleos_metcon"
+   }
+  ]
  },
  "romaleos3": {
   "reviews": [
@@ -194,6 +237,15 @@
     "outOf": null,
     "url": "https://barbend.com/nike-romaleos-3-review/",
     "summary": "Light, hybrid feel with two insoles in the box; early tongue durability problems."
+   },
+   {
+    "source": "Athlete Performance Solutions shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://athleteps.com/nike-romaleos-3-weightlifting-shoes-multiple-colors/?revpage=2",
+    "summary": "Mostly five-star reviews; owners say it isn't the downgrade from the 2 that some claim, but the thin tongue looks fragile.",
+    "count": 15
    }
   ],
   "videos": [
@@ -206,6 +258,16 @@
     "id": "pCHZqq3hnq8",
     "title": "Nike Romaleos 3 review for squats",
     "channel": "YouTube"
+   },
+   {
+    "id": "7Y-OBaznzc8",
+    "title": "Nike Romaleos 3 vs Romaleos 2",
+    "channel": "YouTube"
+   },
+   {
+    "id": "eVPDJ9Tazrs",
+    "title": "Romaleos 3 vs NOBULL vs Reebok Legacy Lifters",
+    "channel": "FloElite"
    }
   ],
   "summary": {
@@ -232,6 +294,15 @@
     "outOf": null,
     "url": "https://powerliftingtechnique.com/nike-romaleos-3-vs-4/",
     "summary": "The XD fixed the 3's durability with perforated leather and beefier straps, and leaves more room for toe splay than the 4."
+   },
+   {
+    "source": "Athlete Performance Solutions shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://athleteps.com/nike-romaleos-3xd-weightlifting-shoes-multiple-colors",
+    "summary": "About 45 customer reviews; narrow-footed buyers especially like the snug, stable fit.",
+    "count": 45
    }
   ],
   "videos": [
@@ -264,7 +335,14 @@
    "bestFor": "Neutral feet that found the 4 too tight",
    "updated": "2026-11-15"
   },
-  "buyQuery": "nike romaleos 3 xd"
+  "buyQuery": "nike romaleos 3 xd",
+  "lifters": [
+   {
+    "name": "Mat Fraser",
+    "note": "Four-time CrossFit Games champion; lifted 172 kg (380 lb) in Romaleos 3 XDs to win a Games lifting event.",
+    "url": "https://www.wit-fitness.com/blogs/news/nike_i_am_not_a_robot_romaleos_metcon"
+   }
+  ]
  },
  "savaleos": {
   "reviews": [
@@ -302,6 +380,11 @@
    {
     "id": "wEY2ayBZ-PQ",
     "title": "Nike Romaleos vs Savaleos: which should you buy?",
+    "channel": "YouTube"
+   },
+   {
+    "id": "TehW_JwMXsA",
+    "title": "Nike Savaleos first look and first workout",
     "channel": "YouTube"
    }
   ],
@@ -352,6 +435,11 @@
     "id": "7qoxv8baW4U",
     "title": "Adidas Powerlift 5 review",
     "channel": "That Fit Friend"
+   },
+   {
+    "id": "JhkvY0PTAp8",
+    "title": "Adidas Powerlift 5 weightlifting shoe review",
+    "channel": "YouTube"
    }
   ],
   "summary": {
@@ -390,10 +478,10 @@
    {
     "source": "RunRepeat",
     "kind": "expert",
-    "score": null,
-    "outOf": null,
-    "url": "https://www.runrepeat.com/reebok-legacy-lifter-iii",
-    "summary": "Heavy at about 627 g with a stiff TPU platform; they found the Pump actually helps lock the foot down."
+    "score": 86,
+    "outOf": 100,
+    "url": "https://runrepeat.com/reebok-legacy-lifter-iii",
+    "summary": "Rated it a titan for heavy lifting: rigid TPU platform, max torsional rigidity and a very durable leather toe; heavy at about 627 g."
    },
    {
     "source": "Zappos shoppers",
@@ -529,6 +617,11 @@
     "id": "udi5QgYvB7U",
     "title": "TYR L-1 Lifter, honest review",
     "channel": "YouTube"
+   },
+   {
+    "id": "BgH77VayGWw",
+    "title": "TYR L-1 vs LuXiaoJun PowerPro: which is better?",
+    "channel": "YouTube"
    }
   ],
   "summary": {
@@ -544,7 +637,14 @@
    ],
    "bestFor": "Wide or flat feet",
    "updated": "2026-11-15"
-  }
+  },
+  "lifters": [
+   {
+    "name": "Dr. Aaron Horschig (Squat University)",
+    "note": "Physical therapist and weightlifting coach who led the L-1's design.",
+    "url": "https://barbend.com/?p=245853"
+   }
+  ]
  },
  "tyrl2": {
   "reviews": [
@@ -624,6 +724,11 @@
    {
     "id": "CCfClWsGA2k",
     "title": "TYR Force Elite full review (vs Adistar and Anta)",
+    "channel": "YouTube"
+   },
+   {
+    "id": "hUomtj3o_IY",
+    "title": "I made the best weightlifting shoe ever",
     "channel": "YouTube"
    }
   ],
@@ -712,6 +817,11 @@
     "name": "Lu Xiaojun",
     "note": "Olympic champion who tested and refined the PowerPro.",
     "url": "https://luxiaojun.com/products/luxiaojun-powerpro-i-weightlifting-shoes-blue"
+   },
+   {
+    "name": "Karlos Nasar",
+    "note": "Olympic champion and world record holder; LUXIAOJUN made a 'Karlos' PowerPro after he set a world record in their shoes.",
+    "url": "https://luxiaojun.com/products/luxiaojun-powerpro-weightlifting-shoes-karlos"
    }
   ],
   "buyQuery": "luxiaojun powerpro",
@@ -762,6 +872,15 @@
     "outOf": null,
     "url": "https://thatfitfriend.com/do-win-classic-lifter-review/",
     "summary": "Great throwback look, but he wouldn't put it on his best-lifters list without some fixes."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 3.9,
+    "outOf": 5,
+    "url": "https://www.roguefitness.com/do-win-classic-lifter",
+    "summary": "Stable with a grippy sole and two straps; the narrow toe box and inconsistent sizing are the common complaints.",
+    "count": 195
    }
   ],
   "videos": [
@@ -810,9 +929,9 @@
     "kind": "store",
     "score": 4.6,
     "outOf": 5,
-    "count": 492,
-    "url": "https://www.roguecanada.ca/dowin-weightlifting-shoes-black-white",
-    "summary": "Customer star rating on Rogue Canada."
+    "url": "https://www.roguefitness.com/dowin-weightlifting-shoes-black-white",
+    "summary": "Great stability for the money and roomy enough for wider feet; some say order half a size down.",
+    "count": 526
    }
   ],
   "videos": [
@@ -868,6 +987,15 @@
     "outOf": null,
     "url": "https://www.garagegymreviews.com/equipment/adidas-adipower-weightlifting-shoes",
     "summary": "Torsion midfoot bar, hook-and-loop strap, 20.1 mm lift on a 33.4 mm heel stack."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 5,
+    "outOf": 5,
+    "url": "https://www.zappos.com/product/review/8124474",
+    "summary": "Every review was five stars; several say it runs small, so women and narrow feet often size down from street shoes.",
+    "count": 15
    }
   ],
   "videos": [
@@ -896,7 +1024,14 @@
    "bestFor": "Narrow feet hunting a proven classic",
    "updated": "2026-11-15"
   },
-  "buyQuery": "adidas adipower weightlifting original M21864"
+  "buyQuery": "adidas adipower weightlifting original M21864",
+  "lifters": [
+   {
+    "name": "London 2012 medalists",
+    "note": "The OG Adipower launched for London 2012, and nearly half the weightlifting weight classes there had Adipowers on the podium.",
+    "url": "https://garagegymreviews.com/?p=123276"
+   }
+  ]
  },
  "adipower2": {
   "reviews": [
@@ -923,6 +1058,15 @@
     "outOf": null,
     "url": "https://powerliftingtechnique.com/reebok-legacy-lifter-vs-adidas-adipower/",
     "summary": "Notes that many lifters consider the Adipower II a step down from the original."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 4.7,
+    "outOf": 5,
+    "url": "https://www.zappos.com/product/review/9234392",
+    "summary": "79% five stars; buyers like the stability, a few found the toe box narrow and the upper soft.",
+    "count": 72
    }
   ],
   "videos": [
@@ -981,6 +1125,11 @@
     "id": "OkFp2zw5Yy4",
     "title": "Adidas Leistung 16 2.0 review",
     "channel": "YouTube"
+   },
+   {
+    "id": "t3xpude9bis",
+    "title": "Dmitry Lapikov compares the Adipower and Leistung",
+    "channel": "YouTube"
    }
   ],
   "summary": {
@@ -998,7 +1147,14 @@
    "bestFor": "High-bar squatters with limited ankle mobility",
    "updated": "2026-11-15"
   },
-  "buyQuery": "adidas leistung 16 II"
+  "buyQuery": "adidas leistung 16 II",
+  "lifters": [
+   {
+    "name": "Dmitry Lapikov",
+    "note": "2008 Olympic medalist who reviewed the Leistung against his older Adipowers on video.",
+    "url": "https://www.youtube.com/watch?v=t3xpude9bis"
+   }
+  ]
  },
  "powerlift4": {
   "reviews": [
@@ -1025,6 +1181,15 @@
     "outOf": null,
     "url": "https://www.nasm.org/equipment-library/best-weightlifting-shoes",
     "summary": "Picked as an affordable, lightweight lifter for all types of lifts; not ideal for competitive powerlifters."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 4.7,
+    "outOf": 5,
+    "url": "https://www.zappos.com/product/review/9143580",
+    "summary": "80% five stars; very stable for squats, but many say go up half a size because it runs snug.",
+    "count": 305
    }
   ],
   "videos": [
@@ -1078,6 +1243,11 @@
    {
     "id": "D7Pg49OiRIE",
     "title": "'08 adiStar shoe review",
+    "channel": "YouTube"
+   },
+   {
+    "id": "CCfClWsGA2k",
+    "title": "TYR Force Elite review, compared with the adiStar",
     "channel": "YouTube"
    }
   ],
@@ -1283,6 +1453,16 @@
     "id": "iT_H_zmLuqw",
     "title": "Reebok Legacy Lifter: first impressions",
     "channel": "YouTube"
+   },
+   {
+    "id": "eVPDJ9Tazrs",
+    "title": "Romaleos 3 vs NOBULL vs Reebok Legacy Lifters",
+    "channel": "FloElite"
+   },
+   {
+    "id": "HHxLkQ90mGY",
+    "title": "Reebok Legacy Lifter with CJ Cummings",
+    "channel": "Reebok"
    }
   ],
   "summary": {
@@ -1307,5 +1487,459 @@
    }
   ],
   "buyQuery": "reebok legacy lifter original"
+ },
+ "legacy4": {
+  "reviews": [
+   {
+    "source": "Reebok",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.reebok.eu/products/legacy-lifter-iv-mens-sneakers-100248687-2033",
+    "summary": "Reebok's page lists the 33 mm TPU heel clip, the Evo strap and the padded collar, but no drop figure yet."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "Reebok's newest lifter (2026). Too new for many outside reviews; it keeps the Legacy line's TPU heel clip and adds a wider single strap.",
+   "pros": [
+    "Wide Evo strap",
+    "Padded collar",
+    "Current model, easy to find"
+   ],
+   "cons": [
+    "Heel drop not published yet",
+    "Few reviews so far"
+   ],
+   "bestFor": "Legacy Lifter fans who want the newest version",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "reebok legacy lifter iv",
+  "stores": []
+ },
+ "lifterpr2": {
+  "reviews": [
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/reebok-lifter-pr-ii-review/",
+    "summary": "A good pick for beginners and budgets; the 15 mm EVA heel never compressed under squats, though quality control has quirks."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/equipment/reebok-lifter-pr-2",
+    "summary": "Great price and a hybrid feel, but the EVA heel may feel too soft for very heavy lifts."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 4.8,
+    "outOf": 5,
+    "url": "https://www.zappos.com/product/review/9399454",
+    "summary": "118 reviews, 83% five stars; buyers call it a great entry-level lifter for the price.",
+    "count": 118
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "The go-to cheap lifter: about $100 with a lower 15 mm EVA heel. Reviewers like it for beginners and mixed workouts but not for maxing out.",
+   "pros": [
+    "About $100",
+    "Light, works for WODs",
+    "Good grip"
+   ],
+   "cons": [
+    "Softer EVA heel",
+    "Lower heel than most"
+   ],
+   "bestFor": "First-time lifters and CrossFit",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "reebok lifter pr ii",
+  "stores": []
+ },
+ "lifterpr3": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": 4.39,
+    "outOf": 5,
+    "url": "https://www.garagegymreviews.com/equipment/reebok-lifter-pr-iii",
+    "summary": "18 mm drop, a rubber outsole and five colorways for around $100."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "Reebok's budget lifter, updated with a taller 18 mm drop. Still around $100.",
+   "pros": [
+    "About $100",
+    "Taller heel than the PR II",
+    "Lots of colors"
+   ],
+   "cons": [
+    "Not as stiff as premium lifters"
+   ],
+   "bestFor": "Beginners on a budget",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "reebok lifter pr iii",
+  "stores": []
+ },
+ "fastlift360": {
+  "reviews": [
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/inov-8-fastlift-360-review/",
+    "summary": "Stable for heavy squats and cleans and one of the lightest lifters; best for slimmer feet."
+   },
+   {
+    "source": "i-Run",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.i-run.com/man/shoes/fitness/inov8/Fastlift-360-M_fiche_119394.html",
+    "summary": "Lists 363 g per shoe, a POWERTRUSS heel cage and a META-FLEX forefoot."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "A very light hybrid lifter with a lower 16.5 mm heel. Reviewers say it is stable for squats and cleans and easy to move in, but snug for wide feet.",
+   "pros": [
+    "Very light (360 g)",
+    "Flexible forefoot",
+    "Good for mixed workouts"
+   ],
+   "cons": [
+    "Lower heel",
+    "Narrow fit"
+   ],
+   "bestFor": "CrossFitters and lifters with narrow feet",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "inov-8 fastlift 360",
+  "stores": []
+ },
+ "nobull": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": 4.22,
+    "outOf": 5,
+    "url": "https://www.garagegymreviews.com/nobull-lifter-shoes-review",
+    "summary": "Testers were split: stable and grippy with a great-looking stacked-leather heel, but pricey, hot and narrow."
+   },
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/nobull-lifter-review/",
+    "summary": "Snappy platform feel close to an old wood heel; good for narrow feet, too narrow for some in the catch."
+   },
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/nobull-lifters-review",
+    "summary": "18.5 mm effective heel; the reviewer called the $299 price exceptionally high."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "A handmade lifter with a stacked leather heel. People love how it looks and feels on the platform, but it was expensive, hot and narrow, and it's now hard to find new.",
+   "pros": [
+    "Stacked leather heel feel",
+    "Stable and grippy",
+    "Looks great"
+   ],
+   "cons": [
+    "Was $299",
+    "Narrow and not breathable",
+    "No longer sold new"
+   ],
+   "bestFor": "Narrow feet and old-school style",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "nobull lifter",
+  "stores": []
+ },
+ "powerperfect3": {
+  "reviews": [
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/adidas-power-perfect-3-review/",
+    "summary": "Consistent, durable and fairly priced, with a high-density EVA heel and a reinforced heel cup."
+   },
+   {
+    "source": "PowerliftingTechnique",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://powerliftingtechnique.com/adidas-adipower-2-vs-adidas-power-perfect/",
+    "summary": "Beat the Adipower II for stability and durability in their test; the strap feels flimsy."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.zappos.com/product/review/8993216",
+    "summary": "114 reviews, 82% five stars.",
+    "count": 114
+   }
+  ],
+  "videos": [
+   {
+    "id": "TdobYEYQ0Jg",
+    "title": "Adidas Power Perfect 3 review",
+    "channel": "BarBend"
+   }
+  ],
+  "summary": {
+   "text": "Adidas's cheap, tough lifter with a ¾-inch heel. Reviewers call it consistent and durable for the money; the strap is its weak spot.",
+   "pros": [
+    "Cheap",
+    "Durable synthetic leather",
+    "High strap near the ankle"
+   ],
+   "cons": [
+    "EVA heel, not TPU",
+    "Flimsy strap"
+   ],
+   "bestFor": "Budget lifters who want durability",
+   "updated": "2026-11-15"
+  },
+  "lifters": [],
+  "buyQuery": "adidas power perfect 3",
+  "stores": []
+ },
+ "strake": {
+  "reviews": [
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/velaasa-strake-review/",
+    "summary": "The wood heel is the star for snatches and cleans; the toe box is narrow and the price is high."
+   },
+   {
+    "source": "Lift Big Eat Big",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://liftbigeatbig.com/?p=873",
+    "summary": "An international lifter trained 2.5 years for Tokyo in them: no cracks in the wood, and they run a little small."
+   },
+   {
+    "source": "Science for Sport",
+    "kind": "expert",
+    "score": 4.5,
+    "outOf": 5,
+    "url": "https://www.scienceforsport.com/best-weightlifting-shoes/",
+    "summary": "Their top pick; wood gives more platform feel than synthetic heels."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "The modern wood-heel lifter. Reviewers rave about the platform feel and say it holds up, but it runs small and narrow.",
+   "pros": [
+    "Real wood heel",
+    "22 mm heel",
+    "Holds up well"
+   ],
+   "cons": [
+    "Runs small",
+    "Narrow toe box"
+   ],
+   "bestFor": "Lifters who want a wood heel",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "Mattie Sasser",
+    "note": "2016 US Olympian (58 kg, 11th in Rio) who signed with Velaasa in 2020.",
+    "url": "https://velaasa.com/blogs/news/olympian-mattie-sasser-signs-with-velaasa"
+   },
+   {
+    "name": "Mona Pretorius",
+    "note": "South African elite weightlifter (now de Lacey) featured recommending the Strake.",
+    "url": "https://shop.liftbigeatbig.com/products/velaasa-strake"
+   }
+  ],
+  "buyQuery": "velaasa strake",
+  "stores": [
+   {
+    "store": "Velaasa",
+    "note": "Official store",
+    "url": "https://velaasa.com/products/velaasa-strake-olympic-weightlifting-shoe-in-black"
+   }
+  ]
+ },
+ "position": {
+  "reviews": [
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/position-usa-weightlifting-shoe-review/",
+    "summary": "1-inch hand-carved wood heel; heavier than most, and the wood needs some upkeep."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/position-weightlifting-eastwood-shoes-review",
+    "summary": "Handmade, so no two pairs are alike; snug at first, but the suede stretches."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "A handmade American lifter with a full 1-inch wood heel. Great platform feedback and a tall heel; heavy, and the wood needs care.",
+   "pros": [
+    "1-inch wood heel",
+    "Handmade",
+    "Big single strap"
+   ],
+   "cons": [
+    "Heavy",
+    "Wood needs upkeep",
+    "Hard to find"
+   ],
+   "bestFor": "Tall lifters and wood-heel fans",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "Jared Enderton",
+    "note": "Nationally ranked weightlifter and sponsored Position athlete.",
+    "url": "https://barbend.com/position-usa-weightlifting-shoe-review/"
+   }
+  ],
+  "buyQuery": "position usa weightlifting shoes",
+  "stores": []
+ },
+ "anta": {
+  "reviews": [
+   {
+    "source": "That Fit Friend (ANTA 2)",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/anta-2-weightlifting-shoes-review/",
+    "summary": "The ANTA 2 feels heavy, reinforced and very Romaleos 2-like; it is one of the priciest lifters."
+   },
+   {
+    "source": "WORKOUT.EU",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.workout.eu/en/produkty/42779-anta-weightlifting-shoes-anta-black.html",
+    "summary": "The shop says China's team calls them 'ton-level shoes'; buyers report a very firm fit that may need breaking in."
+   }
+  ],
+  "videos": [
+   {
+    "id": "EjXI3ZLGvyo",
+    "title": "ANTA weightlifting shoes: sizing comparison",
+    "channel": "Hookgrip"
+   },
+   {
+    "id": "8gAdSPT_qdo",
+    "title": "ANTA weightlifting shoes: follow-up",
+    "channel": "Hookgrip"
+   },
+   {
+    "id": "EkEqxNnRo_g",
+    "title": "ANTA 2 weightlifting shoes unboxing",
+    "channel": "Jake Boly"
+   }
+  ],
+  "summary": {
+   "text": "The Chinese national team's lifter: 20 mm TPU heel, two straps and a stiff, heavy upper. Lifters who miss the Romaleos 2 love it; it's pricey and snug.",
+   "pros": [
+    "Team China's shoe",
+    "Romaleos 2-style lockdown",
+    "Very stable"
+   ],
+   "cons": [
+    "Pricey to import",
+    "Snug, needs breaking in"
+   ],
+   "bestFor": "Romaleos 2 fans",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "China's national team",
+    "note": "ANTA makes the team's lifting shoes; the shop says the whole team trains in them.",
+    "url": "https://www.workout.eu/de/produkty/42780-anta-gewichtheben-schuhe-anta-weiss-blau.html"
+   }
+  ],
+  "buyQuery": "anta weightlifting shoes",
+  "stores": [
+   {
+    "store": "Hookgrip",
+    "note": "Importer",
+    "url": "https://store.hookgrip.com/?p=147547"
+   }
+  ]
+ },
+ "lxjlifter1": {
+  "reviews": [
+   {
+    "source": "WORKOUT.EU",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.workout.eu/en/produkty/44068-lu-xiaojun-shoes-luxiaojun-professional-pink.html",
+    "summary": "Shop page: 20 mm drop, 95 Shore A TPU heel and adjustable straps; Lu tested it for two years before launch."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "LUXIAOJUN's first lifter, replaced by the PowerPro. Lower 20 mm heel, two straps and a roomy inside.",
+   "pros": [
+    "Two straps",
+    "Roomy inside",
+    "Hard TPU heel"
+   ],
+   "cons": [
+    "Discontinued",
+    "Lower heel than the PowerPro"
+   ],
+   "bestFor": "Lu fans who find a pair",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "Lu Xiaojun",
+    "note": "His brand's first lifter, which he tested and refined over two years.",
+    "url": "https://www.workout.eu/en/produkty/44068-lu-xiaojun-shoes-luxiaojun-professional-pink.html"
+   }
+  ],
+  "buyQuery": "luxiaojun lifter 1.0",
+  "stores": []
  }
 }

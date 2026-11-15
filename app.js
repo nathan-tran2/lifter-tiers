@@ -156,7 +156,7 @@
     }
     board.innerHTML = html;
     board.classList.toggle("readonly", !editable());
-    renderChart(); renderChrome(); renderSocial(); renderPick(); renderInsight();
+    renderChart(); renderChrome(); renderSocial(); renderPick(); renderInsight(); renderUserPosts();
     if (lastFocusId) { var el = board.querySelector('.card[data-id="' + cssEsc(lastFocusId) + '"]'); if (el) el.focus(); lastFocusId = null; }
   }
 
@@ -417,7 +417,13 @@
       spec(ed ? "Your tier" : "Their tier", z === "R" ? "Still on the rack" : z + " · " + tierInfo(z).name) +
       "</dl>" + (s.notes ? '<p class="notes">' + esc(s.notes) + "</p>" : "") +
       (ed ? '<span class="move-label">Move to</span><div class="chips">' + chips + "</div>" : "") +
-      '<a class="btn wide" href="#/shoe/' + encodeURIComponent(id) + '" data-close>Reviews, videos & full specs →</a>' +
+      (function () {
+        if (s.custom || s.type === "barefoot") return "";
+        var ex = extReviews[id] || {}, links = buyLinks(s, ex).slice(0, 3);
+        return (ex.lifters && ex.lifters.length ? '<p class="dlg-worn"><b>Worn by:</b> ' + ex.lifters.map(function (l) { return esc(l.name); }).join(", ") + "</p>" : "") +
+          '<div class="dlg-buy"><span class="move-label">' + (isDiscontinued(s) ? "Find a pair" : "Where to buy") + "</span>" + links.map(function (l) { return '<a class="buy-link" href="' + esc(l.url) + '" target="_blank" rel="noopener"><b>' + esc(l.store) + " ↗</b><span>" + esc(l.note) + "</span></a>"; }).join("") + "</div>";
+      })() +
+      '<a class="btn wide" href="#/shoe/' + encodeURIComponent(id) + '" data-close>Reviews, videos, lifters & full specs →</a>' +
       (actions ? '<div class="row"><span style="flex:1"></span>' + actions + "</div>" : "");
     detailBody.dataset.id = id;
     if (!detail.open) detail.showModal();
@@ -740,6 +746,8 @@
   });
   $("s-post").addEventListener("change", function (e) {
     mine.published = e.target.checked; dirty = true; flush().then(function () { loadFeed(); renderAccount(); });
+    if (mine.published) sb.from("posts").insert({ kind: "tierlist", caption: mine.caption || null, tiers: mine.tiers }).select().single().then(function (r) { if (r.data) posts.unshift(r.data); });
+    else sb.from("posts").delete().eq("author", uid).eq("kind", "tierlist").then(function () { posts = posts.filter(function (p) { return !(p.author === uid && p.kind === "tierlist"); }); });
     toast(mine.published ? "Posted. The gym can see it now." : "Taken down from the feed.");
   });
   var capTimer = null;
@@ -924,7 +932,7 @@
   // and report the traits that move with the score. Unranked shoes are then scored by similarity to
   // the shoes this person already ranked (a weighted nearest-neighbour guess).
   var TIER_SCORE = { S: 5, A: 4, B: 3, C: 2, D: 1, F: 0 };
-  var WOOD_HEEL = { heritage: true, tyrforce: true, tyrforcev2: true, adistar: true, ironwork3: true, asics727: true };
+  var WOOD_HEEL = { heritage: true, tyrforce: true, tyrforcev2: true, adistar: true, ironwork3: true, asics727: true, strake: true, position: true };
   function traitsOf(s) {
     var fit = (s.fit || "").toLowerCase(), clo = (s.closure || "").toLowerCase();
     var fitN = null;
@@ -1067,6 +1075,14 @@
         return '<a class="ins-rec" href="#/shoe/' + encodeURIComponent(r.s.id) + '"><span class="t-img">' + pic(r.s) + '</span><span><span class="t-b">' + esc(r.s.brand) + "</span>" + esc(r.s.model) + '</span><span class="plate sm" data-k="' + r.tier + '" title="Predicted tier">' + r.tier + "</span></a>";
       }).join("") + "</div>" : "");
   }
+  function renderUserPosts() {
+    var el = $("user-posts"); if (!el) return;
+    var l = shown();
+    if (!live || view.mode !== "shared" || !l.username) { el.hidden = true; el.innerHTML = ""; return; }
+    var mp = posts.filter(function (p) { return p.author_name === l.username; });
+    el.hidden = false;
+    el.innerHTML = '<div class="sec-head"><div><p class="kicker">Posts</p><h3 class="h3">@' + esc(l.username) + "'s posts.</h3></div></div>" + (mp.length ? gridHTML(mp) : '<p class="empty-note">No posts yet.</p>');
+  }
   function renderInsight() {
     var el = $("insight"); if (!el) return;
     var list = shown();
@@ -1139,7 +1155,7 @@
     });
     $("shoe-grid").innerHTML = list.map(function (s) {
       var c = criticScore(s.id), sh = shopperScore(s.id), lf = lifterStats(s.id), z = tierOf(mine, s.id);
-      var vids = ((extReviews[s.id] && extReviews[s.id].videos) || []).length;
+      var ex = extReviews[s.id] || {}, vids = (ex.videos || []).length;
       return '<a class="shoe-card" href="#/shoe/' + encodeURIComponent(s.id) + '">' +
         '<span class="sc-photo">' + pic(s) + (z !== "R" ? '<span class="plate sm" data-k="' + z + '" title="On your board: ' + esc(tierInfo(z).name) + '">' + z + "</span>" : "") + "</span>" +
         '<span class="sc-body"><span class="sc-b">' + esc(s.brand) + '</span><span class="sc-m">' + esc(s.model) + "</span>" +
@@ -1148,7 +1164,9 @@
         '<span title="Average review-site score"><b>' + (c == null ? "–" : fmt1(c)) + "</b> critics</span>" +
         '<span title="Store star ratings"><b>' + (sh ? fmt1(sh.avg) + "★" : "–") + "</b> shoppers</span>" +
         '<span title="Ratings from lifters here"><b>' + (lf.avg == null ? "–" : fmt1(lf.avg) + "★") + "</b> lifters" + (lf.count ? " (" + lf.count + ")" : "") + "</span>" +
-        "</span>" + (vids ? '<span class="sc-vids">▶ ' + vids + (vids === 1 ? " video" : " videos") + "</span>" : "") + "</span></a>";
+        "</span>" + (vids ? '<span class="sc-vids">▶ ' + vids + (vids === 1 ? " video" : " videos") + "</span>" : "") +
+        (ex.lifters && ex.lifters.length ? '<span class="sc-worn">Worn by ' + esc(ex.lifters[0].name) + "</span>" : "") +
+        (s.type !== "barefoot" && !s.custom ? '<span class="sc-buy">' + (isDiscontinued(s) ? "Find a used pair →" : "Where to buy →") + "</span>" : "") + "</span></a>";
     }).join("") || '<p class="empty-note">Loading shoes…</p>';
   }
 
@@ -1157,7 +1175,7 @@
   // ---------- where to buy ----------
   var BRAND_STORE = {
     adidas: "https://www.adidas.com/us/search?q=", nike: "https://www.nike.com/w?q=", reebok: "https://www.reebok.com/search?q=",
-    tyr: "https://www.tyr.com/search?q=", luxiaojun: "https://luxiaojun.com/search?q="
+    tyr: "https://www.tyr.com/search?q=", luxiaojun: "https://luxiaojun.com/search?q=", velaasa: "https://velaasa.com/search?q="
   };
   function isDiscontinued(s) { return /discontinued/i.test(s.priceLabel || ""); }
   function buyLinks(s, ext) {
@@ -1181,7 +1199,7 @@
   function buyHTML(s, ext) {
     var deals = (ext.deals || []).filter(function (d) { return safeUrl(d.url); }).sort(function (a, b) { return (a.price || 1e9) - (b.price || 1e9); });
     var best = deals[0];
-    return '<section class="sec buy"><div class="sec-head"><div><p class="kicker">Where to buy</p><h3 class="h3">' + (isDiscontinued(s) ? "Find a pair." : "Best deals.") + "</h3></div></div>" +
+    return '<section class="sec buy" id="buy"><div class="sec-head"><div><p class="kicker">Where to buy</p><h3 class="h3">' + (isDiscontinued(s) ? "Find a pair." : "Best deals.") + "</h3></div></div>" +
       (best ? '<a class="deal-best" href="' + esc(safeUrl(best.url)) + '" target="_blank" rel="noopener"><span class="db-l">Best price we found</span><span class="db-p">$' + esc(best.price) + '</span><span class="db-s">' + esc(best.store) + (best.note ? " · " + esc(best.note) : "") + "</span>" + (best.checked ? '<span class="db-d">Checked ' + esc(best.checked) + "</span>" : "") + "</a>" : "") +
       (deals.length > 1 ? '<ul class="deal-list">' + deals.slice(1, 6).map(function (d) { return '<li><a href="' + esc(safeUrl(d.url)) + '" target="_blank" rel="noopener"><b>$' + esc(d.price) + "</b> " + esc(d.store) + (d.note ? " · " + esc(d.note) : "") + "</a></li>"; }).join("") + "</ul>" : "") +
       '<div class="buy-links">' + buyLinks(s, ext).map(function (l) { return '<a class="buy-link" href="' + esc(l.url) + '" target="_blank" rel="noopener"><b>' + esc(l.store) + " ↗</b><span>" + esc(l.note) + "</span></a>"; }).join("") + "</div>" +
@@ -1199,7 +1217,7 @@
   }
   function liftersHTML(ext) {
     if (!ext.lifters || !ext.lifters.length) return "";
-    return '<section class="sec"><div class="sec-head"><div><p class="kicker">Worn by</p><h3 class="h3">Notable lifters.</h3></div></div><ul class="worn">' +
+    return '<section class="sec" id="worn"><div class="sec-head"><div><p class="kicker">Worn by</p><h3 class="h3">Notable lifters.</h3></div></div><ul class="worn">' +
       ext.lifters.map(function (l) { var u = safeUrl(l.url); return "<li><b>" + esc(l.name) + "</b><span>" + esc(l.note) + "</span>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">Source ↗</a>' : "") + "</li>"; }).join("") + "</ul></section>";
   }
 
@@ -1222,17 +1240,24 @@
       '<div><span class="big">' + (c == null ? "–" : fmt1(c)) + '</span><span class="lbl">Critics /10</span></div>' +
       '<div><span class="big">' + (sh ? fmt1(sh.avg) : "–") + '</span><span class="lbl">Shoppers /5' + (sh && sh.count ? " · " + sh.count.toLocaleString() : "") + "</span></div>" +
       '<div><span class="big">' + (lf.avg == null ? "–" : fmt1(lf.avg)) + '</span><span class="lbl">Lifters /5' + (lf.count ? " · " + lf.count : "") + "</span></div>" +
-      "</div></div></section>" +
+      "</div>" +
+      (!s.custom && s.type !== "barefoot" ? '<nav class="jump" aria-label="On this page">' +
+        '<a href="#buy" data-jump="buy">🛒 Where to buy</a>' +
+        ((ext.lifters || []).length ? '<a href="#worn" data-jump="worn">🏋️ Worn by ' + esc(ext.lifters[0].name) + "</a>" : "") +
+        '<a href="#outside" data-jump="outside">★ Reviews (' + ((ext.reviews || []).length) + ")</a>" +
+        '<a href="#videos" data-jump="videos">▶ Videos' + ((ext.videos || []).length ? " (" + ext.videos.length + ")" : "") + "</a>" +
+        (live ? '<a href="#shoe-posts" data-jump="shoe-posts">📸 Posts (' + posts.filter(function (p) { return p.shoe_id === s.id; }).length + ")</a>" : "") + "</nav>" : "") +
+      "</div></section>" +
       '<dl class="specs specs-3">' +
       spec("Effective heel", s.heel != null && s.heel > 0 ? heelText(s) + " (" + (s.heel / 25.4).toFixed(2) + " in)" : heelText(s)) +
       spec("Weight per shoe", s.weight != null ? (s.weight ? s.weight + " g" : "Weightless") : "Not listed") +
       spec("List price", priceText(s) || "Not listed") + spec("Closure", s.closure || "–") + spec("Fit", s.fit || "–") +
       spec("Kind", { lifter: "Weightlifting shoe", trainer: "Trainer", barefoot: "Barefoot", other: "Other" }[s.type]) + "</dl>" +
       (s.notes ? '<p class="notes sh-notes">' + esc(s.notes) + "</p>" : "");
-    if (!s.custom && s.type !== "barefoot") html += summaryHTML(s, ext, lf) + buyHTML(s, ext) + liftersHTML(ext);
+    if (!s.custom && s.type !== "barefoot") html += summaryHTML(s, ext, lf) + buyHTML(s, ext) + liftersHTML(ext) + shoePostsHTML(id);
     // outside reviews
     if (!s.custom && s.type !== "barefoot") {
-      html += '<section class="sec"><div class="sec-head"><div><p class="kicker">Outside reviews</p><h3 class="h3">What reviewers say.</h3></div></div>';
+      html += '<section class="sec" id="outside"><div class="sec-head"><div><p class="kicker">Outside reviews</p><h3 class="h3">What reviewers say.</h3></div></div>';
       html += (ext.reviews && ext.reviews.length) ? '<ul class="ext-list">' + ext.reviews.map(function (r) {
         var u = safeUrl(r.url);
         return '<li class="ext"><div class="ext-top"><span class="ext-src">' + esc(r.source) + '</span><span class="ext-kind">' + (r.kind === "store" ? "Store rating" : "Review site") + "</span>" +
@@ -1240,12 +1265,12 @@
           '<p>' + esc(r.summary) + "</p>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">Read on ' + esc(hostOf(u)) + " ↗</a>" : "") + "</li>";
       }).join("") + "</ul>" : '<p class="empty-note">No outside reviews yet.</p>';
       html += "</section>";
-      html += '<section class="sec"><div class="sec-head"><div><p class="kicker">YouTube</p><h3 class="h3">Review videos.</h3></div></div>';
+      html += '<section class="sec" id="videos"><div class="sec-head"><div><p class="kicker">YouTube</p><h3 class="h3">Review videos.</h3></div></div>';
       html += (ext.videos && ext.videos.length) ? '<div class="vids">' + ext.videos.map(function (v) {
         if (!/^[A-Za-z0-9_-]{11}$/.test(v.id)) return "";
         return '<a class="vid" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener"><span class="vid-thumb"><img src="https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg" alt="" loading="lazy"><span class="vid-play">▶</span></span>' +
           '<span class="vid-t">' + esc(v.title) + '</span><span class="vid-c">' + esc(v.channel || "YouTube") + "</span></a>";
-      }).join("") + "</div>" : '<p class="empty-note">No review videos yet.</p>';
+      }).join("") + "</div>" : '<p class="empty-note">We haven\'t picked any videos for this one yet. <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(s.brand + " " + s.model + " weightlifting shoe review") + '" target="_blank" rel="noopener">Search YouTube ↗</a></p>';
       html += "</section>";
     }
     // lifter reviews
@@ -1261,6 +1286,7 @@
         html += '<form class="rv-form" id="rv-form" data-id="' + esc(id) + '"><div class="rv-stars" role="radiogroup" aria-label="Your rating">' +
           [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="rv-star" role="radio" data-n="' + n + '" aria-checked="' + (n === cur) + '" aria-label="' + n + (n === 1 ? " star" : " stars") + '">' + (n <= cur ? "★" : "☆") + "</button>"; }).join("") +
           '</div><textarea id="rv-body" maxlength="1000" rows="3" placeholder="How do they feel in the catch? Fit, durability, sizing…" aria-label="Your review">' + esc(mineR ? mineR.body || "" : "") + "</textarea>" +
+          (mineR ? "" : '<label class="check"><input type="checkbox" id="rv-share" checked> Also share it as a post</label>') +
           '<div class="row"><button class="btn red" type="submit">' + (mineR ? "Update review" : "Post review") + "</button>" + (mineR ? '<button class="danger" type="button" data-act="review-delete">Delete my review</button>' : "") + "</div></form>";
       }
       html += others.length ? '<ul class="rv-list">' + others.map(function (r) {
@@ -1272,6 +1298,8 @@
   }
   shoePageEl.addEventListener("click", function (e) {
     var id = route.id;
+    var jp = e.target.closest("[data-jump]");
+    if (jp) { e.preventDefault(); var t = document.getElementById(jp.dataset.jump); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     var mv = e.target.closest("[data-move]");
     if (mv) { var P = pool(mine); if (!P[id]) return; moveTo(id, mv.dataset.move); render(); renderShoePage(id); toast(P[id].model + " → " + (mv.dataset.move === "R" ? "the rack" : mv.dataset.move + " · " + tierInfo(mv.dataset.move).name)); return; }
     var st = e.target.closest(".rv-star");
@@ -1283,6 +1311,7 @@
     var act = e.target.closest("[data-act]"); if (!act) return;
     if (act.dataset.act === "review-signin") openSignIn("Sign in to review shoes.");
     else if (act.dataset.act === "review-name") requireName(function () { renderShoePage(id); });
+    else if (act.dataset.act === "post-shoe") openComposer({ shoe: id, kind: "lift" });
     else if (act.dataset.act === "review-delete") {
       if (act.dataset.armed !== "1") { act.dataset.armed = "1"; act.textContent = "Tap again to delete"; return; }
       sb.from("reviews").delete().eq("shoe_id", id).eq("author", uid).then(function (res) {
@@ -1297,14 +1326,16 @@
     e.preventDefault();
     var id = e.target.dataset.id, chosen = shoePageEl.querySelector('.rv-star[aria-checked="true"]');
     if (!chosen) { toast("Tap the stars to pick a rating first."); return; }
-    var rating = +chosen.dataset.n, body = $("rv-body").value.trim().slice(0, 1000);
+    var rating = +chosen.dataset.n, body = $("rv-body").value.trim().slice(0, 1000), shareIt = $("rv-share") ? $("rv-share").checked : false;
     var btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true;
     sb.from("reviews").upsert({ shoe_id: id, author: uid, rating: rating, body: body || null }).select().single().then(function (res) {
       btn.disabled = false;
       if (res.error) { toast("Review didn't save: " + res.error.message); return; }
+      var isNew = !siteReviews.some(function (r) { return r.shoe_id === id && r.author === uid; });
       siteReviews = siteReviews.filter(function (r) { return !(r.shoe_id === id && r.author === uid); });
       siteReviews.unshift(res.data);
       renderShoePage(id); toast("Review posted");
+      if (isNew && shareIt) sb.from("posts").insert({ kind: "review", shoe_id: id, rating: rating, caption: body || null }).select().single().then(function (r) { if (r.data) { posts.unshift(r.data); renderShoePage(id); } });
     });
   });
 
@@ -1377,6 +1408,8 @@
       '<section class="sec insight">' + insightHTML(mine, "") + "</section>" +
       '<section class="sec"><div class="sec-head"><div><p class="kicker">Your board</p><h3 class="h3">Your list.</h3></div><div class="toolbar"><a class="btn" href="#/">Open board</a><button class="btn red" type="button" data-act="p-share">Share or post</button></div></div>' +
       (tiersHtml ? '<div class="p-tiers">' + tiersHtml + "</div>" : '<p class="empty-note">Nothing ranked yet. <a href="#/">Start ranking</a>.</p>') + "</section>" +
+      '<section class="sec"><div class="sec-head"><div><p class="kicker">Your posts</p><h3 class="h3">Posts.</h3></div><button class="btn red sm" type="button" data-act="p-newpost">+ New post</button></div>' +
+      (function () { var mp = posts.filter(function (q) { return q.author === uid; }); return mp.length ? gridHTML(mp) : '<p class="empty-note">No posts yet.</p>'; })() + "</section>" +
       '<section class="sec"><div class="sec-head"><div><p class="kicker">Your reviews</p><h3 class="h3">Shoes you rated.</h3></div></div>' +
       (myRev.length ? '<ul class="rv-list">' + myRev.map(function (r) {
         var s = shoes[r.shoe_id]; if (!s) return "";
@@ -1391,6 +1424,7 @@
     else if (a === "p-edit") openName();
     else if (a === "p-pass") openPassword("Change password.");
     else if (a === "p-out") sb.auth.signOut();
+    else if (a === "p-newpost") openComposer();
     else if (a === "p-share") { if (!ranked(mine)) { toast("Put at least one shoe on a plate first."); return; } openShare(); }
   });
 
@@ -1407,13 +1441,14 @@
     if ((m = /^#\/u\/([a-z0-9_]{3,20})$/.exec(h)) || (m = /^#u=([a-z0-9_]{3,20})$/.exec(h))) return { page: "board", user: m[1] };
     if ((m = /^#\/s\/([A-Za-z0-9_-]{1,12000})$/.exec(h)) || (m = /^#s=([A-Za-z0-9_-]{1,12000})$/.exec(h))) return { page: "board", share: m[1] };
     if ((m = /^#\/shoe\/([A-Za-z0-9_%-]{1,80})$/.exec(h))) { var id; try { id = decodeURIComponent(m[1]); } catch (e) { id = m[1]; } return { page: "shoe", id: id }; }
+    if ((m = /^#\/p\/([A-Za-z0-9-]{8,40})$/.exec(h))) return { page: "post", id: m[1] };
     if ((m = /^#\/(shoes|reviews|posts|profile)$/.exec(h))) return { page: m[1] };
     if (/^#list-/.test(h)) return { page: "board", legacy: true };
     return { page: "board" };
   }
   function showPage(name) {
     document.querySelectorAll(".page").forEach(function (p) { p.hidden = p.dataset.page !== name; });
-    var navName = name === "shoe" ? "shoes" : name;
+    var navName = name === "shoe" ? "shoes" : name === "post" ? "posts" : name;
     document.querySelectorAll("[data-nav]").forEach(function (a) { if (a.dataset.nav === navName) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     document.body.dataset.page = name;
     if (name !== "board" && picked) setPick(null);
@@ -1423,7 +1458,8 @@
     if (r.page === "shoes") { renderShoes(); renderChart(); }
     else if (r.page === "shoe") renderShoePage(r.id);
     else if (r.page === "reviews") { renderScores(); renderLatest(); }
-    else if (r.page === "posts") renderFeed();
+    else if (r.page === "posts") renderPosts();
+    else if (r.page === "post") renderPostPage(r.id);
     else if (r.page === "profile") renderProfile();
   }
   function applyHash() {
@@ -1456,10 +1492,347 @@
     if (r.legacy) toast("That's an old share link. Ask for a new one.");
     if (view.mode === "shared") { view = { mode: "mine", list: null }; render(); loadSocial(); }
   }
-  window.addEventListener("hashchange", applyHash);
+  // short branded transition between pages
+  var veil = $("veil"), veilT1 = null, veilT2 = null;
+  var PAGE_LABEL = { board: "Board", shoes: "Shoes", shoe: "Shoe", reviews: "Reviews", posts: "Posts", post: "Post", profile: "Profile" };
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function onHash() {
+    var next = parseHash();
+    if (!veil || reduceMotion || !loaderDone || next.page === route.page && next.id === route.id) { applyHash(); return; }
+    clearTimeout(veilT1); clearTimeout(veilT2);
+    $("veil-label").textContent = PAGE_LABEL[next.page] || "";
+    veil.classList.add("on");
+    veilT1 = setTimeout(function () { applyHash(); veilT2 = setTimeout(function () { veil.classList.remove("on"); }, 260); }, 170);
+  }
+  window.addEventListener("hashchange", onHash);
 
   var toastEl = $("toast"), toastTimer = null;
   function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2600); }
+
+  // ---------- posts: photos, lift videos, reviews, review videos, tier lists, talk ----------
+  var KINDS = {
+    lift: { label: "Lift", icon: "🏋️", hint: "A photo or video of you lifting in your shoes", media: "need" },
+    review: { label: "Review", icon: "★", hint: "Rate a shoe and say why", rating: true, shoe: "need" },
+    review_video: { label: "Review video", icon: "🎬", hint: "Your own video review: upload it or paste a YouTube or TikTok link", rating: true, shoe: "need", media: "need" },
+    photo: { label: "Shoe pic", icon: "📷", hint: "Show off a pair", media: "need" },
+    video: { label: "Video", icon: "▶", hint: "Any lifting or shoe video", media: "need" },
+    tierlist: { label: "Tier list", icon: "▦", hint: "Post your current board" },
+    text: { label: "Talk", icon: "💬", hint: "Questions, hot takes, sizing help" }
+  };
+  var KIND_ORDER = ["lift", "review", "review_video", "photo", "video", "tierlist", "text"];
+  var posts = [], postsLoaded = false, likeCount = {}, myLikes = {}, commentCount = {}, likedBy = {};
+  var postTab = "fyp", postCat = "all";
+  var postsEl = $("ig-feed"), postPageEl = $("post-page");
+
+  function ytId(u) {
+    var m = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(u || "");
+    return m ? m[1] : null;
+  }
+  function mediaKind(u) { if (ytId(u)) return "youtube"; return "link"; }
+  function loadPosts() {
+    if (!live) { postsLoaded = true; return Promise.resolve(); }
+    return sb.from("posts").select("id,author,author_name,kind,shoe_id,caption,rating,media_url,media_type,tiers,created_at").order("created_at", { ascending: false }).limit(400).then(function (res) {
+      posts = (res.data || []).filter(function (p) { return KINDS[p.kind]; });
+      var ids = posts.map(function (p) { return p.id; });
+      likeCount = {}; myLikes = {}; commentCount = {}; likedBy = {};
+      if (!ids.length) { postsLoaded = true; return; }
+      return Promise.all([
+        sb.from("post_likes").select("post_id,user_id").in("post_id", ids).limit(20000),
+        sb.from("post_comments").select("post_id").in("post_id", ids).limit(20000)
+      ]).then(function (r) {
+        (r[0].data || []).forEach(function (l) {
+          likeCount[l.post_id] = (likeCount[l.post_id] || 0) + 1;
+          (likedBy[l.user_id] = likedBy[l.user_id] || {})[l.post_id] = 1;
+          if (l.user_id === uid) myLikes[l.post_id] = true;
+        });
+        (r[1].data || []).forEach(function (c) { commentCount[c.post_id] = (commentCount[c.post_id] || 0) + 1; });
+        postsLoaded = true;
+      });
+    }).then(function () { postsLoaded = true; }, function () { postsLoaded = true; });
+  }
+  function postById(id) { for (var i = 0; i < posts.length; i++) if (posts[i].id === id) return posts[i]; return null; }
+
+  // For You: engagement + freshness + how well the post matches what you rank highly and what you've liked
+  function fypScore(p, taste) {
+    var now = Date.now(), ageH = Math.max(0, (now - new Date(p.created_at).getTime()) / 36e5);
+    var eng = Math.log(1 + (likeCount[p.id] || 0) + 2 * (commentCount[p.id] || 0));
+    var fresh = 3 * Math.exp(-ageH / 60);
+    var aff = 0;
+    if (p.shoe_id) {
+      var t = tierOf(mine, p.shoe_id);
+      if (t === "S" || t === "A") aff += 1.6; else if (t === "B") aff += 0.6; else if (t === "D" || t === "F") aff += 0.2;
+      if (taste.recs[p.shoe_id]) aff += 1;
+    }
+    if (taste.kinds[p.kind]) aff += Math.min(1.2, 0.4 * taste.kinds[p.kind]);
+    if (taste.authors[p.author]) aff += Math.min(1.5, 0.5 * taste.authors[p.author]);
+    if (p.media_url) aff += 0.4;
+    if (p.author === uid) aff -= 2;
+    if (myLikes[p.id]) aff -= 1.2;
+    var h = 0; for (var i = 0; i < p.id.length; i++) h = (h * 31 + p.id.charCodeAt(i)) % 997;
+    return eng + fresh + aff + (h / 997) * 0.6;
+  }
+  function tasteModel() {
+    var kinds = {}, authors = {}, recs = {};
+    Object.keys(myLikes).forEach(function (id) { var p = postById(id); if (p) { kinds[p.kind] = (kinds[p.kind] || 0) + 1; authors[p.author] = (authors[p.author] || 0) + 1; } });
+    var a = analyzeList(mine); if (a.ok) a.recs.slice(0, 5).forEach(function (r) { if (r.pred >= 3) recs[r.s.id] = 1; });
+    return { kinds: kinds, authors: authors, recs: recs };
+  }
+  function orderedPosts() {
+    var list = posts.filter(function (p) { return postCat === "all" || p.kind === postCat || (postCat === "review" && p.kind === "review_video"); });
+    if (postTab === "new") return list;
+    if (postTab === "top") {
+      var weekAgo = Date.now() - 7 * 864e5;
+      return list.filter(function (p) { return new Date(p.created_at).getTime() >= weekAgo; })
+        .sort(function (a, b) { return ((likeCount[b.id] || 0) + 2 * (commentCount[b.id] || 0)) - ((likeCount[a.id] || 0) + 2 * (commentCount[a.id] || 0)); });
+    }
+    var taste = tasteModel();
+    var scored = list.map(function (p) { return { p: p, s: fypScore(p, taste) }; }).sort(function (a, b) { return b.s - a.s; });
+    // keep the same person from filling the top of the feed
+    var out = [], held = [];
+    scored.forEach(function (x) {
+      if (out.length && out[out.length - 1].author === x.p.author) held.push(x.p); else { out.push(x.p); if (held.length && held[0].author !== x.p.author) out.push(held.shift()); }
+    });
+    return out.concat(held);
+  }
+
+  function tierThumbs(t) {
+    var P = pool(mine), out = [];
+    TK.forEach(function (k) { ((t && t[k]) || []).forEach(function (id) { if (shoes[id] && out.length < 6) out.push([k, shoes[id]]); }); });
+    return out;
+  }
+  function mediaHTML(p, big) {
+    var u = safeUrl(p.media_url);
+    if (p.kind === "tierlist") {
+      var th = tierThumbs(p.tiers);
+      return '<div class="pm pm-tiers">' + (th.length ? th.map(function (t) { return '<figure>' + pic(t[1]) + '<span class="plate sm" data-k="' + t[0] + '">' + t[0] + "</span></figure>"; }).join("") : '<p class="sub">Empty board</p>') + "</div>";
+    }
+    if (!u) return "";
+    if (p.media_type === "image") return '<div class="pm" data-dbl="' + esc(p.id) + '"><img src="' + esc(u) + '" alt="' + esc(KINDS[p.kind].label + " by @" + (p.author_name || "lifter")) + '" loading="lazy"><span class="pm-heart" aria-hidden="true">♥</span></div>';
+    if (p.media_type === "video") return '<div class="pm"><video src="' + esc(u) + '" controls playsinline preload="metadata"' + (big ? "" : "") + "></video></div>";
+    var yid = p.media_type === "youtube" ? ytId(u) : null;
+    if (yid) return '<div class="pm pm-yt"><button type="button" class="yt" data-yt="' + yid + '" aria-label="Play video"><img src="https://i.ytimg.com/vi/' + yid + '/hqdefault.jpg" alt="" loading="lazy"><span class="vid-play">▶</span></button></div>';
+    return '<a class="pm pm-link" href="' + esc(u) + '" target="_blank" rel="noopener"><span>Watch on ' + esc(hostOf(u)) + " ↗</span></a>";
+  }
+  function shoeTag(p) {
+    var s = p.shoe_id && shoes[p.shoe_id]; if (!s) return "";
+    return '<a class="p-shoe" href="#/shoe/' + encodeURIComponent(s.id) + '"><span class="t-img">' + pic(s) + '</span><span><span class="t-b">' + esc(s.brand) + "</span>" + esc(s.model) + "</span>" + (p.rating ? '<span class="p-stars">' + stars(p.rating) + "</span>" : "") + "</a>";
+  }
+  function postCard(p, opts) {
+    opts = opts || {};
+    var k = KINDS[p.kind], n = likeCount[p.id] || 0, c = commentCount[p.id] || 0, name = p.author_name || "lifter";
+    return '<article class="ig" data-post="' + esc(p.id) + '">' +
+      '<header class="ig-h"><a class="ig-av" href="#/u/' + esc(name) + '">' + esc(name.charAt(0).toUpperCase()) + '</a><div class="ig-who"><a href="#/u/' + esc(name) + '"><b>@' + esc(name) + "</b></a>" +
+      '<span class="ig-meta"><span class="kind-pill" data-kind="' + p.kind + '">' + k.icon + " " + esc(k.label) + "</span> · " + esc(ago(p.created_at)) + "</span></div>" +
+      (p.author === uid ? '<button type="button" class="ig-x" data-del="' + esc(p.id) + '" title="Delete post">⋯</button>' : "") + "</header>" +
+      mediaHTML(p, opts.big) + shoeTag(p) +
+      '<div class="ig-act"><button type="button" class="ig-like" data-like="' + esc(p.id) + '" aria-pressed="' + !!myLikes[p.id] + '" aria-label="Like">' + (myLikes[p.id] ? "♥" : "♡") + " <span>" + n + "</span></button>" +
+      '<a class="ig-c" href="#/p/' + esc(p.id) + '">💬 <span>' + c + "</span></a>" +
+      '<button type="button" class="ig-share" data-share="' + esc(p.id) + '" aria-label="Copy link">↗</button>' +
+      (p.kind === "tierlist" ? '<a class="ig-more" href="#/u/' + esc(name) + '">See full list →</a>' : "") + "</div>" +
+      (p.caption ? '<p class="ig-cap"><b>@' + esc(name) + "</b> " + esc(opts.big ? p.caption : (p.caption.length > 220 ? p.caption.slice(0, 220) + "…" : p.caption)) + "</p>" : "") +
+      (!opts.big && c ? '<a class="ig-all" href="#/p/' + esc(p.id) + '">View ' + (c === 1 ? "1 comment" : "all " + c + " comments") + "</a>" : "") +
+      "</article>";
+  }
+  function renderPosts() {
+    var cats = $("cat-chips");
+    cats.innerHTML = ['all'].concat(KIND_ORDER.filter(function (k) { return k !== "review_video"; })).map(function (k) {
+      return '<button type="button" class="chip-cat" data-cat="' + k + '" aria-pressed="' + (postCat === k) + '">' + (k === "all" ? "All" : KINDS[k].icon + " " + KINDS[k].label + (k === "review" ? "s" : "")) + "</button>";
+    }).join("");
+    document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", b.dataset.tab === postTab); });
+    if (!live) { postsEl.innerHTML = '<p class="empty-note">Posts turn on once the database is connected.</p>'; return; }
+    if (!postsLoaded) { postsEl.innerHTML = '<p class="empty-note">Loading posts…</p>'; return; }
+    var list = orderedPosts();
+    postsEl.innerHTML = list.length ? list.map(function (p) { return postCard(p); }).join("") :
+      '<div class="empty-note">' + (posts.length ? "Nothing in this category yet." : "No posts yet. Be the first: post a lift, a review, or your tier list.") + "</div>";
+  }
+  function renderPostPage(id) {
+    if (!live) { postPageEl.innerHTML = '<p class="empty-note">Posts need the database.</p>'; return; }
+    var p = postById(id);
+    if (!p) { postPageEl.innerHTML = postsLoaded ? '<section class="sec"><p class="empty-note">That post is gone. <a href="#/posts">Back to posts</a>.</p></section>' : '<p class="empty-note">Loading…</p>'; return; }
+    var more = p.shoe_id ? posts.filter(function (q) { return q.shoe_id === p.shoe_id && q.id !== p.id; }).slice(0, 6) : [];
+    postPageEl.innerHTML = '<a class="back" href="#/posts">← All posts</a><div class="post-one">' + postCard(p, { big: true }) +
+      '<section class="ig-comments" id="pc-list"><p class="sub">Loading comments…</p></section>' +
+      (uid && mine.username ? '<form class="ig-cform" id="pc-form"><input id="pc-body" maxlength="500" placeholder="Add a comment…" aria-label="Add a comment" autocomplete="off"><button class="btn red sm" type="submit">Post</button></form>'
+        : live ? '<p class="sub"><a href="#" data-act="pc-signin">Sign in</a> to comment.</p>' : "") + "</div>" +
+      (more.length ? '<section class="sec"><div class="sec-head"><div><p class="kicker">Same shoe</p><h3 class="h3">More about the ' + esc(shoes[p.shoe_id].model) + ".</h3></div></div>" + gridHTML(more) + "</section>" : "");
+    sb.from("post_comments").select("id,post_id,author,author_name,body,created_at").eq("post_id", id).order("created_at", { ascending: true }).limit(500).then(function (res) {
+      var el = $("pc-list"); if (!el) return;
+      var rows = res.data || []; commentCount[id] = rows.length;
+      el.innerHTML = rows.length ? rows.map(function (c) {
+        return '<p class="ig-com"><b>@' + esc(c.author_name || "lifter") + "</b> " + esc(c.body) + ' <time>' + esc(ago(c.created_at)) + "</time>" +
+          (c.author === uid || p.author === uid ? ' <button type="button" class="link-btn" data-cdel="' + c.id + '">delete</button>' : "") + "</p>";
+      }).join("") : '<p class="sub">No comments yet.</p>';
+    });
+  }
+  function gridHTML(list) {
+    return '<div class="ig-grid">' + list.map(function (p) {
+      var u = safeUrl(p.media_url), yid = p.media_type === "youtube" ? ytId(u) : null, s = p.shoe_id && shoes[p.shoe_id], inner;
+      if (p.media_type === "image" && u) inner = '<img src="' + esc(u) + '" alt="" loading="lazy">';
+      else if (yid) inner = '<img src="https://i.ytimg.com/vi/' + yid + '/mqdefault.jpg" alt="" loading="lazy"><span class="g-play">▶</span>';
+      else if (p.media_type === "video" && u) inner = '<video src="' + esc(u) + '#t=0.5" muted playsinline preload="metadata"></video><span class="g-play">▶</span>';
+      else if (s) inner = '<span class="g-shoe">' + pic(s) + "</span>" + (p.rating ? '<span class="g-rate">' + "★".repeat(p.rating) + "</span>" : "");
+      else inner = '<span class="g-text">' + esc((p.caption || KINDS[p.kind].label).slice(0, 90)) + "</span>";
+      return '<a class="g" href="#/p/' + esc(p.id) + '" title="' + esc(KINDS[p.kind].label) + '">' + inner + '<span class="g-kind">' + KINDS[p.kind].icon + "</span></a>";
+    }).join("") + "</div>";
+  }
+  function shoePostsHTML(id) {
+    if (!live) return "";
+    var list = posts.filter(function (p) { return p.shoe_id === id; });
+    return '<section class="sec" id="shoe-posts"><div class="sec-head"><div><p class="kicker">Posts</p><h3 class="h3">Lifts, reviews and clips.</h3></div>' +
+      '<button class="btn red sm" type="button" data-act="post-shoe">+ Post about this shoe</button></div>' +
+      (list.length ? gridHTML(list.slice(0, 9)) + (list.length > 9 ? '<p class="sub">' + list.length + " posts in total.</p>" : "") : '<p class="empty-note">Nobody has posted about this shoe yet.</p>') + "</section>";
+  }
+
+  function toggleLike(id, forceOn) {
+    if (!live) return;
+    if (!uid) { openSignIn("Sign in to like posts."); return; }
+    var on = !myLikes[id];
+    if (forceOn && !on) return;
+    myLikes[id] = on || undefined; if (!on) delete myLikes[id];
+    likeCount[id] = Math.max(0, (likeCount[id] || 0) + (on ? 1 : -1));
+    document.querySelectorAll('[data-like="' + cssEsc(id) + '"]').forEach(function (b) { b.setAttribute("aria-pressed", on); b.innerHTML = (on ? "♥" : "♡") + " <span>" + likeCount[id] + "</span>"; });
+    var q = on ? sb.from("post_likes").insert({ post_id: id, user_id: uid }) : sb.from("post_likes").delete().eq("post_id", id).eq("user_id", uid);
+    q.then(function (r) { if (r && r.error && !/duplicate/i.test(r.error.message || "")) toast("Couldn't save that like."); });
+  }
+  function postClick(e) {
+    var lk = e.target.closest("[data-like]"); if (lk) { toggleLike(lk.dataset.like); return; }
+    var yt = e.target.closest("[data-yt]");
+    if (yt) { var f = document.createElement("iframe"); f.src = "https://www.youtube-nocookie.com/embed/" + yt.dataset.yt + "?autoplay=1&playsinline=1"; f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true; f.title = "YouTube video"; yt.replaceWith(f); return; }
+    var sh = e.target.closest("[data-share]"); if (sh) { copy(location.origin + location.pathname + "#/p/" + sh.dataset.share, "Post link copied"); return; }
+    var del = e.target.closest("[data-del]");
+    if (del) {
+      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "Delete?"; return; }
+      var id = del.dataset.del, p = postById(id);
+      sb.from("posts").delete().eq("id", id).then(function (r) {
+        if (r.error) { toast("Couldn't delete that post."); return; }
+        posts = posts.filter(function (x) { return x.id !== id; });
+        var m = p && p.media_url && /\/post-media\/(.+)$/.exec(p.media_url); if (m) sb.storage.from("post-media").remove([decodeURIComponent(m[1])]);
+        toast("Post deleted"); if (route.page === "post") location.hash = "#/posts"; else refreshPage();
+      });
+      return;
+    }
+    var cd = e.target.closest("[data-cdel]");
+    if (cd) { sb.from("post_comments").delete().eq("id", +cd.dataset.cdel).then(function () { renderPostPage(route.id); }); return; }
+    var si = e.target.closest('[data-act="pc-signin"]'); if (si) { e.preventDefault(); openSignIn("Sign in to comment."); }
+  }
+  var lastTap = 0;
+  function postDbl(e) {
+    var m = e.target.closest("[data-dbl]"); if (!m) return;
+    var now = Date.now();
+    if (e.type === "dblclick" || now - lastTap < 320) {
+      toggleLike(m.dataset.dbl, true); m.classList.remove("pop"); void m.offsetWidth; m.classList.add("pop");
+      lastTap = 0;
+    } else lastTap = now;
+  }
+  [postsEl, postPageEl].forEach(function (el) { el.addEventListener("click", postClick); el.addEventListener("dblclick", postDbl); el.addEventListener("touchend", function (e) { if (e.target.closest("[data-dbl]")) postDbl(e); }); });
+  postPageEl.addEventListener("submit", function (e) {
+    if (e.target.id !== "pc-form") return;
+    e.preventDefault();
+    var inp = $("pc-body"), body = inp.value.trim(); if (!body) return;
+    if (!requireName()) return;
+    inp.disabled = true;
+    sb.from("post_comments").insert({ post_id: route.id, body: body }).then(function (r) {
+      inp.disabled = false;
+      if (r.error) { toast("Couldn't post that comment."); return; }
+      inp.value = ""; commentCount[route.id] = (commentCount[route.id] || 0) + 1; renderPostPage(route.id);
+    });
+  });
+  $("cat-chips").addEventListener("click", function (e) { var b = e.target.closest("[data-cat]"); if (b) { postCat = b.dataset.cat; renderPosts(); } });
+  document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { postTab = b.dataset.tab; renderPosts(); }); });
+
+  // ---------- new post ----------
+  var postDlg = $("post-dlg"), pcKind = "lift", pcRating = 0, pcFile = null;
+  function openComposer(opts) {
+    opts = opts || {};
+    if (!live) { toast("Posting needs the database."); return; }
+    if (!requireName(function () { openComposer(opts); })) return;
+    pcKind = opts.kind || "lift"; pcRating = 0; pcFile = null;
+    $("pc-kinds").innerHTML = KIND_ORDER.map(function (k) { return '<button type="button" class="pk" data-k="' + k + '" aria-pressed="' + (k === pcKind) + '"><span>' + KINDS[k].icon + "</span>" + esc(KINDS[k].label) + "</button>"; }).join("");
+    var opts2 = Object.keys(shoes).map(function (id) { return shoes[id]; }).filter(function (s) { return s.type !== "barefoot"; }).sort(function (a, b) { return (a.brand + a.model).localeCompare(b.brand + b.model); });
+    $("pc-shoe").innerHTML = '<option value="">No shoe tagged</option>' + opts2.map(function (s) { return '<option value="' + esc(s.id) + '">' + esc(s.brand + " " + s.model) + "</option>"; }).join("");
+    $("pc-shoe").value = opts.shoe || "";
+    $("pc-caption").value = ""; $("pc-link").value = ""; $("pc-file").value = ""; $("pc-preview").innerHTML = ""; $("pc-err").textContent = ""; $("pc-status").textContent = "";
+    syncComposer(); postDlg.showModal();
+  }
+  function syncComposer() {
+    var k = KINDS[pcKind];
+    $("pc-kinds").querySelectorAll(".pk").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.k === pcKind); });
+    $("pc-hint").textContent = k.hint;
+    $("pc-rate-row").hidden = !k.rating;
+    $("pc-media-row").hidden = !k.media && pcKind !== "text";
+    $("pc-shoe-label").textContent = k.shoe === "need" ? "Which shoe? (required)" : "Tag a shoe";
+    $("pc-shoe-row").hidden = pcKind === "tierlist";
+    $("pc-tier-note").hidden = pcKind !== "tierlist";
+    $("pc-stars").innerHTML = [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="rv-star" data-n="' + n + '" aria-label="' + n + ' stars">' + (n <= pcRating ? "★" : "☆") + "</button>"; }).join("");
+    $("pc-caption").placeholder = pcKind === "review" ? "How do they feel? Fit, heel, durability, sizing…" : pcKind === "tierlist" ? "Say something about your list (optional)" : "Write a caption…";
+  }
+  $("pc-kinds").addEventListener("click", function (e) { var b = e.target.closest(".pk"); if (b) { pcKind = b.dataset.k; syncComposer(); } });
+  $("pc-stars").addEventListener("click", function (e) { var b = e.target.closest(".rv-star"); if (b) { pcRating = +b.dataset.n; syncComposer(); } });
+  $("pc-file").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0]; pcFile = null; $("pc-preview").innerHTML = ""; $("pc-err").textContent = "";
+    if (!f) return;
+    if (/^video\//.test(f.type)) {
+      if (f.size > 50 * 1024 * 1024) { $("pc-err").textContent = "Videos can be up to 50 MB. Trim it or paste a YouTube link instead."; e.target.value = ""; return; }
+      if (!/^video\/(mp4|quicktime|webm)$/.test(f.type)) { $("pc-err").textContent = "Use an MP4, MOV or WebM video."; e.target.value = ""; return; }
+      pcFile = f; $("pc-preview").innerHTML = '<video src="' + URL.createObjectURL(f) + '" controls playsinline muted></video>';
+    } else if (/^image\//.test(f.type)) {
+      pcFile = f; $("pc-preview").innerHTML = '<img src="' + URL.createObjectURL(f) + '" alt="Preview">';
+    } else { $("pc-err").textContent = "Pick a photo or a video."; e.target.value = ""; }
+  });
+  function shrinkPost(file) {
+    return new Promise(function (ok, bad) {
+      if (file.type === "image/gif") { ok(file); return; }
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var max = 1440, sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth * sc); c.height = Math.round(img.naturalHeight * sc);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? ok(b) : bad(); }, "image/jpeg", 0.85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); bad(); };
+      img.src = url;
+    });
+  }
+  $("pc-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var k = KINDS[pcKind], err = $("pc-err"), shoe = $("pc-shoe").value, caption = $("pc-caption").value.trim(), link = $("pc-link").value.trim();
+    err.textContent = "";
+    if (k.shoe === "need" && !shoe) { err.textContent = "Pick the shoe this is about."; return; }
+    if (k.rating && !pcRating) { err.textContent = "Tap the stars to rate it."; return; }
+    if (link && !/^https:\/\/\S+$/.test(link)) { err.textContent = "Links need to start with https://"; return; }
+    if (k.media === "need" && !pcFile && !link) { err.textContent = "Add a photo or video, or paste a link."; return; }
+    if (pcKind === "tierlist" && !ranked(mine)) { err.textContent = "Rank some shoes on your board first."; return; }
+    if ((pcKind === "text" || pcKind === "review") && !caption && !pcFile && !link) { err.textContent = "Write something first."; return; }
+    var btn = $("pc-submit"); btn.disabled = true; $("pc-status").textContent = pcFile ? "Uploading…" : "Posting…";
+    var row = { kind: pcKind, caption: caption || null, shoe_id: pcKind === "tierlist" ? null : (shoe || null), rating: k.rating ? pcRating : null };
+    if (pcKind === "tierlist") row.tiers = mine.tiers;
+    var up = Promise.resolve();
+    if (pcFile) {
+      var isVid = /^video\//.test(pcFile.type);
+      up = (isVid ? Promise.resolve(pcFile) : shrinkPost(pcFile)).then(function (blob) {
+        var ext = isVid ? ({ "video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm" }[pcFile.type]) : (pcFile.type === "image/gif" ? "gif" : "jpg");
+        var path = uid + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
+        return sb.storage.from("post-media").upload(path, blob, { contentType: isVid ? pcFile.type : (ext === "gif" ? "image/gif" : "image/jpeg"), upsert: false }).then(function (r) {
+          if (r.error) throw r.error;
+          row.media_url = sb.storage.from("post-media").getPublicUrl(path).data.publicUrl; row.media_type = isVid ? "video" : "image";
+        });
+      });
+    } else if (link) { row.media_url = link; row.media_type = mediaKind(link); }
+    up.then(function () { return sb.from("posts").insert(row).select().single(); }).then(function (r) {
+      if (r.error) throw r.error;
+      if (k.rating && shoe) sb.from("reviews").upsert({ shoe_id: shoe, author: uid, rating: pcRating, body: caption ? caption.slice(0, 1000) : null }).select().single().then(function () { loadSiteReviews().then(refreshPage); });
+      btn.disabled = false; postDlg.close();
+      if (r.data) posts.unshift(r.data);
+      toast("Posted!"); postTab = "new";
+      if (r.data && r.data.id) location.hash = "#/p/" + r.data.id; else { location.hash = "#/posts"; }
+      loadPosts().then(refreshPage);
+    }).catch(function (x) {
+      btn.disabled = false; $("pc-status").textContent = "";
+      err.textContent = /size|too large|413/i.test((x && x.message) || "") ? "That file is too big (50 MB max)." : "Couldn't post that. " + ((x && x.message) || "Try again.");
+    });
+  });
+  $("btn-new-post").addEventListener("click", function () { openComposer(); });
+  wireClose(postDlg);
 
   // ---------- data loading ----------
   function loadLocal() {
@@ -1496,6 +1869,7 @@
       }
       mine.userId = uid;
       renderAccount(); render(); loadSocial(); refreshPage();
+      loadPosts().then(refreshPage);
       var back = null; try { back = sessionStorage.getItem("lt-return-hash"); sessionStorage.removeItem("lt-return-hash"); } catch (e) {}
       if (back && !location.hash) location.hash = back.replace(/^#/, ""); else applyHash();
       if (!mine.username) { needName = true; if (!document.querySelector("dialog[open]")) openName(); }
@@ -1532,6 +1906,7 @@
     live = true; loadLocal(); renderAccount(); render(); renderFeed(); loaderStatus("Loading shoes and reviews…");
     Promise.all([loadShoesFromDb(), loadExtReviews()]).then(function () {
       shoesLoaded = true; render(); applyHash(); loadFeed(); startShowcase(); hideLoader();
+      loadPosts().then(function () { refreshPage(); renderUserPosts(); });
       loadSiteReviews().then(refreshPage);
     }, function () {
       live = false; sb = null;
