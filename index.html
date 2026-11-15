@@ -4,14 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F4F2EE">
-<title>Weightlifting Shoe Tier List</title>
+<title>Lifter Tiers · Find your shoe. Rank the rest.</title>
 <meta name="description" content="Rank Olympic weightlifting shoes, read reviews from lifters and review sites, and post your tier list.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="is-loading">
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="ld-inner">
+    <p class="ld-brand">Lifter Tiers<span>.</span></p>
+    <p class="ld-slogan">Find your shoe. Rank the rest.</p>
+    <div class="ld-shoes" aria-hidden="true">
+      <img src="images/tyrforcev2.jpg" alt=""><img src="images/romaleos4.jpg" alt=""><img src="images/heritage.jpg" alt=""><img src="images/adipower3.jpg" alt=""><img src="images/tyrl2.jpg" alt="">
+    </div>
+    <div class="ld-plates" aria-hidden="true"><span data-k="S">S</span><span data-k="A">A</span><span data-k="B">B</span><span data-k="C">C</span><span data-k="D">D</span><span data-k="F">F</span></div>
+    <p class="ld-status" id="ld-status">Loading shoes…</p>
+  </div>
+</div>
+<script>setTimeout(function(){var l=document.getElementById("loader");if(l){l.remove();document.body.classList.remove("is-loading");}},9000);</script>
 <header class="topbar" id="top">
   <a class="brand" href="#/">Lifter Tiers<span>.</span></a>
   <nav class="nav" id="nav" aria-label="Main">
@@ -33,6 +45,7 @@
       <div class="hero-copy">
         <p class="badge"><span class="badge-red">Weightlifting</span><span id="stat-count">Loading the rack</span></p>
         <h1 id="hero-h">Shoe tier list<span class="dot">.</span></h1>
+        <p class="slogan">Find your shoe. Rank the rest.</p>
         <p class="lede">Tap a shoe, tap a plate. Rank every lifting shoe from <strong>the best</strong> to <strong>avoid</strong>, find out what kind of shoe you like, and post your list.</p>
       </div>
       <button type="button" class="showcase" id="showcase" aria-label="Featured shoe, open its page">

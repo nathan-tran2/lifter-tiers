@@ -924,7 +924,7 @@
   // and report the traits that move with the score. Unranked shoes are then scored by similarity to
   // the shoes this person already ranked (a weighted nearest-neighbour guess).
   var TIER_SCORE = { S: 5, A: 4, B: 3, C: 2, D: 1, F: 0 };
-  var WOOD_HEEL = { heritage: true, tyrforce: true, tyrforcev2: true };
+  var WOOD_HEEL = { heritage: true, tyrforce: true, tyrforcev2: true, adistar: true, ironwork3: true, asics727: true };
   function traitsOf(s) {
     var fit = (s.fit || "").toLowerCase(), clo = (s.closure || "").toLowerCase();
     var fitN = null;
@@ -1154,6 +1154,55 @@
 
   // ---------- one shoe ----------
   var shoePageEl = $("shoe-page");
+  // ---------- where to buy ----------
+  var BRAND_STORE = {
+    adidas: "https://www.adidas.com/us/search?q=", nike: "https://www.nike.com/w?q=", reebok: "https://www.reebok.com/search?q=",
+    tyr: "https://www.tyr.com/search?q=", luxiaojun: "https://luxiaojun.com/search?q="
+  };
+  function isDiscontinued(s) { return /discontinued/i.test(s.priceLabel || ""); }
+  function buyLinks(s, ext) {
+    var q = (ext && ext.buyQuery) || (s.brand + " " + s.model + " weightlifting shoes"), e = encodeURIComponent(q);
+    var out = ((ext && ext.stores) || []).filter(function (l) { return safeUrl(l.url); }).map(function (l) { return { store: l.store, note: l.note || "", url: safeUrl(l.url) }; });
+    var ebay = { store: "eBay", note: "Cheapest first", url: "https://www.ebay.com/sch/i.html?_nkw=" + e + "&_sop=15" };
+    if (isDiscontinued(s)) {
+      out.push(ebay,
+        { store: "Depop", note: "Used and deadstock", url: "https://www.depop.com/search/?q=" + e },
+        { store: "Mercari", note: "Used", url: "https://www.mercari.com/search/?keyword=" + e },
+        { store: "Poshmark", note: "Used", url: "https://poshmark.com/search?query=" + e },
+        { store: "GOAT", note: "Authenticated resale", url: "https://www.goat.com/search?query=" + e });
+    } else {
+      var b = BRAND_STORE[(s.brand || "").toLowerCase()];
+      if (b) out.push({ store: s.brand + " store", note: "Full price, official", url: b + encodeURIComponent(s.model) });
+      out.push({ store: "Price comparison", note: "Every store, lowest first", url: "https://www.google.com/search?tbm=shop&q=" + e },
+        { store: "Amazon", note: "Often discounted", url: "https://www.amazon.com/s?k=" + e }, ebay);
+    }
+    return out;
+  }
+  function buyHTML(s, ext) {
+    var deals = (ext.deals || []).filter(function (d) { return safeUrl(d.url); }).sort(function (a, b) { return (a.price || 1e9) - (b.price || 1e9); });
+    var best = deals[0];
+    return '<section class="sec buy"><div class="sec-head"><div><p class="kicker">Where to buy</p><h3 class="h3">' + (isDiscontinued(s) ? "Find a pair." : "Best deals.") + "</h3></div></div>" +
+      (best ? '<a class="deal-best" href="' + esc(safeUrl(best.url)) + '" target="_blank" rel="noopener"><span class="db-l">Best price we found</span><span class="db-p">$' + esc(best.price) + '</span><span class="db-s">' + esc(best.store) + (best.note ? " · " + esc(best.note) : "") + "</span>" + (best.checked ? '<span class="db-d">Checked ' + esc(best.checked) + "</span>" : "") + "</a>" : "") +
+      (deals.length > 1 ? '<ul class="deal-list">' + deals.slice(1, 6).map(function (d) { return '<li><a href="' + esc(safeUrl(d.url)) + '" target="_blank" rel="noopener"><b>$' + esc(d.price) + "</b> " + esc(d.store) + (d.note ? " · " + esc(d.note) : "") + "</a></li>"; }).join("") + "</ul>" : "") +
+      '<div class="buy-links">' + buyLinks(s, ext).map(function (l) { return '<a class="buy-link" href="' + esc(l.url) + '" target="_blank" rel="noopener"><b>' + esc(l.store) + " ↗</b><span>" + esc(l.note) + "</span></a>"; }).join("") + "</div>" +
+      '<p class="sub small">' + (isDiscontinued(s) ? "Out of production, so these links search resale sites. eBay opens sorted cheapest first." : "Links open live searches, so prices are current. ") + (best ? "" : " Specific deals are added by the weekly update.") + "</p></section>";
+  }
+  function summaryHTML(s, ext, lf) {
+    var sm = ext.summary; if (!sm) return "";
+    function li(a) { return (a || []).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join(""); }
+    return '<section class="sec sum"><div class="sec-head"><div><p class="kicker">Summary</p><h3 class="h3">The short version.</h3></div>' + (sm.updated ? '<span class="sum-up">Updated ' + esc(sm.updated) + "</span>" : "") + "</div>" +
+      '<p class="sum-text">' + esc(sm.text) + "</p>" +
+      '<div class="sum-cols"><div><p class="sum-h good">Good</p><ul>' + li(sm.pros) + '</ul></div><div><p class="sum-h bad">Watch out</p><ul>' + li(sm.cons) + "</ul></div></div>" +
+      (sm.bestFor ? '<p class="sum-best"><b>Best for:</b> ' + esc(sm.bestFor) + "</p>" : "") +
+      (sm.lifters ? '<p class="sum-best"><b>Lifters here say:</b> ' + esc(sm.lifters) + "</p>" : (lf.count ? '<p class="sum-best"><b>Lifters here:</b> ' + fmt1(lf.avg) + " / 5 from " + lf.count + (lf.count === 1 ? " review" : " reviews") + "</p>" : "")) +
+      '<p class="sub small">Written from the outside reviews below' + (lf.count ? " and reviews from lifters on this site" : "") + ", and refreshed weekly.</p></section>";
+  }
+  function liftersHTML(ext) {
+    if (!ext.lifters || !ext.lifters.length) return "";
+    return '<section class="sec"><div class="sec-head"><div><p class="kicker">Worn by</p><h3 class="h3">Notable lifters.</h3></div></div><ul class="worn">' +
+      ext.lifters.map(function (l) { var u = safeUrl(l.url); return "<li><b>" + esc(l.name) + "</b><span>" + esc(l.note) + "</span>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">Source ↗</a>' : "") + "</li>"; }).join("") + "</ul></section>";
+  }
+
   function renderShoePage(id) {
     var P = pool(mine), s = P[id];
     if (!s) { shoePageEl.innerHTML = shoesLoaded ? '<section class="sec"><p class="empty-note">That shoe isn\'t on the rack. <a href="#/shoes">See every shoe</a>.</p></section>' : '<p class="empty-note">Loading…</p>'; return; }
@@ -1180,6 +1229,7 @@
       spec("List price", priceText(s) || "Not listed") + spec("Closure", s.closure || "–") + spec("Fit", s.fit || "–") +
       spec("Kind", { lifter: "Weightlifting shoe", trainer: "Trainer", barefoot: "Barefoot", other: "Other" }[s.type]) + "</dl>" +
       (s.notes ? '<p class="notes sh-notes">' + esc(s.notes) + "</p>" : "");
+    if (!s.custom && s.type !== "barefoot") html += summaryHTML(s, ext, lf) + buyHTML(s, ext) + liftersHTML(ext);
     // outside reviews
     if (!s.custom && s.type !== "barefoot") {
       html += '<section class="sec"><div class="sec-head"><div><p class="kicker">Outside reviews</p><h3 class="h3">What reviewers say.</h3></div></div>';
@@ -1455,17 +1505,33 @@
     uid = null; isAdmin = false; userEmail = ""; mine = emptyList(); loadLocal(); setSave(""); renderAccount(); render(); loadSocial(); refreshPage();
   }
 
+  // ---------- loading screen ----------
+  var loaderStart = Date.now(), loaderDone = false;
+  function loaderStatus(t) { var el = $("ld-status"); if (el && !loaderDone) el.textContent = t; }
+  function hideLoader() {
+    if (loaderDone) return; loaderDone = true;
+    var el = $("loader"); if (!el) { document.body.classList.remove("is-loading"); return; }
+    var n = Object.keys(shoes).length;
+    el.classList.add("ld-ready"); var st = $("ld-status"); if (st) st.textContent = n ? n + " shoes ready" : "Ready";
+    var wait = Math.max(0, 1100 - (Date.now() - loaderStart));
+    setTimeout(function () {
+      el.classList.add("ld-out"); document.body.classList.remove("is-loading");
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 450);
+    }, wait + 350);
+  }
+  setTimeout(hideLoader, 7000);
+
   function startPreview() {
     live = false; loadLocal(); renderAccount(); renderFeed();
-    Promise.all([loadShoesFromFile().catch(function () { shoes = {}; }), loadExtReviews()]).then(function () { shoesLoaded = true; siteReviewsLoaded = true; render(); applyHash(); startShowcase(); });
+    Promise.all([loadShoesFromFile().catch(function () { shoes = {}; }), loadExtReviews()]).then(function () { shoesLoaded = true; siteReviewsLoaded = true; render(); applyHash(); startShowcase(); hideLoader(); });
   }
   function startLive() {
     try {
       sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true } });
     } catch (e) { startPreview(); return; }
-    live = true; loadLocal(); renderAccount(); render(); renderFeed();
+    live = true; loadLocal(); renderAccount(); render(); renderFeed(); loaderStatus("Loading shoes and reviews…");
     Promise.all([loadShoesFromDb(), loadExtReviews()]).then(function () {
-      shoesLoaded = true; render(); applyHash(); loadFeed(); startShowcase();
+      shoesLoaded = true; render(); applyHash(); loadFeed(); startShowcase(); hideLoader();
       loadSiteReviews().then(refreshPage);
     }, function () {
       live = false; sb = null;

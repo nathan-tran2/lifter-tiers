@@ -1,175 +1,1311 @@
 {
-  "_note": "Outside reviews collected November 2026. Scores are each site's own; summaries are paraphrased. Store ratings move over time.",
-  "adipower3": {
-    "reviews": [
-      { "source": "That Fit Friend", "kind": "expert", "score": 4.4, "outOf": 5, "url": "https://thatfitfriend.com/adidas-adipower-3-review/", "summary": "Stable TPU heel and a tough ripstop upper, but the $220 price and narrow toe box hold it back." },
-      { "source": "Garage Gym Lab", "kind": "expert", "score": null, "outOf": null, "url": "https://garagegymlab.com/adidas-adipower-3-review/", "summary": "Excellent 22 mm TPU heel for squats; best for narrow to moderately wide feet." },
-      { "source": "Rogue Fitness shoppers", "kind": "store", "score": 4.8, "outOf": 5, "count": 22, "url": "https://www.roguefitness.com/adidas-adipower-3-weightlifting-shoes", "summary": "Customer star rating on Rogue." }
-    ],
-    "videos": [
-      { "id": "VKsSff2S_jg", "title": "Why the Adipower 3 are not for everybody", "channel": "ListedFit" },
-      { "id": "bUVXP0BaUHw", "title": "Adidas Adipower 3 review: worth $220?", "channel": "That Fit Friend" },
-      { "id": "9Yf-8NIv2EI", "title": "Adidas Adipower 3, honest review", "channel": "YouTube" }
-    ]
-  },
-  "romaleos4": {
-    "reviews": [
-      { "source": "Garage Gym Lab", "kind": "expert", "score": 9.0, "outOf": 10, "url": "https://garagegymlab.com/nike-romaleos-4-review/", "summary": "Very grounded thanks to the rigid outsole and dual straps. Runs small, suits narrower feet, and the stiff forefoot needs breaking in." },
-      { "source": "Garage Gym Reviews", "kind": "expert", "score": 4, "outOf": 5, "url": "https://www.garagegymreviews.com/equipment/nike-romaleos-4", "summary": "Their tester called it the heaviest, most stable lifter they'd used; the toe box is still snug." },
-      { "source": "RunRepeat", "kind": "expert", "score": null, "outOf": null, "url": "https://runrepeat.com/nike-romaleos-4", "summary": "Lab-tested as the stiffest lifting shoe they've measured; most buyers say it fits about a half size small." },
-      { "source": "Rogue Fitness shoppers", "kind": "store", "score": 4.4, "outOf": 5, "count": 19, "url": "https://www.roguefitness.com/nike-romaleos-4-mens-shoes", "summary": "Customer star rating on Rogue." }
-    ],
-    "videos": [
-      { "id": "oR10gPy1Tpo", "title": "Nike Romaleos 4 review: USA Weightlifting coach & CrossFit Games athlete", "channel": "YouTube" },
-      { "id": "Nvdmkf5fGtE", "title": "Nike Romaleos 4 weightlifting shoe review", "channel": "Keep Pulling" },
-      { "id": "kGtJhZ78Hmc", "title": "Nike Romaleos 4: 18-month durability review", "channel": "YouTube" }
-    ]
-  },
-  "romaleos2": {
-    "reviews": [
-      { "source": "OutdoorGearLab", "kind": "expert", "score": null, "outOf": null, "url": "https://www.outdoorgearlab.com/reviews/shoes-and-boots/weightlifting-shoes/nike-romaleo-ii", "summary": "The double straps lock the foot down with no movement inside the shoe." },
-      { "source": "Athlete Performance Solutions shoppers", "kind": "store", "score": null, "outOf": null, "count": 193, "url": "https://www.athleteps.com/nike-romaleos-2-weightlifting-shoes", "summary": "Nearly 200 customer reviews, overwhelmingly five stars; many buyers say they prefer it to the 3 and 4." }
-    ],
-    "videos": [
-      { "id": "Var4xvPri-M", "title": "Everything you need to know about the Nike Romaleos 2", "channel": "YouTube" },
-      { "id": "LrR7VUxIBDY", "title": "Nike Romaleos 2 video review", "channel": "The Gym Revolution" }
-    ]
-  },
-  "romaleos3": {
-    "reviews": [
-      { "source": "Garage Gym Reviews", "kind": "expert", "score": null, "outOf": null, "url": "https://www.garagegymreviews.com/nike-romaleos-3-weightlifting-shoes-review", "summary": "Light and high-tech, but they didn't expect it to hold up to long-term use." },
-      { "source": "BarBend", "kind": "expert", "score": null, "outOf": null, "url": "https://barbend.com/nike-romaleos-3-review/", "summary": "Light, hybrid feel with two insoles in the box; early tongue durability problems." }
-    ],
-    "videos": [
-      { "id": "2IMVdnavpao", "title": "Switching from Romaleos 2 to Romaleos 3", "channel": "YouTube" },
-      { "id": "pCHZqq3hnq8", "title": "Nike Romaleos 3 review for squats", "channel": "YouTube" }
-    ]
-  },
-  "romaleos3xd": {
-    "reviews": [
-      { "source": "Powerlifting Technique", "kind": "expert", "score": null, "outOf": null, "url": "https://powerliftingtechnique.com/nike-romaleos-3-vs-4/", "summary": "The XD fixed the 3's durability with perforated leather and beefier straps, and leaves more room for toe splay than the 4." }
-    ],
-    "videos": [
-      { "id": "ePhOwhcYU50", "title": "Nike Romaleos 3 XD weightlifting shoe review", "channel": "Fit at Midlife" },
-      { "id": "kv1-8S1htVw", "title": "Romaleos 4 first look and comparison to the Romaleos 3 XD", "channel": "YouTube" },
-      { "id": "2QnJTyrSijs", "title": "Nike Romaleos 3 XD review: best for squats?", "channel": "YouTube" }
-    ]
-  },
-  "savaleos": {
-    "reviews": [
-      { "source": "RunRepeat", "kind": "expert", "score": 82, "outOf": 100, "url": "https://runrepeat.com/nike-savaleos", "summary": "A good entry-level hybrid that can also handle jumps and lunges; not for heavy lifting or wide feet." },
-      { "source": "Garage Gym Reviews", "kind": "expert", "score": null, "outOf": null, "url": "https://www.garagegymreviews.com/nike-savaleos-weightlifting-shoes-review", "summary": "A 25-year Olympic lifter found them secure for the price, with a slightly cushioned insole." },
-      { "source": "That Fit Friend", "kind": "expert", "score": null, "outOf": null, "url": "https://thatfitfriend.com/nike-savaleos-review/", "summary": "A solid first pair of lifters; lower-grade materials than the Romaleos but stable enough for most people." }
-    ],
-    "videos": [
-      { "id": "dHZgjwT5d7k", "title": "Nike Savaleos review", "channel": "That Fit Friend" },
-      { "id": "wEY2ayBZ-PQ", "title": "Nike Romaleos vs Savaleos: which should you buy?", "channel": "YouTube" }
-    ]
-  },
-  "powerlift5": {
-    "reviews": [
-      { "source": "Garage Gym Lab", "kind": "expert", "score": 8.8, "outOf": 10, "url": "https://garagegymlab.com/adidas-powerlift-5-review/", "summary": "One of the best beginner lifters; narrow toe box and runs about half a size small." },
-      { "source": "RunRepeat", "kind": "expert", "score": 81, "outOf": 100, "url": "https://runrepeat.com/adidas-powerlift-5", "summary": "Lab-tested as one of the best entry-level lifters; they don't recommend it for 350 lb+ lifts." },
-      { "source": "Rogue Fitness shoppers", "kind": "store", "score": 4.3, "outOf": 5, "count": 22, "url": "https://www.roguecanada.ca/adidas-powerlift-5-weightlifting-shoes", "summary": "Customer star rating on Rogue Canada." }
-    ],
-    "videos": [
-      { "id": "7qoxv8baW4U", "title": "Adidas Powerlift 5 review", "channel": "That Fit Friend" }
-    ]
-  },
-  "legacy3": {
-    "reviews": [
-      { "source": "Garage Gym Lab", "kind": "expert", "score": 9.2, "outOf": 10, "url": "https://garagegymlab.com/reebok-legacy-lifter-3-review/", "summary": "True-to-size fit and an ultra-stable 22 mm heel; good for both Olympic lifters and powerlifters." },
-      { "source": "Garage Gym Reviews", "kind": "expert", "score": 4.39, "outOf": 5, "url": "https://www.garagegymreviews.com/reebok-legacy-lifter-3-review", "summary": "Very durable and built for heavy training, but pricier than most rivals." },
-      { "source": "RunRepeat", "kind": "expert", "score": null, "outOf": null, "url": "https://www.runrepeat.com/reebok-legacy-lifter-iii", "summary": "Heavy at about 627 g with a stiff TPU platform; they found the Pump actually helps lock the foot down." },
-      { "source": "Zappos shoppers", "kind": "store", "score": 4.2, "outOf": 5, "count": 81, "url": "https://www.zappos.com/product/review/9817239", "summary": "Average worked out from Zappos' star breakdown; 70% gave five stars." }
-    ],
-    "videos": [
-      { "id": "t2_GcGOcv1Q", "title": "Reebok Legacy Lifter 3 review: okay shoe, but gimmicky", "channel": "That Fit Friend" },
-      { "id": "xluXO3OD88Q", "title": "My honest opinion on the Reebok Legacy Lifter 3", "channel": "ListedFit" }
-    ]
-  },
-  "legacy2": {
-    "reviews": [
-      { "source": "That Fit Friend", "kind": "expert", "score": null, "outOf": null, "url": "https://thatfitfriend.com/reebok-legacy-lifter-2-review/", "summary": "Quickly became one of the reviewer's favorite lifting shoes." },
-      { "source": "Zappos shoppers", "kind": "store", "score": 4.7, "outOf": 5, "count": 351, "url": "https://www.zappos.com/product/review/9399457", "summary": "Average worked out from Zappos' star breakdown; 78% gave five stars. Many say to size down half a size." }
-    ],
-    "videos": [
-      { "id": "4RpyEB8QjwY", "title": "Reebok Legacy Lifter 2 review", "channel": "That Fit Friend" },
-      { "id": "W80QGBqJecE", "title": "Reebok Legacy Lifter 2, honest review", "channel": "YouTube" }
-    ]
-  },
-  "tyrl1": {
-    "reviews": [
-      { "source": "Garage Gym Lab", "kind": "expert", "score": 9.2, "outOf": 10, "url": "https://garagegymlab.com/tyr-l-1-lifter-review/", "summary": "Excellent stability and heel lockdown from the 21 mm TPU heel; the toe box can be too roomy for narrow feet." },
-      { "source": "That Fit Friend", "kind": "expert", "score": null, "outOf": null, "url": "https://thatfitfriend.com/tyr-l-1-lifter-review/", "summary": "The widest toe box he'd tried and a favorite for squats; narrow feet won't enjoy it." },
-      { "source": "Believe in the Run", "kind": "expert", "score": null, "outOf": null, "url": "https://believeintherun.com/shoe-reviews/tyr-l-1-lifter-review", "summary": "Unique foot-shaped toe box; the upper felt less premium than the price suggests." },
-      { "source": "TYR shoppers", "kind": "store", "score": 4.9, "outOf": 5, "count": 2485, "url": "https://www.tyr.com/products/mens-l-1-lifter-black", "summary": "Customer star rating on TYR.com." }
-    ],
-    "videos": [
-      { "id": "kbfJeK4X45E", "title": "TYR L-1 Lifter review: thicc and wide", "channel": "That Fit Friend" },
-      { "id": "K5o_KG4n0Yw", "title": "They made barefoot weightlifting shoes: TYR L-1 review", "channel": "YouTube" },
-      { "id": "udi5QgYvB7U", "title": "TYR L-1 Lifter, honest review", "channel": "YouTube" }
-    ]
-  },
-  "tyrl2": {
-    "reviews": [
-      { "source": "Believe in the Run", "kind": "expert", "score": null, "outOf": null, "url": "https://believeintherun.com/?p=53849", "summary": "A worthy upgrade over the L-1 and a standout around 21 mm if you want room for your toes." },
-      { "source": "TYR shoppers", "kind": "store", "score": 4.8, "outOf": 5, "count": 540, "url": "https://tyr.com/products/mens-l-2-lifter-black-gum", "summary": "Customer star rating on TYR.com; buyers praise the grip, stability and roomy toe box." },
-      { "source": "Rogue Fitness shoppers", "kind": "store", "score": 4.5, "outOf": 5, "count": 28, "url": "https://www.roguefitness.com/tyr-l-2-lifter-shoes", "summary": "Customer star rating on Rogue." }
-    ],
-    "videos": [
-      { "id": "CG-DiziR7bw", "title": "TYR L-2 Lifter review: worth the price increase?", "channel": "That Fit Friend" },
-      { "id": "TjDt5extmXs", "title": "The Drop: TYR L-2 Lifter review", "channel": "YouTube" }
-    ]
-  },
-  "tyrforce": {
-    "reviews": [
-      { "source": "Believe in the Run", "kind": "expert", "score": null, "outOf": null, "url": "https://believeintherun.com/shoe-reviews/tyrforce-elite-carbon-lifter-review", "summary": "Built like a tank with a 1-inch wooden heel; their pick if price is no object." },
-      { "source": "Road Trail Run", "kind": "expert", "score": null, "outOf": null, "url": "https://www.roadtrailrun.com/2026/01/tyrforce-elite-carbon-weight-lifting.html", "summary": "Exceptionally stable with an anatomical, wide-foot-friendly fit; too stiff and heavy for WODs." }
-    ],
-    "videos": [
-      { "id": "CCfClWsGA2k", "title": "TYR Force Elite full review (vs Adistar and Anta)", "channel": "YouTube" }
-    ]
-  },
-  "tyrforcev2": {
-    "reviews": [
-      { "source": "TYR", "kind": "store", "score": null, "outOf": null, "url": "https://tyr.com/products/mens-tyrforce-elite-v2-lifter-white-black", "summary": "Just released; no outside reviews yet. TYR's page lists the specs." }
-    ],
-    "videos": []
-  },
-  "powerpro": {
-    "reviews": [
-      { "source": "LUXIAOJUN shoppers", "kind": "store", "score": null, "outOf": null, "url": "https://luxiaojun.com/products/luxiaojun-powerpro-i-weightlifting-shoesblack", "summary": "Dozens of reviews per colorway; buyers mention the stability, roomier toe box and the spare thinner insoles. Some found it snug." }
-    ],
-    "videos": [
-      { "id": "BgH77VayGWw", "title": "TYR L-1 vs LUXIAOJUN PowerPro: which is better?", "channel": "YouTube" },
-      { "id": "H1Clwf5tjrQ", "title": "Reviewing Lu Xiaojun's weightlifting shoes", "channel": "Coach ZT" }
-    ]
-  },
-  "heritage": {
-    "reviews": [
-      { "source": "LUXIAOJUN shoppers", "kind": "store", "score": null, "outOf": null, "url": "https://luxiaojun.com/products/luxiaojun-heritage-lifter-white", "summary": "Brand new. Early buyers rave about the build and the wood-heel slap; one noted a roomier toe box and slightly lower rise than the PowerPro." }
-    ],
-    "videos": []
-  },
-  "dowin": {
-    "reviews": [
-      { "source": "Garage Gym Reviews", "kind": "expert", "score": null, "outOf": null, "url": "https://www.garagegymreviews.com/do-win-classic-lifter-review", "summary": "Stylish and grippy, but it runs small, so size up. Rogue buyers average about 4.2 out of 5." },
-      { "source": "That Fit Friend", "kind": "expert", "score": null, "outOf": null, "url": "https://thatfitfriend.com/do-win-classic-lifter-review/", "summary": "Great throwback look, but he wouldn't put it on his best-lifters list without some fixes." }
-    ],
-    "videos": [
-      { "id": "xcOmeMY-su8", "title": "Rogue Do-Win Classic Lifter review", "channel": "YouTube" }
-    ]
-  },
-  "dowintpu": {
-    "reviews": [
-      { "source": "Garage Gym Lab", "kind": "expert", "score": 8.7, "outOf": 10, "url": "https://garagegymlab.com/do-win-weightlifting-shoes-review/", "summary": "A quality budget lifter with dual straps and a TPU heel; neutral toe box, true to size." },
-      { "source": "That Fit Friend", "kind": "expert", "score": null, "outOf": null, "url": "https://thatfitfriend.com/do-win-weightlifting-shoes-review/", "summary": "Consistent, no-frills performance for the money once broken in." },
-      { "source": "Rogue Fitness shoppers", "kind": "store", "score": 4.6, "outOf": 5, "count": 492, "url": "https://www.roguecanada.ca/dowin-weightlifting-shoes-black-white", "summary": "Customer star rating on Rogue Canada." }
-    ],
-    "videos": [
-      { "id": "G-4X86y0e48", "title": "Do-Win weightlifting shoes review", "channel": "That Fit Friend" },
-      { "id": "JWXyXSdc-9w", "title": "Do-Win weightlifting shoes: great value?", "channel": "BarBend" }
-    ]
+ "_note": "Outside reviews collected November 2026. Scores are each site's own; summaries are paraphrased. 'summary' is a written digest of the reviews; 'deals' is refreshed by the weekly update. Store ratings move over time.",
+ "adipower3": {
+  "reviews": [
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": 4.4,
+    "outOf": 5,
+    "url": "https://thatfitfriend.com/adidas-adipower-3-review/",
+    "summary": "Stable TPU heel and a tough ripstop upper, but the $220 price and narrow toe box hold it back."
+   },
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://garagegymlab.com/adidas-adipower-3-review/",
+    "summary": "Excellent 22 mm TPU heel for squats; best for narrow to moderately wide feet."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 4.8,
+    "outOf": 5,
+    "count": 22,
+    "url": "https://www.roguefitness.com/adidas-adipower-3-weightlifting-shoes",
+    "summary": "Customer star rating on Rogue."
+   }
+  ],
+  "videos": [
+   {
+    "id": "VKsSff2S_jg",
+    "title": "Why the Adipower 3 are not for everybody",
+    "channel": "ListedFit"
+   },
+   {
+    "id": "bUVXP0BaUHw",
+    "title": "Adidas Adipower 3 review: worth $220?",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "9Yf-8NIv2EI",
+    "title": "Adidas Adipower 3, honest review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A light, stable 22 mm TPU lifter that flexes well at the toe for jerks. Reviewers like the heel and upper but knock the $220 price and narrow toe box.",
+   "pros": [
+    "22 mm TPU heel",
+    "Flexible forefoot for the split",
+    "Durable ripstop upper"
+   ],
+   "cons": [
+    "Narrow toe box",
+    "Pricey for what changed"
+   ],
+   "bestFor": "Narrow to neutral feet who want a classic Adidas feel",
+   "updated": "2026-11-15"
   }
+ },
+ "romaleos4": {
+  "reviews": [
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": 9.0,
+    "outOf": 10,
+    "url": "https://garagegymlab.com/nike-romaleos-4-review/",
+    "summary": "Very grounded thanks to the rigid outsole and dual straps. Runs small, suits narrower feet, and the stiff forefoot needs breaking in."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": 4,
+    "outOf": 5,
+    "url": "https://www.garagegymreviews.com/equipment/nike-romaleos-4",
+    "summary": "Their tester called it the heaviest, most stable lifter they'd used; the toe box is still snug."
+   },
+   {
+    "source": "RunRepeat",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://runrepeat.com/nike-romaleos-4",
+    "summary": "Lab-tested as the stiffest lifting shoe they've measured; most buyers say it fits about a half size small."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 4.4,
+    "outOf": 5,
+    "count": 19,
+    "url": "https://www.roguefitness.com/nike-romaleos-4-mens-shoes",
+    "summary": "Customer star rating on Rogue."
+   }
+  ],
+  "videos": [
+   {
+    "id": "oR10gPy1Tpo",
+    "title": "Nike Romaleos 4 review: USA Weightlifting coach & CrossFit Games athlete",
+    "channel": "YouTube"
+   },
+   {
+    "id": "Nvdmkf5fGtE",
+    "title": "Nike Romaleos 4 weightlifting shoe review",
+    "channel": "Keep Pulling"
+   },
+   {
+    "id": "kGtJhZ78Hmc",
+    "title": "Nike Romaleos 4: 18-month durability review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The heaviest, most planted mainstream lifter: rigid outsole, power bridge and two straps. Expect it to run small and feel stiff at first.",
+   "pros": [
+    "Extremely stable",
+    "Two straps lock the midfoot",
+    "Durable upper"
+   ],
+   "cons": [
+    "Runs about half a size small",
+    "Snug toe box",
+    "Stiff break-in"
+   ],
+   "bestFor": "Narrow-footed lifters who want to feel bolted down",
+   "updated": "2026-11-15"
+  }
+ },
+ "romaleos2": {
+  "reviews": [
+   {
+    "source": "OutdoorGearLab",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.outdoorgearlab.com/reviews/shoes-and-boots/weightlifting-shoes/nike-romaleo-ii",
+    "summary": "The double straps lock the foot down with no movement inside the shoe."
+   },
+   {
+    "source": "Athlete Performance Solutions shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "count": 193,
+    "url": "https://www.athleteps.com/nike-romaleos-2-weightlifting-shoes",
+    "summary": "Nearly 200 customer reviews, overwhelmingly five stars; many buyers say they prefer it to the 3 and 4."
+   }
+  ],
+  "videos": [
+   {
+    "id": "Var4xvPri-M",
+    "title": "Everything you need to know about the Nike Romaleos 2",
+    "channel": "YouTube"
+   },
+   {
+    "id": "LrR7VUxIBDY",
+    "title": "Nike Romaleos 2 video review",
+    "channel": "The Gym Revolution"
+   }
+  ],
+  "summary": {
+   "text": "Still the shoe many lifters compare everything to: a ¾-inch TPU heel, two straps and two insoles. Owners often prefer it to the 3 and 4.",
+   "pros": [
+    "Locked-in double straps",
+    "Two insole options",
+    "Proven design"
+   ],
+   "cons": [
+    "Discontinued",
+    "Heavier than modern lifters"
+   ],
+   "bestFor": "Anyone who can find a pair in their size",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "nike romaleos 2"
+ },
+ "romaleos3": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/nike-romaleos-3-weightlifting-shoes-review",
+    "summary": "Light and high-tech, but they didn't expect it to hold up to long-term use."
+   },
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/nike-romaleos-3-review/",
+    "summary": "Light, hybrid feel with two insoles in the box; early tongue durability problems."
+   }
+  ],
+  "videos": [
+   {
+    "id": "2IMVdnavpao",
+    "title": "Switching from Romaleos 2 to Romaleos 3",
+    "channel": "YouTube"
+   },
+   {
+    "id": "pCHZqq3hnq8",
+    "title": "Nike Romaleos 3 review for squats",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "Light and hybrid-feeling with two insoles, but durability (especially the tongue) was a weak spot.",
+   "pros": [
+    "Light",
+    "Two insoles"
+   ],
+   "cons": [
+    "Durability problems",
+    "Less planted than the 2"
+   ],
+   "bestFor": "Lifters who also do some conditioning",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "nike romaleos 3"
+ },
+ "romaleos3xd": {
+  "reviews": [
+   {
+    "source": "Powerlifting Technique",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://powerliftingtechnique.com/nike-romaleos-3-vs-4/",
+    "summary": "The XD fixed the 3's durability with perforated leather and beefier straps, and leaves more room for toe splay than the 4."
+   }
+  ],
+  "videos": [
+   {
+    "id": "ePhOwhcYU50",
+    "title": "Nike Romaleos 3 XD weightlifting shoe review",
+    "channel": "Fit at Midlife"
+   },
+   {
+    "id": "kv1-8S1htVw",
+    "title": "Romaleos 4 first look and comparison to the Romaleos 3 XD",
+    "channel": "YouTube"
+   },
+   {
+    "id": "2QnJTyrSijs",
+    "title": "Nike Romaleos 3 XD review: best for squats?",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The fix for the 3: perforated leather and beefier straps, with more room for toe splay than the 4.",
+   "pros": [
+    "Tougher than the 3",
+    "Roomier toe than the 4"
+   ],
+   "cons": [
+    "Discontinued",
+    "Single strap feels lighter-duty"
+   ],
+   "bestFor": "Neutral feet that found the 4 too tight",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "nike romaleos 3 xd"
+ },
+ "savaleos": {
+  "reviews": [
+   {
+    "source": "RunRepeat",
+    "kind": "expert",
+    "score": 82,
+    "outOf": 100,
+    "url": "https://runrepeat.com/nike-savaleos",
+    "summary": "A good entry-level hybrid that can also handle jumps and lunges; not for heavy lifting or wide feet."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/nike-savaleos-weightlifting-shoes-review",
+    "summary": "A 25-year Olympic lifter found them secure for the price, with a slightly cushioned insole."
+   },
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/nike-savaleos-review/",
+    "summary": "A solid first pair of lifters; lower-grade materials than the Romaleos but stable enough for most people."
+   }
+  ],
+  "videos": [
+   {
+    "id": "dHZgjwT5d7k",
+    "title": "Nike Savaleos review",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "wEY2ayBZ-PQ",
+    "title": "Nike Romaleos vs Savaleos: which should you buy?",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "An entry-level hybrid with a 15 mm heel that can handle jumps and lunges, but not the heaviest lifts or wide feet.",
+   "pros": [
+    "Light and versatile",
+    "Good price"
+   ],
+   "cons": [
+    "Soft for heavy lifting",
+    "Narrow fit"
+   ],
+   "bestFor": "CrossFit-style training and first-time lifter buyers",
+   "updated": "2026-11-15"
+  }
+ },
+ "powerlift5": {
+  "reviews": [
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": 8.8,
+    "outOf": 10,
+    "url": "https://garagegymlab.com/adidas-powerlift-5-review/",
+    "summary": "One of the best beginner lifters; narrow toe box and runs about half a size small."
+   },
+   {
+    "source": "RunRepeat",
+    "kind": "expert",
+    "score": 81,
+    "outOf": 100,
+    "url": "https://runrepeat.com/adidas-powerlift-5",
+    "summary": "Lab-tested as one of the best entry-level lifters; they don't recommend it for 350 lb+ lifts."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 4.3,
+    "outOf": 5,
+    "count": 22,
+    "url": "https://www.roguecanada.ca/adidas-powerlift-5-weightlifting-shoes",
+    "summary": "Customer star rating on Rogue Canada."
+   }
+  ],
+  "videos": [
+   {
+    "id": "7qoxv8baW4U",
+    "title": "Adidas Powerlift 5 review",
+    "channel": "That Fit Friend"
+   }
+  ],
+  "summary": {
+   "text": "One of the best beginner lifters: a 16 mm wedge, canvas upper and one strap. Runs a bit small and narrow.",
+   "pros": [
+    "Cheap",
+    "Easy to adapt to",
+    "Durable"
+   ],
+   "cons": [
+    "Narrow toe box",
+    "EVA wedge less rigid than TPU"
+   ],
+   "bestFor": "Beginners and low-bar squatters",
+   "updated": "2026-11-15"
+  }
+ },
+ "legacy3": {
+  "reviews": [
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": 9.2,
+    "outOf": 10,
+    "url": "https://garagegymlab.com/reebok-legacy-lifter-3-review/",
+    "summary": "True-to-size fit and an ultra-stable 22 mm heel; good for both Olympic lifters and powerlifters."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": 4.39,
+    "outOf": 5,
+    "url": "https://www.garagegymreviews.com/reebok-legacy-lifter-3-review",
+    "summary": "Very durable and built for heavy training, but pricier than most rivals."
+   },
+   {
+    "source": "RunRepeat",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.runrepeat.com/reebok-legacy-lifter-iii",
+    "summary": "Heavy at about 627 g with a stiff TPU platform; they found the Pump actually helps lock the foot down."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 4.2,
+    "outOf": 5,
+    "count": 81,
+    "url": "https://www.zappos.com/product/review/9817239",
+    "summary": "Average worked out from Zappos' star breakdown; 70% gave five stars."
+   }
+  ],
+  "videos": [
+   {
+    "id": "t2_GcGOcv1Q",
+    "title": "Reebok Legacy Lifter 3 review: okay shoe, but gimmicky",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "xluXO3OD88Q",
+    "title": "My honest opinion on the Reebok Legacy Lifter 3",
+    "channel": "ListedFit"
+   }
+  ],
+  "summary": {
+   "text": "True-to-size, ultra-stable 22 mm TPU heel built for heavy training; the Pump is debated but does help lockdown.",
+   "pros": [
+    "Very stable",
+    "True to size",
+    "Durable"
+   ],
+   "cons": [
+    "Heavy (about 627 g)",
+    "Pricey"
+   ],
+   "bestFor": "High-bar squatters and Olympic lifters who want a tall heel",
+   "updated": "2026-11-15"
+  }
+ },
+ "legacy2": {
+  "reviews": [
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/reebok-legacy-lifter-2-review/",
+    "summary": "Quickly became one of the reviewer's favorite lifting shoes."
+   },
+   {
+    "source": "Zappos shoppers",
+    "kind": "store",
+    "score": 4.7,
+    "outOf": 5,
+    "count": 351,
+    "url": "https://www.zappos.com/product/review/9399457",
+    "summary": "Average worked out from Zappos' star breakdown; 78% gave five stars. Many say to size down half a size."
+   }
+  ],
+  "videos": [
+   {
+    "id": "4RpyEB8QjwY",
+    "title": "Reebok Legacy Lifter 2 review",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "W80QGBqJecE",
+    "title": "Reebok Legacy Lifter 2, honest review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A fan favorite with a 22 mm heel and one strap; shoppers rate it highly but many size down half a size.",
+   "pros": [
+    "Stable 22 mm heel",
+    "Great value on sale"
+   ],
+   "cons": [
+    "Runs big for some",
+    "Heavier than Adidas"
+   ],
+   "bestFor": "Neutral feet who want height without paying for the 3",
+   "updated": "2026-11-15"
+  }
+ },
+ "tyrl1": {
+  "reviews": [
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": 9.2,
+    "outOf": 10,
+    "url": "https://garagegymlab.com/tyr-l-1-lifter-review/",
+    "summary": "Excellent stability and heel lockdown from the 21 mm TPU heel; the toe box can be too roomy for narrow feet."
+   },
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/tyr-l-1-lifter-review/",
+    "summary": "The widest toe box he'd tried and a favorite for squats; narrow feet won't enjoy it."
+   },
+   {
+    "source": "Believe in the Run",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://believeintherun.com/shoe-reviews/tyr-l-1-lifter-review",
+    "summary": "Unique foot-shaped toe box; the upper felt less premium than the price suggests."
+   },
+   {
+    "source": "TYR shoppers",
+    "kind": "store",
+    "score": 4.9,
+    "outOf": 5,
+    "count": 2485,
+    "url": "https://www.tyr.com/products/mens-l-1-lifter-black",
+    "summary": "Customer star rating on TYR.com."
+   }
+  ],
+  "videos": [
+   {
+    "id": "kbfJeK4X45E",
+    "title": "TYR L-1 Lifter review: thicc and wide",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "K5o_KG4n0Yw",
+    "title": "They made barefoot weightlifting shoes: TYR L-1 review",
+    "channel": "YouTube"
+   },
+   {
+    "id": "udi5QgYvB7U",
+    "title": "TYR L-1 Lifter, honest review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The widest toe box in the category with a 21 mm TPU heel and excellent heel lockdown.",
+   "pros": [
+    "Huge toe box",
+    "Stable heel",
+    "Thousands of 5-star shopper reviews"
+   ],
+   "cons": [
+    "Too roomy for narrow feet",
+    "Upper feels less premium"
+   ],
+   "bestFor": "Wide or flat feet",
+   "updated": "2026-11-15"
+  }
+ },
+ "tyrl2": {
+  "reviews": [
+   {
+    "source": "Believe in the Run",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://believeintherun.com/?p=53849",
+    "summary": "A worthy upgrade over the L-1 and a standout around 21 mm if you want room for your toes."
+   },
+   {
+    "source": "TYR shoppers",
+    "kind": "store",
+    "score": 4.8,
+    "outOf": 5,
+    "count": 540,
+    "url": "https://tyr.com/products/mens-l-2-lifter-black-gum",
+    "summary": "Customer star rating on TYR.com; buyers praise the grip, stability and roomy toe box."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 4.5,
+    "outOf": 5,
+    "count": 28,
+    "url": "https://www.roguefitness.com/tyr-l-2-lifter-shoes",
+    "summary": "Customer star rating on Rogue."
+   }
+  ],
+  "videos": [
+   {
+    "id": "CG-DiziR7bw",
+    "title": "TYR L-2 Lifter review: worth the price increase?",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "TjDt5extmXs",
+    "title": "The Drop: TYR L-2 Lifter review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A refined L-1: same roomy foot shape, leather straps and a 21 mm heel. Shoppers praise the grip and stability.",
+   "pros": [
+    "Roomy toe box",
+    "Grippy and stable",
+    "Nicer materials than the L-1"
+   ],
+   "cons": [
+    "Still wide for narrow feet"
+   ],
+   "bestFor": "Wide feet that want a premium feel",
+   "updated": "2026-11-15"
+  }
+ },
+ "tyrforce": {
+  "reviews": [
+   {
+    "source": "Believe in the Run",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://believeintherun.com/shoe-reviews/tyrforce-elite-carbon-lifter-review",
+    "summary": "Built like a tank with a 1-inch wooden heel; their pick if price is no object."
+   },
+   {
+    "source": "Road Trail Run",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.roadtrailrun.com/2026/01/tyrforce-elite-carbon-weight-lifting.html",
+    "summary": "Exceptionally stable with an anatomical, wide-foot-friendly fit; too stiff and heavy for WODs."
+   }
+  ],
+  "videos": [
+   {
+    "id": "CCfClWsGA2k",
+    "title": "TYR Force Elite full review (vs Adistar and Anta)",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "Built like a tank: a 1-inch wooden heel, carbon plate and an anatomical wide fit. Too stiff and heavy for anything but lifting.",
+   "pros": [
+    "Wood-heel feel",
+    "Exceptionally stable",
+    "Wide-foot friendly"
+   ],
+   "cons": [
+    "$350",
+    "Heavy and stiff"
+   ],
+   "bestFor": "Serious lifters with wide feet and a big budget",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "tyr tyrforce elite carbon lifter"
+ },
+ "tyrforcev2": {
+  "reviews": [
+   {
+    "source": "TYR",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://tyr.com/products/mens-tyrforce-elite-v2-lifter-white-black",
+    "summary": "Just released; no outside reviews yet. TYR's page lists the specs."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "The new wood-heel Elite Carbon with a full-length carbon plate and double straps. Too new for many outside reviews yet.",
+   "pros": [
+    "Wood heel + carbon plate",
+    "Double straps"
+   ],
+   "cons": [
+    "No outside testing yet",
+    "$350"
+   ],
+   "bestFor": "Early adopters who loved the first TYRFORCE",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "tyr tyrforce elite carbon v2"
+ },
+ "powerpro": {
+  "reviews": [
+   {
+    "source": "LUXIAOJUN shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://luxiaojun.com/products/luxiaojun-powerpro-i-weightlifting-shoesblack",
+    "summary": "Dozens of reviews per colorway; buyers mention the stability, roomier toe box and the spare thinner insoles. Some found it snug."
+   }
+  ],
+  "videos": [
+   {
+    "id": "BgH77VayGWw",
+    "title": "TYR L-1 vs LUXIAOJUN PowerPro: which is better?",
+    "channel": "YouTube"
+   },
+   {
+    "id": "H1Clwf5tjrQ",
+    "title": "Reviewing Lu Xiaojun's weightlifting shoes",
+    "channel": "Coach ZT"
+   }
+  ],
+  "summary": {
+   "text": "Lu Xiaojun's own lifter: a 24.5–27 mm heel that scales with size, roomier toe box and spare thinner insoles. Shoppers love the stability.",
+   "pros": [
+    "Tall, stable heel",
+    "Roomier toe box",
+    "Extra insoles for fit"
+   ],
+   "cons": [
+    "Some find it snug",
+    "Mostly sold direct"
+   ],
+   "bestFor": "Lifters who want a high heel and toe room",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "Lu Xiaojun",
+    "note": "Olympic champion who tested and refined the PowerPro.",
+    "url": "https://luxiaojun.com/products/luxiaojun-powerpro-i-weightlifting-shoes-blue"
+   }
+  ],
+  "buyQuery": "luxiaojun powerpro",
+  "stores": []
+ },
+ "heritage": {
+  "reviews": [
+   {
+    "source": "LUXIAOJUN shoppers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://luxiaojun.com/products/luxiaojun-heritage-lifter-white",
+    "summary": "Brand new. Early buyers rave about the build and the wood-heel slap; one noted a roomier toe box and slightly lower rise than the PowerPro."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "LUXIAOJUN's new wood-heel lifter. Early buyers rave about the build and the wood-heel feel; slightly lower rise than the PowerPro.",
+   "pros": [
+    "Real wood heel",
+    "Premium build"
+   ],
+   "cons": [
+    "Brand new, few reviews",
+    "$325"
+   ],
+   "bestFor": "Wood-heel fans who can't find vintage pairs",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "luxiaojun heritage wood heel",
+  "stores": []
+ },
+ "dowin": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/do-win-classic-lifter-review",
+    "summary": "Stylish and grippy, but it runs small, so size up. Rogue buyers average about 4.2 out of 5."
+   },
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/do-win-classic-lifter-review/",
+    "summary": "Great throwback look, but he wouldn't put it on his best-lifters list without some fixes."
+   }
+  ],
+  "videos": [
+   {
+    "id": "xcOmeMY-su8",
+    "title": "Rogue Do-Win Classic Lifter review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A stylish throwback with a grippy sole and two straps. Runs small, so most people size up.",
+   "pros": [
+    "Cheap",
+    "Classic look",
+    "Grippy"
+   ],
+   "cons": [
+    "Runs small",
+    "Rough edges vs premium lifters"
+   ],
+   "bestFor": "Budget buyers who like the old-school look",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "do-win classic lifter"
+ },
+ "dowintpu": {
+  "reviews": [
+   {
+    "source": "Garage Gym Lab",
+    "kind": "expert",
+    "score": 8.7,
+    "outOf": 10,
+    "url": "https://garagegymlab.com/do-win-weightlifting-shoes-review/",
+    "summary": "A quality budget lifter with dual straps and a TPU heel; neutral toe box, true to size."
+   },
+   {
+    "source": "That Fit Friend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thatfitfriend.com/do-win-weightlifting-shoes-review/",
+    "summary": "Consistent, no-frills performance for the money once broken in."
+   },
+   {
+    "source": "Rogue Fitness shoppers",
+    "kind": "store",
+    "score": 4.6,
+    "outOf": 5,
+    "count": 492,
+    "url": "https://www.roguecanada.ca/dowin-weightlifting-shoes-black-white",
+    "summary": "Customer star rating on Rogue Canada."
+   }
+  ],
+  "videos": [
+   {
+    "id": "G-4X86y0e48",
+    "title": "Do-Win weightlifting shoes review",
+    "channel": "That Fit Friend"
+   },
+   {
+    "id": "JWXyXSdc-9w",
+    "title": "Do-Win weightlifting shoes: great value?",
+    "channel": "BarBend"
+   }
+  ],
+  "summary": {
+   "text": "A quality budget lifter with two straps and a TPU heel; consistent once broken in and true to size.",
+   "pros": [
+    "Great value",
+    "Two straps",
+    "Neutral toe box"
+   ],
+   "cons": [
+    "Plain materials",
+    "Needs break-in"
+   ],
+   "bestFor": "Anyone wanting a real TPU lifter for about $100",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "do-win weightlifting shoe"
+ },
+ "adipower1": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/adidas-adipower-2-review",
+    "summary": "Called the original one of the best weightlifting shoes ever released; it beats the Adipower 2 on durability and stability."
+   },
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/adidas-adipower-review",
+    "summary": "One of the first lifters with a full TPU heel; 20.1 mm effective heel and a flexible forefoot that helps the back foot in the jerk."
+   },
+   {
+    "source": "Garage Gym Reviews (specs)",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/equipment/adidas-adipower-weightlifting-shoes",
+    "summary": "Torsion midfoot bar, hook-and-loop strap, 20.1 mm lift on a 33.4 mm heel stack."
+   }
+  ],
+  "videos": [
+   {
+    "id": "pGlH50ZJpAw",
+    "title": "Adidas Adipower 2012: honest review 10 years later",
+    "channel": "YouTube"
+   },
+   {
+    "id": "R39xwyVeIhE",
+    "title": "Adidas Adipower review: most consistent lifter?",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The OG Adipower: leather upper, Torsion bar and a 20.1 mm TPU heel. Many reviewers still rank it above its successors.",
+   "pros": [
+    "Stable and durable",
+    "Flexible forefoot for jerks",
+    "Classic look"
+   ],
+   "cons": [
+    "Narrow",
+    "Discontinued, used prices vary"
+   ],
+   "bestFor": "Narrow feet hunting a proven classic",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas adipower weightlifting original M21864"
+ },
+ "adipower2": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/adidas-adipower-2-review",
+    "summary": "Comfortable, breathable and locked-down, but too flexible for a true weightlifting shoe; the original is sturdier."
+   },
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/adidas-adipower-2-review/",
+    "summary": "Same 20.1 mm TPU heel as the original with a woven upper; good for recreational and functional-fitness lifters."
+   },
+   {
+    "source": "Powerlifting Technique",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://powerliftingtechnique.com/reebok-legacy-lifter-vs-adidas-adipower/",
+    "summary": "Notes that many lifters consider the Adipower II a step down from the original."
+   }
+  ],
+  "videos": [
+   {
+    "id": "WNgXMdrKngY",
+    "title": "Nike Romaleos 4 vs Adidas Adipower 2",
+    "channel": "YouTube"
+   },
+   {
+    "id": "OXTeZmDL660",
+    "title": "Adipower 2 vs Legacy Lifter 2 test",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "Lighter and more breathable than the original with the same heel, but reviewers found it too soft and flexible.",
+   "pros": [
+    "Breathable woven upper",
+    "Comfortable"
+   ],
+   "cons": [
+    "Too flexible for heavy lifts",
+    "Upper bunches when laced tight"
+   ],
+   "bestFor": "Recreational lifters who value comfort",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas adipower weightlifting 2"
+ },
+ "leistung16": {
+  "reviews": [
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/adidas-leistung-16-ii-vs-adipower",
+    "summary": "1-inch (24.8 mm) heel, the tallest Adidas made; about 17 oz, middle of the pack for weight."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://garagegymreviews.com/adidas-leistung-weightlifting-shoes-review",
+    "summary": "Higher heel and lighter than the Adipower and Romaleos 2; a big plus for poor ankle mobility, even if the looks are divisive."
+   }
+  ],
+  "videos": [
+   {
+    "id": "59F4-esTU5Y",
+    "title": "Adidas Leistung 16 2.0: not for everyone",
+    "channel": "BarBend"
+   },
+   {
+    "id": "OkFp2zw5Yy4",
+    "title": "Adidas Leistung 16 2.0 review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The tall-heel Adidas: about 25 mm with a BOA dial. Great for tight ankles, divisive on looks and fit.",
+   "pros": [
+    "Tallest Adidas heel",
+    "Quick BOA lockdown",
+    "Light"
+   ],
+   "cons": [
+    "BOA feels gimmicky to some",
+    "Narrow",
+    "Discontinued"
+   ],
+   "bestFor": "High-bar squatters with limited ankle mobility",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas leistung 16 II"
+ },
+ "powerlift4": {
+  "reviews": [
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/?p=60842",
+    "summary": "Canvas upper and a 0.6 in high-density EVA heel; a good bridge from flat shoes to a traditional 0.75 in lifter."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/equipment/adidas-powerlift-4",
+    "summary": "Easy to get used to and versatile for beginners; the narrow heel base isn't the most stable."
+   },
+   {
+    "source": "NASM",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.nasm.org/equipment-library/best-weightlifting-shoes",
+    "summary": "Picked as an affordable, lightweight lifter for all types of lifts; not ideal for competitive powerlifters."
+   }
+  ],
+  "videos": [
+   {
+    "id": "MSd6FZ2SJxg",
+    "title": "Adidas Powerlift 4 review: what's really different?",
+    "channel": "YouTube"
+   },
+   {
+    "id": "AAz0X3ZVuLk",
+    "title": "Nike Savaleos vs Adidas Powerlift 4 vs Reebok Lifter PR 2",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A budget 15 mm EVA lifter that eases you in from flat shoes, though the narrow heel base limits stability.",
+   "pros": [
+    "Cheap",
+    "Easy transition",
+    "Light"
+   ],
+   "cons": [
+    "Narrow heel base",
+    "EVA not as rigid"
+   ],
+   "bestFor": "Beginners and powerlifters",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas powerlift 4"
+ },
+ "adistar": {
+  "reviews": [
+   {
+    "source": "Average Broz",
+    "kind": "expert",
+    "score": 8.4,
+    "outOf": 10,
+    "url": "https://averagebroz.com/2008-adidas-adistar-weightlifting-shoe-review/",
+    "summary": "Stylish, light next to the Romaleos, flexible and roomy in the toe; but it runs large and the plastic strap loops broke in testing."
+   },
+   {
+    "source": "eBay sellers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.ebay.com/sch/i.html?_nkw=adidas+adistar+weightlifting+2008&_sop=15",
+    "summary": "Listings regularly call it the last and best wood-heel Adidas; used pairs often ask $500 or more."
+   }
+  ],
+  "videos": [
+   {
+    "id": "D7Pg49OiRIE",
+    "title": "'08 adiStar shoe review",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "The 2008 wood-heel Adidas grail: stylish, light and roomy in the toe, but it runs big and the strap hardware was fragile.",
+   "pros": [
+    "Wood heel",
+    "Roomy square toe",
+    "Collector piece"
+   ],
+   "cons": [
+    "Runs about a size big",
+    "Fragile strap loops",
+    "$500+ used"
+   ],
+   "bestFor": "Collectors and wood-heel purists",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas adistar weightlifting 2008"
+ },
+ "ironwork3": {
+  "reviews": [
+   {
+    "source": "Dynamic Fitness Equipment",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.dynamicfitnessequipment.com/product-p/098486.htm",
+    "summary": "Exposed wooden heel wedge, hook-and-loop instep strap, perforated synthetic-leather upper and an EVA insole."
+   },
+   {
+    "source": "eBay sellers",
+    "kind": "store",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.ebay.com/sch/i.html?_nkw=adidas+ironwork+iii&_sop=15",
+    "summary": "Sought after for the solid wooden heel and stable platform; increasingly hard to find in small sizes."
+   }
+  ],
+  "videos": [
+   {
+    "id": "hP12AGQ7vKE",
+    "title": "Weightlifting shoe collection: Ironwork II, ASICS 727, adiStar and more",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "A simpler 2008 Adidas trainer with an exposed wooden heel and one strap. Rare now and mostly found used.",
+   "pros": [
+    "Wooden heel",
+    "Breathable perforated upper"
+   ],
+   "cons": [
+    "Hard to find",
+    "Few modern reviews"
+   ],
+   "bestFor": "Vintage wood-heel fans",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "adidas ironwork weightlifting"
+ },
+ "asics727": {
+  "reviews": [
+   {
+    "source": "Average Broz",
+    "kind": "expert",
+    "score": 9,
+    "outOf": 10,
+    "url": "https://averagebroz.com/asics-727-tiger-shoe-review/",
+    "summary": "Handmade leather-and-wood lifter that he rates above modern plastic heels for feel and stability; price and availability are the drawbacks."
+   },
+   {
+    "source": "Average Broz shoppers",
+    "kind": "store",
+    "score": 4.92,
+    "outOf": 5,
+    "url": "https://averagebroz.com/abg/asics-727-weightlifting-shoes/",
+    "summary": "Buyers love the wide toe box and build quality; several say it stretches, so consider half a size down.",
+    "count": 24
+   }
+  ],
+  "videos": [
+   {
+    "id": "jX0Cun8xEKI",
+    "title": "These lifting shoes are still king",
+    "channel": "YouTube"
+   },
+   {
+    "id": "LyeyAL7-QDM",
+    "title": "ASICS TOW 727 review with comparisons",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "Handmade Japanese leather-and-wood lifter that hardly changed in decades. Reviewers rate the feel above modern shoes; price and availability are the catch.",
+   "pros": [
+    "Solid wood heel",
+    "Wide toe box",
+    "Exceptional craftsmanship"
+   ],
+   "cons": [
+    "$350+ imported",
+    "No strap",
+    "Can stretch over time"
+   ],
+   "bestFor": "Wide feet and lifters who want the classic wood-heel feel",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "Pyrros Dimas",
+    "note": "Greek Olympic champion pictured in 727s at the 1996 Olympics; Kakhi Kakhiashvili and Dmitry Klokov also wore them.",
+    "url": "https://www.youtube.com/watch?v=jX0Cun8xEKI"
+   }
+  ],
+  "buyQuery": "asics 727 weightlifting TOW727",
+  "stores": [
+   {
+    "store": "Average Broz store",
+    "note": "US importer",
+    "url": "https://store.averagebroz.com/shop/apparel/asics-727/"
+   }
+  ]
+ },
+ "romaleos1": {
+  "reviews": [
+   {
+    "source": "BoxRox",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.boxrox.com/?p=38727",
+    "summary": "Debuted at the 2008 Beijing Olympics; lighter athletes complained about the weight (about 620 g) and a stiff forefoot."
+   },
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/nike-romaleos-3-weightlifting-shoes-review",
+    "summary": "Remembers the originals as \"absolute bricks\": rock solid but heavy."
+   },
+   {
+    "source": "Lifting shoe blog review",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://mybestbuysblog.blogspot.com/2015/03/nike-romaleo.html",
+    "summary": "Praised the heel that scales with shoe size and the deep heel cup; weight was the main knock."
+   }
+  ],
+  "videos": [],
+  "summary": {
+   "text": "Nike's 2008 original: rock solid with a size-scaled heel, but famously heavy and stiff.",
+   "pros": [
+    "Very stable",
+    "Heel scales with size"
+   ],
+   "cons": [
+    "About 620 g",
+    "Stiff forefoot",
+    "Rare"
+   ],
+   "bestFor": "Collectors and heavy squatters",
+   "updated": "2026-11-15"
+  },
+  "buyQuery": "nike romaleos 315815"
+ },
+ "legacy1": {
+  "reviews": [
+   {
+    "source": "Garage Gym Reviews",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://www.garagegymreviews.com/equipment/reebok-legacy-lifter",
+    "summary": "Called it the best weightlifting shoe Reebok has ever made."
+   },
+   {
+    "source": "BarBend",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://barbend.com/reebok-legacy-lifters-review",
+    "summary": "22 mm heel and about 20.6 oz, a few ounces heavier than the Romaleos and Leistung."
+   },
+   {
+    "source": "The Barbell Spin",
+    "kind": "expert",
+    "score": null,
+    "outOf": null,
+    "url": "https://thebarbellspin.com/fitness/reebok-legacy-lifter-review-and-photos",
+    "summary": "82 mm-wide extra-hard TPU heel and an Exoframe heel clip; a roomier fit than slim lifters like the Adipower."
+   }
+  ],
+  "videos": [
+   {
+    "id": "c7P8pcX-rhk",
+    "title": "Reebok Legacy Lifters review",
+    "channel": "YouTube"
+   },
+   {
+    "id": "iT_H_zmLuqw",
+    "title": "Reebok Legacy Lifter: first impressions",
+    "channel": "YouTube"
+   }
+  ],
+  "summary": {
+   "text": "Reebok's first real lifter, made with CJ Cummings: a wide 22 mm TPU heel and two straps. Often called Reebok's best.",
+   "pros": [
+    "Wide, stable heel",
+    "Two straps",
+    "Roomier fit"
+   ],
+   "cons": [
+    "Heavy",
+    "Discontinued"
+   ],
+   "bestFor": "Lifters who want a tall heel with toe room",
+   "updated": "2026-11-15"
+  },
+  "lifters": [
+   {
+    "name": "CJ Cummings",
+    "note": "Co-designed the original Legacy Lifter with Reebok.",
+    "url": "https://www.youtube.com/watch?v=HHxLkQ90mGY"
+   }
+  ],
+  "buyQuery": "reebok legacy lifter original"
+ }
 }
