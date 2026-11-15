@@ -4,12 +4,12 @@
   // ---------- constants ----------
   var CFG = window.TIER_CONFIG || {};
   var TIERS = [
-    { k: "S", kg: 25, name: "Light weight, baby!" },
-    { k: "A", kg: 20, name: "Goated, no cap" },
-    { k: "B", kg: 15, name: "Yeah buddy" },
-    { k: "C", kg: 10, name: "Mid, ngl" },
-    { k: "D", kg: 5, name: "Skill issue" },
-    { k: "F", kg: 2.5, name: "Do you even lift, bro?" }
+    { k: "S", kg: 25, name: "World-record ready" },
+    { k: "A", kg: 20, name: "Meet day" },
+    { k: "B", kg: 15, name: "Training day" },
+    { k: "C", kg: 10, name: "Good enough" },
+    { k: "D", kg: 5, name: "Missed lift" },
+    { k: "F", kg: 2.5, name: "No lift" }
   ];
   var TK = TIERS.map(function (t) { return t.k; });
   var ZONES = TK.concat("R");
@@ -28,6 +28,7 @@
   var feed = [], feedSort = "top", feedLoaded = false;
   var social = { listId: null, votes: [], comments: [], loading: false };
   var dirty = false, saving = false, saveTimer = null, lastFocusId = null, needName = false, picked = null;
+  var extReviews = {}, siteReviews = [], siteReviewsLoaded = false, userEmail = "", route = { page: "board" }, signMode = "in";
 
   function emptyTiers() { var t = {}; TK.forEach(function (k) { t[k] = []; }); return t; }
   function emptyList() { return { userId: null, username: "", name: "", tiers: emptyTiers(), custom: [], published: false, caption: "" }; }
@@ -202,7 +203,7 @@
     }
     if (!uid) {
       line.className = "account-line";
-      t.innerHTML = "<strong>Not signed in.</strong> Rank away. Sign in with Apple, Google or email to save your list, post it, and vote and comment on other people's.";
+      t.innerHTML = "<strong>Not signed in.</strong> Rank away. Create an account to save your list, post it, review shoes, and vote and comment.";
       top.innerHTML = '<button class="btn red sm" type="button" data-act="signin">Sign in</button>';
       return;
     }
@@ -211,7 +212,7 @@
       ? "<strong>Signed in as @" + esc(mine.username) + ".</strong> Your list saves as you go." + (mine.published ? " It's posted to the community." : " It's private until you post it.")
       : "<strong>Signed in.</strong> Pick a username so you can post and comment.";
     var initial = (mine.name || mine.username || "?").charAt(0);
-    top.innerHTML = '<button class="avatar" type="button" data-act="profile" aria-label="Edit your profile" title="' + esc(mine.username ? "@" + mine.username : "Pick a username") + '">' + esc(initial) + "</button>" +
+    top.innerHTML = '<button class="avatar" type="button" data-act="profile" aria-label="Your profile" title="' + esc(mine.username ? "@" + mine.username : "Pick a username") + '">' + esc(initial) + "</button>" +
       '<button class="btn sm" type="button" data-act="signout">Sign out</button>';
   }
   function setSave(t) { $("save-state").textContent = t; }
@@ -219,7 +220,7 @@
     var b = e.target.closest("[data-act]"); if (!b) return;
     if (b.dataset.act === "signin") openSignIn();
     else if (b.dataset.act === "signout") sb.auth.signOut();
-    else if (b.dataset.act === "profile") openName();
+    else if (b.dataset.act === "profile") location.hash = "#/profile";
   });
 
   // ---------- saving ----------
@@ -364,6 +365,7 @@
     if (!s) { picked = null; pickEl.hidden = true; document.body.classList.remove("picking"); return; }
     pickEl.hidden = false; document.body.classList.add("picking");
     var img = $("pick-img"); if (s.photo) img.src = s.photo; else img.removeAttribute("src");
+    $("pick-page").href = "#/shoe/" + encodeURIComponent(s.id);
     $("pick-brand").textContent = s.brand; $("pick-model").textContent = s.model;
     var z = tierOf(mine, s.id);
     pickEl.querySelectorAll(".pp").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.k === z ? "true" : "false"); });
@@ -388,7 +390,7 @@
 
   // ---------- dialogs ----------
   function wireClose(dlg) { dlg.addEventListener("click", function (e) { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); }); }
-  ["detail", "shoe-dlg", "signin-dlg", "name-dlg", "share-dlg"].forEach(function (id) { wireClose($(id)); });
+  ["detail", "shoe-dlg", "signin-dlg", "name-dlg", "share-dlg", "pw-dlg"].forEach(function (id) { wireClose($(id)); });
 
   // ---------- shoe detail ----------
   var detail = $("detail"), detailBody = $("detail-body");
@@ -415,6 +417,7 @@
       spec(ed ? "Your tier" : "Their tier", z === "R" ? "Still on the rack" : z + " · " + tierInfo(z).name) +
       "</dl>" + (s.notes ? '<p class="notes">' + esc(s.notes) + "</p>" : "") +
       (ed ? '<span class="move-label">Move to</span><div class="chips">' + chips + "</div>" : "") +
+      '<a class="btn wide" href="#/shoe/' + encodeURIComponent(id) + '" data-close>Reviews, videos & full specs →</a>' +
       (actions ? '<div class="row"><span style="flex:1"></span>' + actions + "</div>" : "");
     detailBody.dataset.id = id;
     if (!detail.open) detail.showModal();
@@ -557,38 +560,112 @@
   }
   $("btn-add").addEventListener("click", function () { openShoeForm(null); });
 
-  // ---------- sign in ----------
+  // ---------- sign in: password, Google/Apple, or an emailed link ----------
   var siDlg = $("signin-dlg"), siForm = $("signin-form");
-  function openSignIn(msg) {
+  function setSignMode(m) {
+    signMode = m;
+    $("tab-in").setAttribute("aria-selected", m === "in"); $("tab-up").setAttribute("aria-selected", m === "up");
+    $("si-title").textContent = m === "in" ? "Sign in." : "Create an account.";
+    $("si-pass2-row").hidden = m !== "up";
+    $("si-pass").setAttribute("autocomplete", m === "in" ? "current-password" : "new-password");
+    $("si-submit").textContent = m === "in" ? "Sign in" : "Create account";
+    $("si-forgot").hidden = m !== "in";
+    $("si-err").textContent = "";
+  }
+  function openSignIn(msg, mode) {
     if (!live) { toast("Accounts turn on once the database is connected."); return; }
     $("si-err").textContent = "";
-    $("si-msg").textContent = msg || "Save your list, post it, and vote and comment on other people's.";
+    $("si-msg").textContent = msg || "Save your list, post it, review shoes, and vote and comment on other people's lists.";
     var g = !!CFG.googleSignIn, a = !!CFG.appleSignIn, box = $("oauth");
     $("btn-google").hidden = !g; $("btn-apple").hidden = !a; $("or-line").hidden = !(g || a);
-    // Apple first on iPhone, iPad and Mac; Google first everywhere else
     if (APPLE_DEVICE) box.insertBefore($("btn-apple"), box.firstChild); else box.insertBefore($("btn-google"), box.firstChild);
-    $("si-submit").disabled = false; $("si-submit").textContent = "Email me a sign-in link";
-    siDlg.showModal();
+    $("si-submit").disabled = false; $("si-pass").value = ""; $("si-pass2").value = "";
+    setSignMode(mode || "in");
+    if (!siDlg.open) siDlg.showModal();
   }
+  $("tab-in").addEventListener("click", function () { setSignMode("in"); });
+  $("tab-up").addEventListener("click", function () { setSignMode("up"); });
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest(".pw-toggle"); if (!t) return;
+    var inp = $(t.dataset.toggle), show = inp.type === "password";
+    inp.type = show ? "text" : "password"; t.textContent = show ? "Hide" : "Show"; t.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  });
   function redirectUrl() { return location.origin + location.pathname; }
+  function rememberHash() { try { sessionStorage.setItem("lt-return-hash", location.hash || ""); } catch (e) {} }
   function oauth(provider) {
-    try { sessionStorage.setItem("lt-return-hash", location.hash || ""); } catch (e) {}
+    rememberHash();
     sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: redirectUrl() } }).then(function (res) {
       if (res.error) $("si-err").textContent = "Couldn't start sign-in: " + res.error.message;
     });
   }
   $("btn-google").addEventListener("click", function () { oauth("google"); });
   $("btn-apple").addEventListener("click", function () { oauth("apple"); });
+  function authError(err) {
+    var m = (err && err.message) || "Something went wrong.";
+    if (/invalid login credentials/i.test(m)) return "Wrong email or password.";
+    if (/already registered|already been registered/i.test(m)) return "That email already has an account. Sign in instead.";
+    if (/email not confirmed/i.test(m)) return "Confirm your email first. Check your inbox for the link.";
+    if (/not authorized/i.test(m)) return "Emails can't be sent to that address yet. Use a password instead.";
+    if (/rate limit|only request this/i.test(m)) return "Too many tries. Wait a minute and try again.";
+    if (/password should be|weak/i.test(m)) return "Pick a stronger password (at least 8 characters, mix in numbers or symbols).";
+    return m;
+  }
+  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
   siForm.addEventListener("submit", function (e) {
     e.preventDefault();
+    var email = $("si-email").value.trim(), pass = $("si-pass").value, err = $("si-err"), btn = $("si-submit");
+    err.textContent = "";
+    if (!validEmail(email)) { err.textContent = "That email doesn't look right."; return; }
+    if (pass.length < 8) { err.textContent = "Passwords are at least 8 characters."; return; }
+    if (signMode === "up" && pass !== $("si-pass2").value) { err.textContent = "The two passwords don't match."; return; }
+    btn.disabled = true; var label = btn.textContent; btn.textContent = signMode === "in" ? "Signing in…" : "Creating…";
+    var req = signMode === "in" ? sb.auth.signInWithPassword({ email: email, password: pass })
+      : sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: redirectUrl() } });
+    req.then(function (res) {
+      btn.disabled = false; btn.textContent = label;
+      if (res.error) { err.textContent = authError(res.error); return; }
+      if (signMode === "up" && !(res.data && res.data.session)) {
+        $("si-msg").textContent = "Almost there. Open the confirmation link we emailed to " + email + ", then sign in.";
+        setSignMode("in"); return;
+      }
+      siDlg.close(); toast(signMode === "in" ? "Signed in" : "Account created. Welcome!");
+    }, function () { btn.disabled = false; btn.textContent = label; err.textContent = "Couldn't reach the server. Try again."; });
+  });
+  $("si-forgot").addEventListener("click", function () {
     var email = $("si-email").value.trim(), err = $("si-err");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "That email doesn't look right."; return; }
-    var btn = $("si-submit"); btn.disabled = true; btn.textContent = "Sending…"; err.textContent = "";
-    try { sessionStorage.setItem("lt-return-hash", location.hash || ""); } catch (er) {}
+    if (!validEmail(email)) { err.textContent = "Type your email above first, then tap Forgot password."; return; }
+    err.textContent = "";
+    sb.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl() }).then(function (res) {
+      if (res.error) { err.textContent = authError(res.error); return; }
+      $("si-msg").textContent = "If " + email + " has an account, a reset link is on its way. Open it on this device.";
+    });
+  });
+  $("si-magic").addEventListener("click", function () {
+    var email = $("si-email").value.trim(), err = $("si-err");
+    if (!validEmail(email)) { err.textContent = "Type your email above first."; return; }
+    err.textContent = ""; rememberHash();
     sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectUrl() } }).then(function (res) {
-      if (res.error) { err.textContent = "Couldn't send the link: " + res.error.message; btn.disabled = false; btn.textContent = "Email me a sign-in link"; return; }
-      btn.textContent = "Check your email";
+      if (res.error) { err.textContent = authError(res.error); return; }
       $("si-msg").textContent = "Sent. Open the link in that email on this device and you're in.";
+    });
+  });
+
+  // set a new password (after a reset link, or from the profile page)
+  var pwDlg = $("pw-dlg");
+  function openPassword(title) {
+    $("pw-title").textContent = title || "New password."; $("pw-err").textContent = ""; $("pw-new").value = ""; $("pw-new2").value = "";
+    if (!pwDlg.open) pwDlg.showModal();
+  }
+  $("pw-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var p1 = $("pw-new").value, p2 = $("pw-new2").value, err = $("pw-err"), btn = $("pw-submit");
+    if (p1.length < 8) { err.textContent = "At least 8 characters."; return; }
+    if (p1 !== p2) { err.textContent = "The two passwords don't match."; return; }
+    btn.disabled = true;
+    sb.auth.updateUser({ password: p1 }).then(function (res) {
+      btn.disabled = false;
+      if (res.error) { err.textContent = authError(res.error); return; }
+      pwDlg.close(); toast("Password saved");
     });
   });
 
@@ -622,7 +699,7 @@
         return;
       }
       needName = false; nameDlg.close(); setSave("Saved");
-      renderAccount(); render(); loadFeed();
+      renderAccount(); render(); loadFeed(); refreshPage();
       toast("You're @" + u);
       if (pendingAfterName) { var f = pendingAfterName; pendingAfterName = null; f(); }
     });
@@ -639,9 +716,9 @@
   var shareDlg = $("share-dlg");
   function shareUrl() {
     var base = location.origin + location.pathname;
-    if (live && uid && mine.username) return base + "#u=" + mine.username;
+    if (live && uid && mine.username) return base + "#/u/" + mine.username;
     var payload = { t: mine.tiers, c: mine.custom.map(function (s) { return { id: s.id, brand: s.brand, model: s.model, heel: s.heel, price: s.price, type: s.type, fit: s.fit }; }) };
-    return base + "#s=" + b64url(JSON.stringify(payload));
+    return base + "#/s/" + b64url(JSON.stringify(payload));
   }
   function openShare() {
     if (live && uid && !mine.username) { requireName(openShare); return; }
@@ -744,8 +821,8 @@
   feedEl.addEventListener("click", function (e) {
     var p = e.target.closest(".post"); if (!p) return;
     var u = p.dataset.user;
-    if (uid && u === mine.username) { goMine(); $("board-sec").scrollIntoView({ behavior: "smooth" }); return; }
-    location.hash = "u=" + u;
+    if (uid && u === mine.username) { location.hash = "#/"; return; }
+    location.hash = "#/u/" + u;
   });
 
   // ---------- votes and comments on a list ----------
@@ -841,38 +918,336 @@
     if (e.target.id === "c-body" && e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); e.target.form.requestSubmit(); }
   });
 
+  // ---------- reviews: outside sites + lifters here ----------
+  function criticScore(id) {
+    var r = (extReviews[id] && extReviews[id].reviews) || [], xs = r.filter(function (x) { return x.kind === "expert" && x.score != null && x.outOf; });
+    if (!xs.length) return null;
+    return xs.reduce(function (n, x) { return n + x.score / x.outOf * 10; }, 0) / xs.length;
+  }
+  function shopperScore(id) {
+    var r = (extReviews[id] && extReviews[id].reviews) || [], xs = r.filter(function (x) { return x.kind === "store" && x.score != null && x.outOf; });
+    if (!xs.length) return null;
+    var w = 0, t = 0; xs.forEach(function (x) { var c = x.count || 1; w += c; t += x.score / x.outOf * 5 * c; });
+    return { avg: t / w, count: xs.reduce(function (n, x) { return n + (x.count || 0); }, 0) };
+  }
+  function lifterStats(id) {
+    var xs = siteReviews.filter(function (r) { return r.shoe_id === id; });
+    if (!xs.length) return { avg: null, count: 0 };
+    return { avg: xs.reduce(function (n, r) { return n + r.rating; }, 0) / xs.length, count: xs.length };
+  }
+  function stars(v) {
+    if (v == null) return "";
+    var full = Math.round(v), out = "";
+    for (var i = 1; i <= 5; i++) out += i <= full ? "★" : "☆";
+    return '<span class="stars" aria-label="' + v.toFixed(1) + ' out of 5">' + out + "</span>";
+  }
+  function fmt1(v) { return v == null ? "–" : (Math.round(v * 10) / 10).toFixed(1); }
+  function scoreLabel(x) {
+    if (x.score == null) return x.count ? x.count.toLocaleString() + " reviews" : "";
+    var v = x.outOf === 100 ? String(x.score) : (Math.round(x.score * 100) / 100).toString();
+    return v + "/" + x.outOf + (x.kind === "store" && x.count ? " · " + x.count.toLocaleString() + " ratings" : "");
+  }
+  function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
+  function safeUrl(u) { return /^https:\/\/[^\s"'<>]+$/.test(u || "") ? u : ""; }
+  function loadExtReviews() {
+    return fetch("data/reviews.json", { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : {}; }).then(function (d) {
+      extReviews = {};
+      Object.keys(d || {}).forEach(function (k) { if (k.charAt(0) !== "_" && d[k] && typeof d[k] === "object") extReviews[k] = d[k]; });
+    }).catch(function () { extReviews = {}; });
+  }
+  function loadSiteReviews() {
+    if (!live) { siteReviewsLoaded = true; return Promise.resolve(); }
+    return sb.from("reviews").select("shoe_id,author,author_name,rating,body,created_at,updated_at").order("updated_at", { ascending: false }).limit(2000).then(function (res) {
+      siteReviews = res.error ? [] : (res.data || []).filter(function (r) { return r && typeof r.shoe_id === "string" && r.rating >= 1 && r.rating <= 5; });
+      siteReviewsLoaded = true;
+    });
+  }
+  function catalogList() {
+    return Object.keys(shoes).map(function (id) { return shoes[id]; });
+  }
+
+  // ---------- Shoes page ----------
+  var shoeSort = "critics";
+  $("shoe-sort").addEventListener("change", function (e) { shoeSort = e.target.value; renderShoes(); });
+  function renderShoes() {
+    var list = catalogList();
+    var key = {
+      critics: function (s) { var v = criticScore(s.id); return v == null ? -1 : v; },
+      lifters: function (s) { var v = lifterStats(s.id).avg; return v == null ? -1 : v; },
+      heel: function (s) { return s.heel == null ? -1 : s.heel; },
+      price: function (s) { return s.price == null ? 1e9 : s.price; }
+    }[shoeSort];
+    list.sort(function (a, b) {
+      if (shoeSort === "name") return (a.brand + a.model).localeCompare(b.brand + b.model);
+      if (shoeSort === "price") return key(a) - key(b);
+      return key(b) - key(a) || (a.brand + a.model).localeCompare(b.brand + b.model);
+    });
+    $("shoe-grid").innerHTML = list.map(function (s) {
+      var c = criticScore(s.id), sh = shopperScore(s.id), lf = lifterStats(s.id), z = tierOf(mine, s.id);
+      var vids = ((extReviews[s.id] && extReviews[s.id].videos) || []).length;
+      return '<a class="shoe-card" href="#/shoe/' + encodeURIComponent(s.id) + '">' +
+        '<span class="sc-photo">' + pic(s) + (z !== "R" ? '<span class="plate sm" data-k="' + z + '" title="On your board: ' + esc(tierInfo(z).name) + '">' + z + "</span>" : "") + "</span>" +
+        '<span class="sc-body"><span class="sc-b">' + esc(s.brand) + '</span><span class="sc-m">' + esc(s.model) + "</span>" +
+        '<span class="sc-specs">' + esc(heelText(s)) + (priceText(s) ? " · " + esc(priceText(s)) : "") + "</span>" +
+        '<span class="sc-scores">' +
+        '<span title="Average review-site score"><b>' + (c == null ? "–" : fmt1(c)) + "</b> critics</span>" +
+        '<span title="Store star ratings"><b>' + (sh ? fmt1(sh.avg) + "★" : "–") + "</b> shoppers</span>" +
+        '<span title="Ratings from lifters here"><b>' + (lf.avg == null ? "–" : fmt1(lf.avg) + "★") + "</b> lifters" + (lf.count ? " (" + lf.count + ")" : "") + "</span>" +
+        "</span>" + (vids ? '<span class="sc-vids">▶ ' + vids + (vids === 1 ? " video" : " videos") + "</span>" : "") + "</span></a>";
+    }).join("") || '<p class="empty-note">Loading shoes…</p>';
+  }
+
+  // ---------- one shoe ----------
+  var shoePageEl = $("shoe-page");
+  function renderShoePage(id) {
+    var P = pool(mine), s = P[id];
+    if (!s) { shoePageEl.innerHTML = shoesLoaded ? '<section class="sec"><p class="empty-note">That shoe isn\'t on the rack. <a href="#/shoes">See every shoe</a>.</p></section>' : '<p class="empty-note">Loading…</p>'; return; }
+    var z = tierOf(mine, id), ext = extReviews[id] || { reviews: [], videos: [] };
+    var c = criticScore(id), sh = shopperScore(id), lf = lifterStats(id);
+    function spec(label, val) { return "<div><dt>" + label + "</dt><dd>" + esc(val) + "</dd></div>"; }
+    var plates = ZONES.map(function (k) {
+      return '<button type="button" class="pp" data-move="' + k + '" data-k="' + k + '" aria-pressed="' + (k === z) + '" title="' + (k === "R" ? "Back on the rack" : esc(tierInfo(k).name)) + '">' + (k === "R" ? "RACK" : k) + "</button>";
+    }).join("");
+    var html = '<a class="back" href="#/shoes">← All shoes</a>' +
+      '<section class="shoe-hero">' +
+      '<div class="sh-photo">' + pic(s) + "</div>" +
+      '<div class="sh-info"><p class="kicker">' + esc(s.brand) + (s.custom ? " · on your rack only" : "") + "</p><h2>" + esc(s.model) + "</h2>" +
+      '<p class="sh-tier">On your board: ' + (z === "R" ? "<b>still on the rack</b>" : '<span class="plate sm" data-k="' + z + '">' + z + "</span> <b>" + esc(tierInfo(z).name) + "</b>") + "</p>" +
+      '<div class="sh-plates" role="group" aria-label="Move this shoe">' + plates + "</div>" +
+      '<div class="sh-scores">' +
+      '<div><span class="big">' + (c == null ? "–" : fmt1(c)) + '</span><span class="lbl">Critics /10</span></div>' +
+      '<div><span class="big">' + (sh ? fmt1(sh.avg) : "–") + '</span><span class="lbl">Shoppers /5' + (sh && sh.count ? " · " + sh.count.toLocaleString() : "") + "</span></div>" +
+      '<div><span class="big">' + (lf.avg == null ? "–" : fmt1(lf.avg)) + '</span><span class="lbl">Lifters /5' + (lf.count ? " · " + lf.count : "") + "</span></div>" +
+      "</div></div></section>" +
+      '<dl class="specs specs-3">' +
+      spec("Effective heel", s.heel != null && s.heel > 0 ? heelText(s) + " (" + (s.heel / 25.4).toFixed(2) + " in)" : heelText(s)) +
+      spec("Weight per shoe", s.weight != null ? (s.weight ? s.weight + " g" : "Weightless") : "Not listed") +
+      spec("List price", priceText(s) || "Not listed") + spec("Closure", s.closure || "–") + spec("Fit", s.fit || "–") +
+      spec("Kind", { lifter: "Weightlifting shoe", trainer: "Trainer", barefoot: "Barefoot", other: "Other" }[s.type]) + "</dl>" +
+      (s.notes ? '<p class="notes sh-notes">' + esc(s.notes) + "</p>" : "");
+    // outside reviews
+    if (!s.custom && s.type !== "barefoot") {
+      html += '<section class="sec"><div class="sec-head"><div><p class="kicker">Outside reviews</p><h3 class="h3">What reviewers say.</h3></div></div>';
+      html += (ext.reviews && ext.reviews.length) ? '<ul class="ext-list">' + ext.reviews.map(function (r) {
+        var u = safeUrl(r.url);
+        return '<li class="ext"><div class="ext-top"><span class="ext-src">' + esc(r.source) + '</span><span class="ext-kind">' + (r.kind === "store" ? "Store rating" : "Review site") + "</span>" +
+          (scoreLabel(r) ? '<span class="ext-score">' + esc(scoreLabel(r)) + "</span>" : "") + "</div>" +
+          '<p>' + esc(r.summary) + "</p>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">Read on ' + esc(hostOf(u)) + " ↗</a>" : "") + "</li>";
+      }).join("") + "</ul>" : '<p class="empty-note">No outside reviews yet.</p>';
+      html += "</section>";
+      html += '<section class="sec"><div class="sec-head"><div><p class="kicker">YouTube</p><h3 class="h3">Review videos.</h3></div></div>';
+      html += (ext.videos && ext.videos.length) ? '<div class="vids">' + ext.videos.map(function (v) {
+        if (!/^[A-Za-z0-9_-]{11}$/.test(v.id)) return "";
+        return '<a class="vid" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener"><span class="vid-thumb"><img src="https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg" alt="" loading="lazy"><span class="vid-play">▶</span></span>' +
+          '<span class="vid-t">' + esc(v.title) + '</span><span class="vid-c">' + esc(v.channel || "YouTube") + "</span></a>";
+      }).join("") + "</div>" : '<p class="empty-note">No review videos yet.</p>';
+      html += "</section>";
+    }
+    // lifter reviews
+    if (!s.custom) {
+      var mineR = uid ? siteReviews.filter(function (r) { return r.shoe_id === id && r.author === uid; })[0] : null;
+      var others = siteReviews.filter(function (r) { return r.shoe_id === id; });
+      html += '<section class="sec" id="lifter-reviews"><div class="sec-head"><div><p class="kicker">Lifters here</p><h3 class="h3">Reviews' + (lf.count ? " · " + fmt1(lf.avg) + " " + stars(lf.avg) : "") + "</h3></div></div>";
+      if (!live) html += '<p class="empty-note">Lifter reviews turn on once the database is connected.</p>';
+      else if (!uid) html += '<div class="rv-cta"><p>Worn these? Rate them for everyone.</p><button class="btn red" type="button" data-act="review-signin">Sign in to review</button></div>';
+      else if (!mine.username) html += '<div class="rv-cta"><p>Pick a username to post reviews.</p><button class="btn red" type="button" data-act="review-name">Pick a username</button></div>';
+      else {
+        var cur = mineR ? mineR.rating : 0;
+        html += '<form class="rv-form" id="rv-form" data-id="' + esc(id) + '"><div class="rv-stars" role="radiogroup" aria-label="Your rating">' +
+          [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="rv-star" role="radio" data-n="' + n + '" aria-checked="' + (n === cur) + '" aria-label="' + n + (n === 1 ? " star" : " stars") + '">' + (n <= cur ? "★" : "☆") + "</button>"; }).join("") +
+          '</div><textarea id="rv-body" maxlength="1000" rows="3" placeholder="How do they feel in the catch? Fit, durability, sizing…" aria-label="Your review">' + esc(mineR ? mineR.body || "" : "") + "</textarea>" +
+          '<div class="row"><button class="btn red" type="submit">' + (mineR ? "Update review" : "Post review") + "</button>" + (mineR ? '<button class="danger" type="button" data-act="review-delete">Delete my review</button>' : "") + "</div></form>";
+      }
+      html += others.length ? '<ul class="rv-list">' + others.map(function (r) {
+        return '<li class="rv"><div class="rv-top"><span class="who">@' + esc(r.author_name || "lifter") + "</span>" + stars(r.rating) + '<time datetime="' + esc(r.updated_at) + '">' + esc(ago(r.updated_at)) + "</time></div>" + (r.body ? "<p>" + esc(r.body) + "</p>" : "") + "</li>";
+      }).join("") + "</ul>" : (live ? '<p class="empty-note">No reviews from lifters here yet. Be the first.</p>' : "");
+      html += "</section>";
+    }
+    shoePageEl.innerHTML = html;
+  }
+  shoePageEl.addEventListener("click", function (e) {
+    var id = route.id;
+    var mv = e.target.closest("[data-move]");
+    if (mv) { var P = pool(mine); if (!P[id]) return; moveTo(id, mv.dataset.move); render(); renderShoePage(id); toast(P[id].model + " → " + (mv.dataset.move === "R" ? "the rack" : mv.dataset.move + " · " + tierInfo(mv.dataset.move).name)); return; }
+    var st = e.target.closest(".rv-star");
+    if (st) {
+      var n = +st.dataset.n;
+      shoePageEl.querySelectorAll(".rv-star").forEach(function (b) { var k = +b.dataset.n; b.textContent = k <= n ? "★" : "☆"; b.setAttribute("aria-checked", k === n); });
+      return;
+    }
+    var act = e.target.closest("[data-act]"); if (!act) return;
+    if (act.dataset.act === "review-signin") openSignIn("Sign in to review shoes.");
+    else if (act.dataset.act === "review-name") requireName(function () { renderShoePage(id); });
+    else if (act.dataset.act === "review-delete") {
+      if (act.dataset.armed !== "1") { act.dataset.armed = "1"; act.textContent = "Tap again to delete"; return; }
+      sb.from("reviews").delete().eq("shoe_id", id).eq("author", uid).then(function (res) {
+        if (res.error) { toast("Couldn't delete it: " + res.error.message); return; }
+        siteReviews = siteReviews.filter(function (r) { return !(r.shoe_id === id && r.author === uid); });
+        renderShoePage(id); toast("Review deleted");
+      });
+    }
+  });
+  shoePageEl.addEventListener("submit", function (e) {
+    if (e.target.id !== "rv-form") return;
+    e.preventDefault();
+    var id = e.target.dataset.id, chosen = shoePageEl.querySelector('.rv-star[aria-checked="true"]');
+    if (!chosen) { toast("Tap the stars to pick a rating first."); return; }
+    var rating = +chosen.dataset.n, body = $("rv-body").value.trim().slice(0, 1000);
+    var btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true;
+    sb.from("reviews").upsert({ shoe_id: id, author: uid, rating: rating, body: body || null }).select().single().then(function (res) {
+      btn.disabled = false;
+      if (res.error) { toast("Review didn't save: " + res.error.message); return; }
+      siteReviews = siteReviews.filter(function (r) { return !(r.shoe_id === id && r.author === uid); });
+      siteReviews.unshift(res.data);
+      renderShoePage(id); toast("Review posted");
+    });
+  });
+
+  // ---------- Reviews page ----------
+  var scoreSort = { key: "critics", dir: -1 };
+  function renderScores() {
+    var rows = catalogList().filter(function (s) { return s.type !== "barefoot"; }).map(function (s) {
+      var sh = shopperScore(s.id), lf = lifterStats(s.id);
+      return { s: s, critics: criticScore(s.id), shoppers: sh ? sh.avg : null, lifters: lf.avg, lcount: lf.count, videos: ((extReviews[s.id] && extReviews[s.id].videos) || []).length,
+        sources: ((extReviews[s.id] && extReviews[s.id].reviews) || []).length };
+    });
+    var k = scoreSort.key, d = scoreSort.dir;
+    rows.sort(function (a, b) {
+      if (k === "name") return d * (a.s.brand + a.s.model).localeCompare(b.s.brand + b.s.model);
+      var x = a[k], y = b[k];
+      if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+      return d * (x - y);
+    });
+    function th(key, label) { return '<th scope="col"><button type="button" data-sort="' + key + '" aria-sort="' + (k === key ? (d < 0 ? "descending" : "ascending") : "none") + '">' + label + (k === key ? (d < 0 ? " ↓" : " ↑") : "") + "</button></th>"; }
+    $("scores").innerHTML = "<thead><tr>" + th("name", "Shoe") + th("critics", "Critics /10") + th("shoppers", "Shoppers ★") + th("lifters", "Lifters ★") + th("videos", "Videos") + "</tr></thead><tbody>" +
+      rows.map(function (r) {
+        return '<tr><th scope="row"><a href="#/shoe/' + encodeURIComponent(r.s.id) + '"><span class="t-img">' + pic(r.s) + '</span><span><span class="t-b">' + esc(r.s.brand) + "</span>" + esc(r.s.model) + "</span></a></th>" +
+          "<td>" + (r.critics == null ? '<span class="na">–</span>' : "<b>" + fmt1(r.critics) + "</b>") + "</td>" +
+          "<td>" + (r.shoppers == null ? '<span class="na">–</span>' : "<b>" + fmt1(r.shoppers) + "</b>") + "</td>" +
+          "<td>" + (r.lifters == null ? '<span class="na">–</span>' : "<b>" + fmt1(r.lifters) + "</b> <small>(" + r.lcount + ")</small>") + "</td>" +
+          "<td>" + (r.videos || '<span class="na">–</span>') + "</td></tr>";
+      }).join("") + "</tbody>";
+  }
+  $("scores").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-sort]"); if (!b) return;
+    var key = b.dataset.sort;
+    scoreSort = { key: key, dir: scoreSort.key === key ? -scoreSort.dir : (key === "name" ? 1 : -1) };
+    renderScores();
+  });
+  function renderLatest() {
+    var el = $("latest-reviews");
+    if (!live) { el.innerHTML = '<p class="empty-note">Lifter reviews turn on once the database is connected.</p>'; return; }
+    if (!siteReviewsLoaded) { el.innerHTML = '<p class="empty-note">Loading reviews…</p>'; return; }
+    var xs = siteReviews.slice(0, 30).filter(function (r) { return shoes[r.shoe_id]; });
+    if (!xs.length) { el.innerHTML = '<p class="empty-note">No lifter reviews yet. Open any shoe and leave the first one.</p>'; return; }
+    el.innerHTML = '<ul class="rv-list">' + xs.map(function (r) {
+      var s = shoes[r.shoe_id];
+      return '<li class="rv rv-wide"><a class="rv-shoe" href="#/shoe/' + encodeURIComponent(s.id) + '"><span class="t-img">' + pic(s) + "</span>" + esc(s.brand + " " + s.model) + "</a>" +
+        '<div class="rv-top"><span class="who">@' + esc(r.author_name || "lifter") + "</span>" + stars(r.rating) + '<time datetime="' + esc(r.updated_at) + '">' + esc(ago(r.updated_at)) + "</time></div>" +
+        (r.body ? "<p>" + esc(r.body) + "</p>" : "") + "</li>";
+    }).join("") + "</ul>";
+  }
+
+  // ---------- Profile page ----------
+  var profileEl = $("profile-page");
+  function renderProfile() {
+    if (!live) { profileEl.innerHTML = '<section class="sec"><p class="empty-note">Accounts turn on once the database is connected.</p></section>'; return; }
+    if (!uid) {
+      profileEl.innerHTML = '<section class="sec profile-out"><p class="kicker">Profile</p><h2>Your account.</h2><p class="sub">Sign in to save your board, post it, review shoes, and vote and comment on other lists.</p>' +
+        '<div class="row"><button class="btn red" type="button" data-act="p-signin">Sign in</button><button class="btn" type="button" data-act="p-signup">Create account</button></div></section>';
+      return;
+    }
+    var P = pool(mine), myRev = siteReviews.filter(function (r) { return r.author === uid; });
+    var tiersHtml = TIERS.map(function (t) {
+      var ids = mine.tiers[t.k].filter(function (id) { return P[id]; });
+      if (!ids.length) return "";
+      return '<div class="p-tier"><span class="plate sm" data-k="' + t.k + '">' + t.k + '</span><span class="p-tn">' + esc(t.name) + '</span><span class="p-ts">' + ids.map(function (id) { return '<a href="#/shoe/' + encodeURIComponent(id) + '">' + esc(P[id].model) + "</a>"; }).join(", ") + "</span></div>";
+    }).join("");
+    profileEl.innerHTML =
+      '<section class="sec profile-card"><div class="p-head"><span class="p-avatar">' + esc((mine.name || mine.username || "?").charAt(0)) + "</span>" +
+      '<div class="p-names"><h2>' + esc(mine.name || (mine.username ? "@" + mine.username : "New lifter")) + "</h2>" +
+      '<p class="p-handle">' + (mine.username ? "@" + esc(mine.username) : "No username yet") + (userEmail ? " · " + esc(userEmail) : "") + "</p></div></div>" +
+      '<div class="p-stats"><div><b>' + ranked(mine) + "</b><span>shoes ranked</span></div><div><b>" + myRev.length + "</b><span>reviews</span></div><div><b>" + (mine.published ? "Posted" : "Private") + "</b><span>your list</span></div></div>" +
+      '<div class="row"><button class="btn" type="button" data-act="p-edit">' + (mine.username ? "Edit username & name" : "Pick a username") + '</button><button class="btn" type="button" data-act="p-pass">Change password</button><button class="btn ghost" type="button" data-act="p-out">Sign out</button></div></section>' +
+      '<section class="sec"><div class="sec-head"><div><p class="kicker">Your board</p><h3 class="h3">Your list.</h3></div><div class="toolbar"><a class="btn" href="#/">Open board</a><button class="btn red" type="button" data-act="p-share">Share or post</button></div></div>' +
+      (tiersHtml ? '<div class="p-tiers">' + tiersHtml + "</div>" : '<p class="empty-note">Nothing ranked yet. <a href="#/">Load the bar</a>.</p>') + "</section>" +
+      '<section class="sec"><div class="sec-head"><div><p class="kicker">Your reviews</p><h3 class="h3">Shoes you rated.</h3></div></div>' +
+      (myRev.length ? '<ul class="rv-list">' + myRev.map(function (r) {
+        var s = shoes[r.shoe_id]; if (!s) return "";
+        return '<li class="rv rv-wide"><a class="rv-shoe" href="#/shoe/' + encodeURIComponent(s.id) + '"><span class="t-img">' + pic(s) + "</span>" + esc(s.brand + " " + s.model) + "</a><div class=\"rv-top\">" + stars(r.rating) + '<time datetime="' + esc(r.updated_at) + '">' + esc(ago(r.updated_at)) + "</time></div>" + (r.body ? "<p>" + esc(r.body) + "</p>" : "") + "</li>";
+      }).join("") + "</ul>" : '<p class="empty-note">You haven\'t reviewed any shoes yet. Open a shoe on the <a href="#/shoes">Shoes</a> page to leave one.</p>') + "</section>";
+  }
+  profileEl.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-act]"); if (!b) return;
+    var a = b.dataset.act;
+    if (a === "p-signin") openSignIn(null, "in");
+    else if (a === "p-signup") openSignIn(null, "up");
+    else if (a === "p-edit") openName();
+    else if (a === "p-pass") openPassword("Change password.");
+    else if (a === "p-out") sb.auth.signOut();
+    else if (a === "p-share") { if (!ranked(mine)) { toast("Put at least one shoe on a plate first."); return; } openShare(); }
+  });
+
   // ---------- routing ----------
   $("btn-back").addEventListener("click", goMine);
   function goMine() {
     view = { mode: "mine", list: null };
-    if (location.hash) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { location.hash = ""; } }
-    render(); loadSocial();
+    if (location.hash !== "#/") { try { history.replaceState(null, "", location.pathname + location.search + "#/"); } catch (e) {} }
+    route = { page: "board" }; showPage("board"); render(); loadSocial();
   }
-  function showShared(l) { picked = null; view = { mode: "shared", list: l }; render(); loadSocial(); $("board-sec").scrollIntoView({ behavior: "smooth" }); }
+  function showShared(l) { picked = null; view = { mode: "shared", list: l }; render(); loadSocial(); }
+  function parseHash() {
+    var h = location.hash || "", m;
+    if ((m = /^#\/u\/([a-z0-9_]{3,20})$/.exec(h)) || (m = /^#u=([a-z0-9_]{3,20})$/.exec(h))) return { page: "board", user: m[1] };
+    if ((m = /^#\/s\/([A-Za-z0-9_-]{1,12000})$/.exec(h)) || (m = /^#s=([A-Za-z0-9_-]{1,12000})$/.exec(h))) return { page: "board", share: m[1] };
+    if ((m = /^#\/shoe\/([A-Za-z0-9_%-]{1,80})$/.exec(h))) { var id; try { id = decodeURIComponent(m[1]); } catch (e) { id = m[1]; } return { page: "shoe", id: id }; }
+    if ((m = /^#\/(shoes|reviews|posts|profile)$/.exec(h))) return { page: m[1] };
+    if (/^#list-/.test(h)) return { page: "board", legacy: true };
+    return { page: "board" };
+  }
+  function showPage(name) {
+    document.querySelectorAll(".page").forEach(function (p) { p.hidden = p.dataset.page !== name; });
+    var navName = name === "shoe" ? "shoes" : name;
+    document.querySelectorAll("[data-nav]").forEach(function (a) { if (a.dataset.nav === navName) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    document.body.dataset.page = name;
+    if (name !== "board" && picked) setPick(null);
+  }
+  function refreshPage() {
+    var r = route;
+    if (r.page === "shoes") { renderShoes(); renderChart(); }
+    else if (r.page === "shoe") renderShoePage(r.id);
+    else if (r.page === "reviews") { renderScores(); renderLatest(); }
+    else if (r.page === "posts") renderFeed();
+    else if (r.page === "profile") renderProfile();
+  }
   function applyHash() {
-    var h = location.hash || "";
-    var u = /^#u=([a-z0-9_]{3,20})$/.exec(h);
-    if (u) {
+    var prev = route, r = parseHash();
+    route = r; showPage(r.page);
+    if (prev.page !== r.page || prev.id !== r.id) window.scrollTo(0, 0);
+    if (r.page !== "board") {
+      if (view.mode === "shared") { view = { mode: "mine", list: null }; render(); loadSocial(); }
+      refreshPage(); return;
+    }
+    if (r.user) {
       if (!live) { toast("Profile links need the shared database, which isn't connected here."); return; }
-      if (uid && u[1] === mine.username) { goMine(); return; }
-      sb.from("lists").select("user_id,username,display_name,tiers,custom_shoes,published,caption,updated_at").eq("username", u[1]).maybeSingle().then(function (res) {
-        if (res.error || !res.data) { toast("Couldn't find @" + u[1] + "."); return; }
+      if (uid && r.user === mine.username) { goMine(); return; }
+      sb.from("lists").select("user_id,username,display_name,tiers,custom_shoes,published,caption,updated_at").eq("username", r.user).maybeSingle().then(function (res) {
+        if (res.error || !res.data) { toast("Couldn't find @" + r.user + "."); return; }
         if (res.data.user_id === uid) { goMine(); return; }
         showShared(rowToList(res.data));
       });
       return;
     }
-    var s = /^#s=([A-Za-z0-9_-]{1,12000})$/.exec(h);
-    if (s) {
+    if (r.share) {
       try {
-        var d = JSON.parse(unb64url(s[1]));
+        var d = JSON.parse(unb64url(r.share));
         var payload = d && d.t ? d : { t: d, c: [] };
         var custom = cleanCustom((payload.c || []).map(function (x) { var y = {}; for (var k in x) if (k !== "photo") y[k] = x[k]; return y; }));
         showShared({ userId: null, username: "", name: "", tiers: cleanTiers(payload.t), custom: custom, published: false, caption: "" });
       } catch (e) { toast("That share link is broken."); }
       return;
     }
-    if (/^#list-/.test(h)) { toast("That's an old share link. Ask for a new one."); return; }
+    if (r.legacy) toast("That's an old share link. Ask for a new one.");
     if (view.mode === "shared") { view = { mode: "mine", list: null }; render(); loadSocial(); }
   }
   window.addEventListener("hashchange", applyHash);
@@ -899,8 +1274,9 @@
       var next = {}; res.data.forEach(function (d) { var s = cleanShoe(d, false); if (s) next[s.id] = s; }); shoes = next;
     });
   }
-  function onSignedIn(newUid) {
-    if (uid === newUid) return;
+  function onSignedIn(newUid, email) {
+    userEmail = email || userEmail;
+    if (uid === newUid) { refreshPage(); return; }
     uid = newUid;
     var localTiers = mine.tiers;
     sb.rpc("is_admin").then(function (r) { isAdmin = !r.error && r.data === true; render(); });
@@ -913,34 +1289,36 @@
         if (ranked(mine)) { dirty = true; flush(); }
       }
       mine.userId = uid;
-      renderAccount(); render(); loadSocial();
+      renderAccount(); render(); loadSocial(); refreshPage();
       var back = null; try { back = sessionStorage.getItem("lt-return-hash"); sessionStorage.removeItem("lt-return-hash"); } catch (e) {}
       if (back && !location.hash) location.hash = back.replace(/^#/, ""); else applyHash();
       if (!mine.username) { needName = true; if (!document.querySelector("dialog[open]")) openName(); }
     });
   }
   function onSignedOut() {
-    uid = null; isAdmin = false; mine = emptyList(); loadLocal(); setSave(""); renderAccount(); render(); loadSocial();
+    uid = null; isAdmin = false; userEmail = ""; mine = emptyList(); loadLocal(); setSave(""); renderAccount(); render(); loadSocial(); refreshPage();
   }
 
   function startPreview() {
     live = false; loadLocal(); renderAccount(); renderFeed();
-    loadShoesFromFile().catch(function () { shoes = {}; }).then(function () { shoesLoaded = true; render(); applyHash(); startShowcase(); });
+    Promise.all([loadShoesFromFile().catch(function () { shoes = {}; }), loadExtReviews()]).then(function () { shoesLoaded = true; siteReviewsLoaded = true; render(); applyHash(); startShowcase(); });
   }
   function startLive() {
     try {
       sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true } });
     } catch (e) { startPreview(); return; }
     live = true; loadLocal(); renderAccount(); render(); renderFeed();
-    loadShoesFromDb().then(function () {
+    Promise.all([loadShoesFromDb(), loadExtReviews()]).then(function () {
       shoesLoaded = true; render(); applyHash(); loadFeed(); startShowcase();
+      loadSiteReviews().then(refreshPage);
     }, function () {
       live = false; sb = null;
       toast("The database didn't answer, so this is running in preview mode.");
       startPreview();
     });
     sb.auth.onAuthStateChange(function (event, sess) {
-      if (sess && sess.user) { if (siDlg.open) siDlg.close(); onSignedIn(sess.user.id); }
+      if (event === "PASSWORD_RECOVERY") setTimeout(function () { openPassword("Set a new password."); }, 300);
+      if (sess && sess.user) { if (siDlg.open) siDlg.close(); onSignedIn(sess.user.id, sess.user.email); }
       else if (event === "SIGNED_OUT") onSignedOut();
       if (/[?&]code=/.test(location.search)) { try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {} }
       renderAccount();
@@ -949,7 +1327,7 @@
     window.addEventListener("focus", function () {
       if (!live || !sb || Date.now() - lastRefresh < 20000 || drag) return;
       lastRefresh = Date.now();
-      loadShoesFromDb().then(function () { render(); loadFeed(); loadSocial(true); }, function () {});
+      Promise.all([loadShoesFromDb(), loadSiteReviews()]).then(function () { render(); loadFeed(); loadSocial(true); refreshPage(); }, function () {});
     });
   }
 
@@ -973,9 +1351,7 @@
     if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) scTimer = setInterval(function () { if (!document.hidden) showcaseNext(); }, 3200);
   }
   $("showcase").addEventListener("click", function () {
-    var id = this.dataset.id; if (!id) return;
-    if (view.mode === "shared") goMine();
-    if (editable()) { setPick(id); var c = board.querySelector('.card[data-id="' + cssEsc(id) + '"]'); if (c) c.scrollIntoView({ block: "center", behavior: "smooth" }); }
+    var id = this.dataset.id; if (id) location.hash = "#/shoe/" + encodeURIComponent(id);
   });
 
   render();

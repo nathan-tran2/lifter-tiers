@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F4F2EE">
 <title>Weightlifting Shoe Tier List</title>
-<meta name="description" content="Rank Olympic weightlifting shoes from light weight baby to do you even lift. Post your list, vote, comment.">
+<meta name="description" content="Rank Olympic weightlifting shoes, read reviews from lifters and review sites, and post your tier list.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -13,62 +13,100 @@
 </head>
 <body>
 <header class="topbar" id="top">
-  <a class="brand" href="#top">Lifter Tiers<span>.</span></a>
-  <nav class="nav" aria-label="Main">
-    <a href="#board-sec">Board</a>
-    <a href="#feed-sec">Community</a>
-    <a href="#chart-sec">Heels</a>
+  <a class="brand" href="#/">Lifter Tiers<span>.</span></a>
+  <nav class="nav" id="nav" aria-label="Main">
+    <a href="#/" data-nav="board">Board</a>
+    <a href="#/shoes" data-nav="shoes">Shoes</a>
+    <a href="#/reviews" data-nav="reviews">Reviews</a>
+    <a href="#/posts" data-nav="posts">Posts</a>
+    <a href="#/profile" data-nav="profile">Profile</a>
   </nav>
   <div class="acct" id="acct"></div>
 </header>
 
-<section class="hero" aria-labelledby="hero-h">
-  <div class="hero-copy">
-    <p class="badge"><span class="badge-red">Weightlifting</span><span id="stat-count">Loading the rack</span></p>
-    <h1 id="hero-h">Shoe tier list<span class="dot">.</span></h1>
-    <p class="lede">Tap a shoe, tap a plate. From <strong>light weight, baby</strong> to <strong>do you even lift, bro</strong>. Post your list and let the gym argue about it.</p>
-  </div>
-  <button type="button" class="showcase" id="showcase" aria-label="Featured shoe, open details">
-    <span class="sc-imgs"><img id="sc-a" alt="" draggable="false"><img id="sc-b" alt="" draggable="false"></span>
-    <span class="sc-cap"><span class="sc-brand" id="sc-brand"></span><span class="sc-model" id="sc-model"></span><span class="sc-meta" id="sc-meta"></span></span>
-  </button>
-</section>
-
 <main class="paper">
   <div class="account-line" id="account" role="status"><span class="dot-s"></span><p id="account-text">Loading…</p><span class="save-state" id="save-state"></span></div>
 
-  <div class="viewing" id="viewing"><p id="viewing-text"></p><button class="btn ghost" type="button" id="btn-back">Back to my list</button></div>
-
-  <section id="board-sec" aria-labelledby="board-h" class="sec">
-    <div class="sec-head">
-      <div><p class="kicker">Your board</p><h2 id="board-h">Load the bar.</h2></div>
-      <div class="toolbar" id="toolbar">
-        <button class="btn red" id="btn-share" type="button">Share or post</button>
-        <button class="btn" id="btn-add" type="button">+ Add your own shoe</button>
-        <button class="btn ghost" id="btn-reset" type="button">Rack everything</button>
+  <!-- BOARD -->
+  <div class="page" data-page="board">
+    <section class="hero" aria-labelledby="hero-h">
+      <div class="hero-copy">
+        <p class="badge"><span class="badge-red">Weightlifting</span><span id="stat-count">Loading the rack</span></p>
+        <h1 id="hero-h">Shoe tier list<span class="dot">.</span></h1>
+        <p class="lede">Tap a shoe, tap a plate. Rank every lifter from <strong>world-record ready</strong> to <strong>no lift</strong>, then post your list and see what the gym thinks.</p>
       </div>
-    </div>
-    <p class="hint" id="hint"><strong>Tap a shoe, then tap a plate.</strong> Or drag it. <span class="kb">Keys S A B C D F R work too.</span></p>
-    <div class="board" id="board" aria-label="Tier board"></div>
-    <div class="social" id="social" hidden></div>
-  </section>
+      <button type="button" class="showcase" id="showcase" aria-label="Featured shoe, open its page">
+        <span class="sc-imgs"><img id="sc-a" alt="" draggable="false"><img id="sc-b" alt="" draggable="false"></span>
+        <span class="sc-cap"><span class="sc-brand" id="sc-brand"></span><span class="sc-model" id="sc-model"></span><span class="sc-meta" id="sc-meta"></span></span>
+      </button>
+    </section>
 
-  <section id="feed-sec" aria-labelledby="feed-h" class="sec">
-    <div class="sec-head">
-      <div><p class="kicker">Community</p><h2 id="feed-h">Posted lists.</h2></div>
-      <div class="toolbar"><button class="btn ghost sm" type="button" id="sort-top" aria-pressed="true">Top</button><button class="btn ghost sm" type="button" id="sort-new" aria-pressed="false">New</button></div>
-    </div>
-    <div class="feed" id="feed"></div>
-  </section>
+    <div class="viewing" id="viewing"><p id="viewing-text"></p><button class="btn ghost" type="button" id="btn-back">Back to my list</button></div>
 
-  <section id="chart-sec" aria-labelledby="chart-h" class="sec">
-    <div class="sec-head"><div><p class="kicker">Specs</p><h2 id="chart-h">Heel height lineup.</h2></div></div>
-    <p class="sub">Effective heel height (heel-to-toe drop) for every shoe with a published number. The red line marks 19 mm, the classic ¾-inch lifter heel. Bars take the color of the plate each shoe sits on in the list you're viewing.</p>
-    <div class="chart"><div class="chart-grid" id="chart"></div></div>
-  </section>
+    <section id="board-sec" aria-labelledby="board-h" class="sec">
+      <div class="sec-head">
+        <div><p class="kicker">Your board</p><h2 id="board-h">Load the bar.</h2></div>
+        <div class="toolbar" id="toolbar">
+          <button class="btn red" id="btn-share" type="button">Share or post</button>
+          <button class="btn" id="btn-add" type="button">+ Add your own shoe</button>
+          <button class="btn ghost" id="btn-reset" type="button">Rack everything</button>
+        </div>
+      </div>
+      <p class="hint" id="hint"><strong>Tap a shoe, then tap a plate.</strong> Or drag it. <span class="kb">Keys S A B C D F R work too.</span></p>
+      <div class="board" id="board" aria-label="Tier board"></div>
+      <div class="social" id="social" hidden></div>
+    </section>
+  </div>
+
+  <!-- SHOES -->
+  <div class="page" data-page="shoes" hidden>
+    <section class="sec" aria-labelledby="shoes-h">
+      <div class="sec-head">
+        <div><p class="kicker">Catalog</p><h2 id="shoes-h">Every shoe.</h2></div>
+        <label class="sort">Sort <select id="shoe-sort"><option value="critics">Critic score</option><option value="lifters">Lifter rating</option><option value="heel">Heel height</option><option value="price">Price</option><option value="name">Name</option></select></label>
+      </div>
+      <p class="sub">Specs, scores from review sites, ratings from lifters here, and review videos. Tap a shoe for the full page.</p>
+      <div class="shoe-grid" id="shoe-grid"></div>
+    </section>
+    <section id="chart-sec" aria-labelledby="chart-h" class="sec">
+      <div class="sec-head"><div><p class="kicker">Specs</p><h2 id="chart-h">Heel height lineup.</h2></div></div>
+      <p class="sub">Effective heel height (heel-to-toe drop) for every shoe with a published number. The red line marks 19 mm, the classic ¾-inch lifter heel. Bars take the color of the tier each shoe sits in on your list.</p>
+      <div class="chart"><div class="chart-grid" id="chart"></div></div>
+    </section>
+  </div>
+
+  <!-- ONE SHOE -->
+  <div class="page" data-page="shoe" hidden><div id="shoe-page"></div></div>
+
+  <!-- REVIEWS -->
+  <div class="page" data-page="reviews" hidden>
+    <section class="sec" aria-labelledby="rev-h">
+      <div class="sec-head"><div><p class="kicker">Reviews</p><h2 id="rev-h">Scorecard.</h2></div></div>
+      <p class="sub">Critics: the average score from review sites like Garage Gym Lab, RunRepeat and That Fit Friend, out of 10. Shoppers: star ratings from stores like Rogue and TYR. Lifters: ratings from people on this site. Tap a column to sort, tap a shoe to read everything.</p>
+      <div class="table-wrap"><table class="scores" id="scores"></table></div>
+    </section>
+    <section class="sec" aria-labelledby="latest-h">
+      <div class="sec-head"><div><p class="kicker">From lifters</p><h2 id="latest-h">Latest reviews.</h2></div></div>
+      <div id="latest-reviews"></div>
+    </section>
+  </div>
+
+  <!-- POSTS -->
+  <div class="page" data-page="posts" hidden>
+    <section id="feed-sec" aria-labelledby="feed-h" class="sec">
+      <div class="sec-head">
+        <div><p class="kicker">Community</p><h2 id="feed-h">Posted lists.</h2></div>
+        <div class="toolbar"><button class="btn ghost sm" type="button" id="sort-top" aria-pressed="true">Top</button><button class="btn ghost sm" type="button" id="sort-new" aria-pressed="false">New</button></div>
+      </div>
+      <div class="feed" id="feed"></div>
+    </section>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" data-page="profile" hidden><div id="profile-page"></div></div>
 
   <footer class="foot">
-    <p>Product photos come from Rogue Fitness, TYR, LUXIAOJUN, Nike, adidas and WORKOUT.eu product pages; the barefoot photo is CC0 from the WordPress Photo Directory. Prices are US list prices and move a lot with sales.</p>
+    <p>Outside scores and summaries come from the linked review sites and stores (collected November 2026; store ratings change). Videos open on YouTube. Product photos come from brand and retailer product pages; the barefoot photo is CC0 from the WordPress Photo Directory. Prices are US list prices.</p>
     <p class="foot-sig">Lifter Tiers<span>.</span> Built by <a href="https://nathan-tran2.github.io/">Nathan Tran</a></p>
   </footer>
 </main>
@@ -105,19 +143,37 @@
   </form>
 </dialog>
 
-<!-- Sign in -->
+<!-- Sign in / create account -->
 <dialog id="signin-dlg" class="sheet" aria-labelledby="si-title">
   <form class="dlg" id="signin-form" novalidate>
-    <div class="dlg-head"><div class="titles"><p class="kicker">Account</p><h3 id="si-title">Sign in to save.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-    <p class="form-note" id="si-msg">Save your list, post it, and vote on other people's.</p>
+    <div class="dlg-head"><div class="titles"><p class="kicker">Account</p><h3 id="si-title">Sign in.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" class="tab" id="tab-in" aria-selected="true">Sign in</button>
+      <button type="button" role="tab" class="tab" id="tab-up" aria-selected="false">Create account</button>
+    </div>
+    <p class="form-note" id="si-msg">Save your list, post it, review shoes, and vote and comment on other people's lists.</p>
     <div class="oauth" id="oauth">
       <button class="btn oauth-btn apple" type="button" id="btn-apple" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.1 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.4-1-2.4-4.2zM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.9-1.4z"/></svg>Continue with Apple</button>
       <button class="btn oauth-btn google" type="button" id="btn-google" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.5z"/><path fill="#34A853" d="M12 23.5c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.4 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A11.5 11.5 0 0 0 12 23.5z"/><path fill="#FBBC05" d="M5.6 14.2a6.9 6.9 0 0 1 0-4.4v-3H1.8a11.5 11.5 0 0 0 0 10.4l3.8-3z"/><path fill="#EA4335" d="M12 5.1c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.5 11.5 0 0 0 1.8 6.8l3.8 3C6.5 7.1 9 5.1 12 5.1z"/></svg>Continue with Google</button>
     </div>
-    <p class="or" id="or-line" hidden><span>or use email</span></p>
+    <p class="or" id="or-line" hidden><span>or</span></p>
     <label for="si-email">Email<input id="si-email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com"></label>
+    <label for="si-pass" id="si-pass-row">Password<span class="pw-field"><input id="si-pass" name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"><button type="button" class="pw-toggle" data-toggle="si-pass" aria-label="Show password">Show</button></span></label>
+    <label for="si-pass2" id="si-pass2-row" hidden>Confirm password<input id="si-pass2" name="password2" type="password" autocomplete="new-password" minlength="8" placeholder="Type it again"></label>
     <p class="form-err" id="si-err" role="alert"></p>
-    <div class="form-actions"><button class="btn red wide" type="submit" id="si-submit">Email me a sign-in link</button></div>
+    <div class="form-actions"><button class="btn red wide" type="submit" id="si-submit">Sign in</button></div>
+    <div class="alt-links"><button type="button" class="linkish" id="si-forgot">Forgot password?</button><button type="button" class="linkish" id="si-magic">Email me a sign-in link instead</button></div>
+  </form>
+</dialog>
+
+<!-- Set or change password -->
+<dialog id="pw-dlg" class="sheet" aria-labelledby="pw-title">
+  <form class="dlg" id="pw-form" novalidate>
+    <div class="dlg-head"><div class="titles"><p class="kicker">Account</p><h3 id="pw-title">New password.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <label for="pw-new">New password<span class="pw-field"><input id="pw-new" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><button type="button" class="pw-toggle" data-toggle="pw-new" aria-label="Show password">Show</button></span></label>
+    <label for="pw-new2">Confirm new password<input id="pw-new2" type="password" autocomplete="new-password" minlength="8" required></label>
+    <p class="form-err" id="pw-err" role="alert"></p>
+    <div class="form-actions"><button class="btn red wide" type="submit" id="pw-submit">Save password</button></div>
   </form>
 </dialog>
 
@@ -156,7 +212,7 @@
     <img class="pick-img" id="pick-img" alt="">
     <div class="pick-name"><span id="pick-brand"></span><strong id="pick-model"></strong></div>
     <div class="pick-plates" id="pick-plates"></div>
-    <button type="button" class="btn sm ghost" id="pick-info">Details</button>
+    <button type="button" class="btn sm ghost" id="pick-info">Details</button><a class="btn sm ghost" id="pick-page" href="#/shoes">Reviews</a>
     <button type="button" class="x" id="pick-x" aria-label="Cancel">×</button>
   </div>
 </div>

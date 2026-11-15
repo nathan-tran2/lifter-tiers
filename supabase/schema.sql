@@ -138,6 +138,42 @@ end $$;
 drop trigger if exists comments_set_author on public.comments;
 create trigger comments_set_author before insert on public.comments for each row execute function public.set_comment_author();
 
+-- ---------- shoe reviews from lifters (one per person per shoe) ----------
+create table if not exists public.reviews (
+  shoe_id     text not null references public.shoes (id) on delete cascade,
+  author      uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  author_name text,
+  rating      smallint not null check (rating between 1 and 5),
+  body        text check (body is null or char_length(body) <= 1000),
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  primary key (shoe_id, author)
+);
+alter table public.reviews enable row level security;
+drop policy if exists "reviews are public" on public.reviews;
+create policy "reviews are public" on public.reviews for select using (true);
+drop policy if exists "people review as themselves" on public.reviews;
+create policy "people review as themselves" on public.reviews for insert to authenticated with check (author = auth.uid());
+drop policy if exists "people edit their own review" on public.reviews;
+create policy "people edit their own review" on public.reviews for update to authenticated
+  using (author = auth.uid()) with check (author = auth.uid());
+drop policy if exists "author or admin deletes a review" on public.reviews;
+create policy "author or admin deletes a review" on public.reviews for delete to authenticated
+  using (author = auth.uid() or public.is_admin());
+
+-- The review's name always comes from the author's own username, and the timestamps can't be faked.
+create or replace function public.set_review_author() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  new.author := auth.uid();
+  new.author_name := coalesce((select username from public.lists where user_id = auth.uid()), 'lifter');
+  if tg_op = 'INSERT' then new.created_at := now(); else new.created_at := old.created_at; end if;
+  new.updated_at := now();
+  return new;
+end $$;
+drop trigger if exists reviews_set_author on public.reviews;
+create trigger reviews_set_author before insert or update on public.reviews for each row execute function public.set_review_author();
+
 -- ---------- photo storage (shoe photos people upload) ----------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('shoe-photos', 'shoe-photos', true, 2097152, array['image/jpeg', 'image/png', 'image/webp'])
