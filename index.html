@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0E0D0C">
+<meta name="theme-color" content="#F4F2EE">
 <title>Weightlifting Shoe Tier List</title>
 <meta name="description" content="Rank Olympic weightlifting shoes from light weight baby to do you even lift. Post your list, vote, comment.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,10 +12,6 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- Rotating lift videos behind the whole page -->
-<div class="stage" id="stage" aria-hidden="true"><div class="stage-glow"></div></div>
-<div class="stage-shade" aria-hidden="true"></div>
-
 <header class="topbar" id="top">
   <a class="brand" href="#top">Lifter Tiers<span>.</span></a>
   <nav class="nav" aria-label="Main">
@@ -27,27 +23,15 @@
 </header>
 
 <section class="hero" aria-labelledby="hero-h">
-  <p class="badge"><span class="badge-red">Platform</span><span id="stat-count">Loading the rack</span></p>
   <div class="hero-copy">
-  <h1 id="hero-h">Shoe<br>tier list<span class="dot">.</span></h1>
-  <p class="lede">Every lifter starts on the rack. Drag them onto the plates, from <strong>light weight, baby</strong> down to <strong>do you even lift, bro</strong>. Post your list and let the gym argue about it.</p>
+    <p class="badge"><span class="badge-red">Weightlifting</span><span id="stat-count">Loading the rack</span></p>
+    <h1 id="hero-h">Shoe tier list<span class="dot">.</span></h1>
+    <p class="lede">Tap a shoe, tap a plate. From <strong>light weight, baby</strong> to <strong>do you even lift, bro</strong>. Post your list and let the gym argue about it.</p>
   </div>
-
-  <div class="now" id="now">
-    <div class="now-head">
-      <span class="now-label">Now lifting</span>
-      <div class="now-ctrls">
-        <button type="button" class="icon-btn" id="v-prev" aria-label="Previous lifter">‹</button>
-        <button type="button" class="icon-btn" id="v-play" aria-label="Pause videos">❚❚</button>
-        <button type="button" class="icon-btn" id="v-next" aria-label="Next lifter">›</button>
-      </div>
-    </div>
-    <p class="now-who" id="v-who">—</p>
-    <p class="now-what" id="v-what"></p>
-    <div class="now-bar"><i id="v-bar"></i></div>
-    <div class="chips-row" id="v-chips" role="tablist" aria-label="Pick a lifter"></div>
-    <p class="now-credit" id="v-credit"></p>
-  </div>
+  <button type="button" class="showcase" id="showcase" aria-label="Featured shoe, open details">
+    <span class="sc-imgs"><img id="sc-a" alt="" draggable="false"><img id="sc-b" alt="" draggable="false"></span>
+    <span class="sc-cap"><span class="sc-brand" id="sc-brand"></span><span class="sc-model" id="sc-model"></span><span class="sc-meta" id="sc-meta"></span></span>
+  </button>
 </section>
 
 <main class="paper">
@@ -64,7 +48,7 @@
         <button class="btn ghost" id="btn-reset" type="button">Rack everything</button>
       </div>
     </div>
-    <p class="hint" id="hint">Drag shoes onto a plate, or tap a shoe and pick its plate. Hold to drag on a phone.<span class="kb"> Keyboard: focus a card and press <kbd>S</kbd> <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>F</kbd> or <kbd>R</kbd>.</span></p>
+    <p class="hint" id="hint"><strong>Tap a shoe, then tap a plate.</strong> Or drag it. <span class="kb">Keys S A B C D F R work too.</span></p>
     <div class="board" id="board" aria-label="Tier board"></div>
     <div class="social" id="social" hidden></div>
   </section>
@@ -84,7 +68,7 @@
   </section>
 
   <footer class="foot">
-    <p>Background videos play from YouTube: All Things Gym, Weightlifting House, Elite Athletes and Ervin Roznjik. Product photos come from Rogue Fitness, TYR, LUXIAOJUN, Nike, adidas and WORKOUT.eu product pages; the barefoot photo is CC0 from the WordPress Photo Directory. Prices are US list prices and move a lot with sales.</p>
+    <p>Product photos come from Rogue Fitness, TYR, LUXIAOJUN, Nike, adidas and WORKOUT.eu product pages; the barefoot photo is CC0 from the WordPress Photo Directory. Prices are US list prices and move a lot with sales.</p>
     <p class="foot-sig">Lifter Tiers<span>.</span> Built by <a href="https://nathan-tran2.github.io/">Nathan Tran</a></p>
   </footer>
 </main>
@@ -167,11 +151,20 @@
   </div>
 </dialog>
 
+<div class="pick" id="pick" hidden>
+  <div class="pick-in">
+    <img class="pick-img" id="pick-img" alt="">
+    <div class="pick-name"><span id="pick-brand"></span><strong id="pick-model"></strong></div>
+    <div class="pick-plates" id="pick-plates"></div>
+    <button type="button" class="btn sm ghost" id="pick-info">Details</button>
+    <button type="button" class="x" id="pick-x" aria-label="Cancel">×</button>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="bg.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

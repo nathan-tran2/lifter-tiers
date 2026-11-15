@@ -27,7 +27,7 @@
   var view = { mode: "mine", list: null };  // or { mode: "shared", list }
   var feed = [], feedSort = "top", feedLoaded = false;
   var social = { listId: null, votes: [], comments: [], loading: false };
-  var dirty = false, saving = false, saveTimer = null, lastFocusId = null, needName = false;
+  var dirty = false, saving = false, saveTimer = null, lastFocusId = null, needName = false, picked = null;
 
   function emptyTiers() { var t = {}; TK.forEach(function (k) { t[k] = []; }); return t; }
   function emptyList() { return { userId: null, username: "", name: "", tiers: emptyTiers(), custom: [], published: false, caption: "" }; }
@@ -138,34 +138,31 @@
   // ---------- board ----------
   var board = $("board");
   function cardHTML(s) {
-    var tags = '<span class="tag">' + esc(heelText(s)) + "</span>";
-    if (priceText(s)) tags += '<span class="tag">' + esc(priceText(s)) + "</span>";
-    if (s.custom) tags += '<span class="tag mine">' + (editable() ? "Mine" : "Their add") + "</span>";
-    return '<button type="button" class="card" data-id="' + esc(s.id) + '" aria-label="' + esc(s.brand + " " + s.model + ", " + heelText(s)) + '. Open details">' +
-      pic(s) + '<span class="brand-s">' + esc(s.brand) + '</span><span class="model">' + esc(s.model) + '</span><span class="meta">' + tags + "</span></button>";
+    return '<button type="button" class="card' + (s.id === picked ? " sel" : "") + '" data-id="' + esc(s.id) + '" title="' + esc(s.brand + " " + s.model) + '" aria-label="' + esc(s.brand + " " + s.model + ", " + heelText(s)) + '">' +
+      pic(s) + '<span class="model">' + esc(s.model) + "</span>" + (s.custom ? '<span class="mine-dot">' + (editable() ? "Mine" : "Theirs") + "</span>" : "") + "</button>";
   }
   function render() {
     var list = shown(), P = pool(list), html = "";
     if (!shoesLoaded) html = '<p class="empty-note" style="margin:12px">Loading the shoe rack…</p>';
     else {
       TIERS.forEach(function (t) {
-        html += '<div class="tier" data-drop="' + t.k + '"><div class="tier-label"><div class="plate" data-k="' + t.k + '">' + t.k + '</div><div class="tier-kg">' + t.kg + ' kg</div><div class="tier-name">' + esc(t.name) + '</div></div>' +
+        html += '<div class="tier" data-drop="' + t.k + '"><div class="tier-label"><span class="tier-letter">' + t.k + '</span><span class="tier-name">' + esc(t.name) + '</span><span class="tier-kg">' + t.kg + ' kg</span></div>' +
           '<div class="cards" role="list" aria-label="' + t.k + " tier, " + esc(t.name) + '">' +
           list.tiers[t.k].map(function (id) { return P[id] ? cardHTML(P[id]) : ""; }).join("") + "</div></div>";
       });
-      html += '<div class="tier rack" data-drop="R"><div class="tier-label"><div class="plate" data-k="R">RACK</div><div class="tier-name">Still on the rack</div></div>' +
+      html += '<div class="tier rack" data-drop="R"><div class="tier-label"><span class="tier-letter">RACK</span><span class="tier-name">Unranked</span></div>' +
         '<div class="cards" role="list" aria-label="Rack, unranked">' + rackIds(list, P).map(function (id) { return cardHTML(P[id]); }).join("") + "</div></div>";
     }
     board.innerHTML = html;
     board.classList.toggle("readonly", !editable());
-    renderChart(); renderChrome(); renderSocial();
+    renderChart(); renderChrome(); renderSocial(); renderPick();
     if (lastFocusId) { var el = board.querySelector('.card[data-id="' + cssEsc(lastFocusId) + '"]'); if (el) el.focus(); lastFocusId = null; }
   }
 
   function renderChrome() {
     var n = Object.keys(shoes).length;
     var posted = feed.length;
-    $("stat-count").textContent = shoesLoaded ? n + " shoes on the rack" + (live && feedLoaded ? " · " + posted + (posted === 1 ? " list posted" : " lists posted") : "") : "Loading the rack";
+    $("stat-count").textContent = shoesLoaded ? n + " shoes" + (live && feedLoaded ? " · " + posted + (posted === 1 ? " list posted" : " lists posted") : "") : "Loading the rack";
     var shared = view.mode === "shared";
     $("viewing").classList.toggle("show", shared);
     if (shared) $("viewing-text").textContent = "You're looking at " + who(view.list) + "'s list. It's read-only.";
@@ -200,7 +197,7 @@
     var line = $("account"), t = $("account-text"), top = $("acct");
     if (!live) {
       line.className = "account-line warn";
-      t.innerHTML = "<strong>Preview mode.</strong> Your list and your own shoes save in this browser, and Share makes a link with your whole list in it. Accounts, posting and comments turn on once the database is connected.";
+      t.innerHTML = "<strong>Preview mode.</strong> Your list saves in this browser. Accounts, posting and comments turn on once the database is connected.";
       top.innerHTML = ""; return;
     }
     if (!uid) {
@@ -315,7 +312,7 @@
   window.addEventListener("keydown", function (e) { if (e.key === "Escape" && drag && drag.active) end(false); });
   function begin() {
     var card = drag.card, r = card.getBoundingClientRect();
-    drag.active = true; drag.ox = drag.sx - r.left; drag.oy = drag.sy - r.top;
+    drag.active = true; drag.ox = drag.sx - r.left; drag.oy = drag.sy - r.top; picked = null; renderPick();
     var g = card.cloneNode(true); g.classList.add("drag-ghost"); g.removeAttribute("data-id"); g.setAttribute("aria-hidden", "true"); g.style.width = r.width + "px";
     document.body.appendChild(g); drag.ghost = g;
     card.classList.add("placeholder"); document.body.classList.add("dragging");
@@ -343,10 +340,43 @@
     else if (list.lastElementChild !== drag.card) list.appendChild(drag.card);
   }
   board.addEventListener("click", function (e) {
+    if (suppressClick) return;
     var card = e.target.closest(".card");
-    if (!card || suppressClick) return;
-    openDetail(card.dataset.id);
+    if (!editable()) { if (card) openDetail(card.dataset.id); return; }
+    if (card) { setPick(card.dataset.id === picked ? null : card.dataset.id); return; }
+    var row = e.target.closest("[data-drop]");
+    if (row && picked) place_(picked, row.dataset.drop);
   });
+
+  // ---------- tap a shoe, then a plate ----------
+  var pickEl = $("pick");
+  $("pick-plates").innerHTML = ZONES.map(function (k) {
+    return '<button type="button" class="pp" data-k="' + k + '" aria-label="' + (k === "R" ? "Back to the rack" : k + " tier, " + esc(tierInfo(k).name)) + '" title="' + (k === "R" ? "Rack" : esc(tierInfo(k).name)) + '">' + (k === "R" ? "RACK" : k) + "</button>";
+  }).join("");
+  function setPick(id) {
+    picked = id;
+    board.querySelectorAll(".card.sel").forEach(function (c) { c.classList.remove("sel"); });
+    if (id) { var c = board.querySelector('.card[data-id="' + cssEsc(id) + '"]'); if (c) c.classList.add("sel"); }
+    renderPick();
+  }
+  function renderPick() {
+    var P = pool(mine), s = picked && editable() ? P[picked] : null;
+    if (!s) { picked = null; pickEl.hidden = true; document.body.classList.remove("picking"); return; }
+    pickEl.hidden = false; document.body.classList.add("picking");
+    var img = $("pick-img"); if (s.photo) img.src = s.photo; else img.removeAttribute("src");
+    $("pick-brand").textContent = s.brand; $("pick-model").textContent = s.model;
+    var z = tierOf(mine, s.id);
+    pickEl.querySelectorAll(".pp").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.k === z ? "true" : "false"); });
+  }
+  function place_(id, zone) {
+    var name = pool(mine)[id].model;
+    moveTo(id, zone); picked = null; render();
+    toast(name + " → " + (zone === "R" ? "the rack" : zone + " · " + tierInfo(zone).name));
+  }
+  $("pick-plates").addEventListener("click", function (e) { var b = e.target.closest(".pp"); if (b && picked) place_(picked, b.dataset.k); });
+  $("pick-info").addEventListener("click", function () { if (picked) openDetail(picked); });
+  $("pick-x").addEventListener("click", function () { setPick(null); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && picked && !document.querySelector("dialog[open]")) setPick(null); });
   board.addEventListener("keydown", function (e) {
     if (!editable()) return;
     var card = e.target.closest(".card");
@@ -392,7 +422,7 @@
   detail.addEventListener("click", function (e) {
     var id = detailBody.dataset.id, P = pool(mine);
     var mv = e.target.closest("[data-move]");
-    if (mv) { moveTo(id, mv.dataset.move); render(); detail.close(); toast(P[id].model + " → " + zoneLabel(mv.dataset.move)); return; }
+    if (mv) { picked = null; moveTo(id, mv.dataset.move); render(); detail.close(); toast(P[id].model + " → " + zoneLabel(mv.dataset.move)); return; }
     var edb = e.target.closest("[data-edit]");
     if (edb) { detail.close(); openShoeForm(id); return; }
     var del = e.target.closest("[data-delete]");
@@ -818,7 +848,7 @@
     if (location.hash) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { location.hash = ""; } }
     render(); loadSocial();
   }
-  function showShared(l) { view = { mode: "shared", list: l }; render(); loadSocial(); $("board-sec").scrollIntoView({ behavior: "smooth" }); }
+  function showShared(l) { picked = null; view = { mode: "shared", list: l }; render(); loadSocial(); $("board-sec").scrollIntoView({ behavior: "smooth" }); }
   function applyHash() {
     var h = location.hash || "";
     var u = /^#u=([a-z0-9_]{3,20})$/.exec(h);
@@ -895,7 +925,7 @@
 
   function startPreview() {
     live = false; loadLocal(); renderAccount(); renderFeed();
-    loadShoesFromFile().catch(function () { shoes = {}; }).then(function () { shoesLoaded = true; render(); applyHash(); });
+    loadShoesFromFile().catch(function () { shoes = {}; }).then(function () { shoesLoaded = true; render(); applyHash(); startShowcase(); });
   }
   function startLive() {
     try {
@@ -903,7 +933,7 @@
     } catch (e) { startPreview(); return; }
     live = true; loadLocal(); renderAccount(); render(); renderFeed();
     loadShoesFromDb().then(function () {
-      shoesLoaded = true; render(); applyHash(); loadFeed();
+      shoesLoaded = true; render(); applyHash(); loadFeed(); startShowcase();
     }, function () {
       live = false; sb = null;
       toast("The database didn't answer, so this is running in preview mode.");
@@ -922,6 +952,31 @@
       loadShoesFromDb().then(function () { render(); loadFeed(); loadSocial(true); }, function () {});
     });
   }
+
+  // ---------- rotating featured shoe in the header ----------
+  var scIdx = -1, scTimer = null, scFront = "sc-a";
+  function showcaseNext() {
+    var ids = Object.keys(shoes).filter(function (id) { return shoes[id].photo && shoes[id].type !== "barefoot"; });
+    if (!ids.length) return;
+    scIdx = (scIdx + 1) % ids.length;
+    var s = shoes[ids[scIdx]], back = scFront === "sc-a" ? "sc-b" : "sc-a", img = $(back);
+    img.onload = function () { $(scFront).classList.remove("on"); img.classList.add("on"); scFront = back; };
+    img.alt = s.brand + " " + s.model; img.src = s.photo;
+    $("showcase").dataset.id = s.id;
+    $("sc-brand").textContent = s.brand; $("sc-model").textContent = s.model;
+    $("sc-meta").textContent = heelText(s) + (priceText(s) ? "\n" + priceText(s) : "");
+  }
+  function startShowcase() {
+    if (scTimer || !Object.keys(shoes).length) return;
+    var ids = Object.keys(shoes); scIdx = Math.floor(Math.random() * ids.length) - 1;
+    showcaseNext();
+    if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) scTimer = setInterval(function () { if (!document.hidden) showcaseNext(); }, 3200);
+  }
+  $("showcase").addEventListener("click", function () {
+    var id = this.dataset.id; if (!id) return;
+    if (view.mode === "shared") goMine();
+    if (editable()) { setPick(id); var c = board.querySelector('.card[data-id="' + cssEsc(id) + '"]'); if (c) c.scrollIntoView({ block: "center", behavior: "smooth" }); }
+  });
 
   render();
   if (CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase && window.supabase.createClient) startLive();
