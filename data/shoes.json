@@ -146,19 +146,6 @@
     "notes": "Nike's entry lifter with a 15 mm heel and a flexible forefoot. Fine for learning the lifts; the low heel can feel off if you're used to Romaleos."
   },
   {
-    "id": "metcon10",
-    "brand": "Nike",
-    "model": "Metcon 10",
-    "heel": null,
-    "weight": null,
-    "price": 155,
-    "closure": "Laces",
-    "fit": "Runs small",
-    "type": "trainer",
-    "photo": "images/metcon10.jpg",
-    "notes": "A flat, stable cross-trainer with a Hyperlift plate under the heel, not a lifter. Great for a WOD; for heavy cleans you give up the heel and the rigid platform."
-  },
-  {
     "id": "barefoot",
     "brand": "No shoes",
     "model": "Barefoot",
@@ -204,21 +191,6 @@
     "notes": "The previous Legacy: 22 mm TPU heel, one wide strap and a reworked toe box. RunRepeat weighed it at 612 g. Easy to find on sale now that the III is out."
   },
   {
-    "id": "thetotal",
-    "brand": "Adidas",
-    "model": "The Total",
-    "heel": 0,
-    "heelLabel": "0 mm",
-    "weight": null,
-    "price": 120,
-    "priceLabel": "",
-    "closure": "Laces + 1 strap",
-    "fit": "Wide toe box",
-    "type": "trainer",
-    "photo": "images/thetotal.jpg",
-    "notes": "A zero-drop deadlift shoe with a wide toe box and a midfoot strap. Great for pulls; the wrong tool for the snatch."
-  },
-  {
     "id": "romaleos3",
     "brand": "Nike",
     "model": "Romaleos 3",
@@ -247,58 +219,30 @@
     "notes": "The 2019 Extra Durability fix for the Romaleos 3: perforated leather instead of mesh, a beefier strap, same 20 mm honeycomb heel. Listed at $200 when it was current."
   },
   {
-    "id": "powerprokarlos",
+    "id": "heritage",
     "brand": "LUXIAOJUN",
-    "model": "PowerPro Karlos Edition",
-    "heel": 25.5,
-    "heelLabel": "24.5–27 mm",
+    "model": "Heritage Lifter",
+    "heel": 22,
+    "heelLabel": "21.7–22.3 mm",
     "weight": null,
-    "price": 229,
+    "price": 325,
     "closure": "Laces + 2 straps",
-    "fit": "Neutral to wide",
+    "fit": "Roomy toe box",
     "type": "lifter",
-    "photo": "images/powerprokarlos.jpg",
-    "notes": "Karlos Nasar's colorway of the PowerPro: black with a red heel and a carbon-look top strap. Same platform and heel as the regular PowerPro, with a spare thinner insole in the box."
+    "photo": "images/heritage.jpg",
+    "notes": "Lu's old-school lifter: solid beechwood heel, genuine leather upper and Goodyear-welted construction. Slightly lower heel than the PowerPro and the classic wood-heel slap. Limited runs in white and pink."
   },
   {
-    "id": "barepower2",
-    "brand": "LUXIAOJUN",
-    "model": "BarePower II",
-    "heel": 0,
-    "heelLabel": "0 mm",
-    "weight": null,
-    "price": 69,
-    "closure": "2 straps",
-    "fit": "Wide toe box",
-    "type": "barefoot",
-    "photo": "images/barepower2.jpg",
-    "notes": "LUXIAOJUN's flat deadlift and training shoe: 3.5 mm rubber outsole, knit upper, two straps. For pulls and accessory work, not the platform."
-  },
-  {
-    "id": "cxt3",
+    "id": "tyrforcev2",
     "brand": "TYR",
-    "model": "CXT-3 Trainer",
+    "model": "TYRFORCE Elite V2",
     "heel": null,
     "weight": null,
-    "price": 160,
-    "closure": "Laces",
+    "price": 350,
+    "closure": "Laces + 2 straps",
     "fit": "Wide toe box",
-    "type": "trainer",
-    "photo": "images/cxt3.jpg",
-    "notes": "TYR's newest cross-trainer, launched in early 2026. Stable enough for light lifts and WODs; not a weightlifting shoe."
-  },
-  {
-    "id": "dropzero2",
-    "brand": "TYR",
-    "model": "DropZero 2 Powerstrap",
-    "heel": 0,
-    "heelLabel": "0 mm",
-    "weight": null,
-    "price": 160,
-    "closure": "2 straps",
-    "fit": "Wide toe box",
-    "type": "barefoot",
-    "photo": "images/dropzero2.jpg",
-    "notes": "Zero-drop barefoot trainer with two straps instead of laces. A deadlift and accessory-day shoe."
+    "type": "lifter",
+    "photo": "images/tyrforcev2.jpg",
+    "notes": "The second-generation Elite Carbon: a dense wooden heel over a full-length carbon-fiber POWERPLATE, perforated leather upper and a double-strap lockdown. TYR hasn't published the heel height yet."
   }
 ]
