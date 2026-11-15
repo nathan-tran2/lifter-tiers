@@ -1,76 +1,66 @@
-# Weightlifting Shoe Tier List
+# Lifter Tiers: weightlifting shoe tier list
 
-Rank Olympic weightlifting shoes from **S: the holy grail** down to **F: ts sucks so fucking bad**. Every shoe starts on the rack. Sign in to save your list, share it with a link, and add shoes the rack is missing.
+Live at https://nathan-tran2.github.io/lifter-tiers/
 
-It's a static site (plain HTML, CSS and JavaScript, no build step) hosted on GitHub Pages, with [Supabase](https://supabase.com) for accounts, saved lists, the shared shoe database and photo uploads.
+Rank Olympic weightlifting shoes on bumper plates, from **S · Light weight, baby!** down to **F · Do you even lift, bro?** Famous lifts play behind the page (Lasha, Karlos Nasar, Lu Xiaojun, Shi Zhiyong, Klokov, Kianoush, Olivia Reeves, Ilya Ilyin, Li Dayin).
 
-Until Supabase is connected, the site runs in **preview mode**: lists save in the browser and "Share my list" makes a link that holds the whole list.
+## What it does
+
+- Drag shoes onto plates (long-press to drag on a phone, or tap a shoe and pick a plate). Keyboard: focus a card and press S A B C D F or R.
+- **Your own shoes:** "+ Add your own shoe" puts a shoe with a photo on *your* rack only. Other people see it only when they open your list.
+- **Accounts:** sign in with Apple, Google, or an emailed link. First sign-in asks for a username (`@nathan_lifts`).
+- **Share and post:** your link is `…/lifter-tiers/#u=yourname`. Tick "Post my list" to put it in the community feed.
+- **Community:** posted lists sorted by Top or New; like/dislike and comment on anyone's list. You can delete your own comments and any comment on your list.
+- **Preview mode:** with `config.js` empty, everything except accounts and the feed still works. Lists and custom shoes save in the browser and share as a link.
 
 ## Files
 
-| Path | What it is |
-| --- | --- |
-| `index.html`, `styles.css`, `app.js` | The site |
-| `config.js` | Your Supabase project URL and public key go here |
-| `data/shoes.json` | The starting shoes, used in preview mode |
+| File | What it is |
+|---|---|
+| `index.html` | Page layout and dialogs |
+| `styles.css` | Look and feel, phone layout, dark mode |
+| `bg.js` | Rotating YouTube lift videos behind the page |
+| `app.js` | Tier board, accounts, posting, votes, comments |
+| `config.js` | Your Supabase URL and key, plus sign-in switches |
+| `data/shoes.json` | The shoe list used in preview mode |
+| `supabase/schema.sql` | Database tables, security rules and the starting shoes |
 | `images/` | Shoe photos |
-| `supabase/schema.sql` | Creates the tables, security rules, photo bucket and starting shoes |
 
-## 1. Put it on GitHub Pages
+## Turning on accounts (Supabase)
 
-1. Create a new public repository on GitHub, for example `lifter-tiers`, and upload these files to it (keep the folders).
-2. In the repo: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, branch `main`, folder `/ (root)`. Save.
-3. After a minute the site is live at `https://<your-username>.github.io/lifter-tiers/`.
+1. Create a free project at https://supabase.com.
+2. **SQL Editor → New query**, paste all of `supabase/schema.sql`, click **Run**. It's safe to run again whenever this file changes (it upgrades an older version in place).
+3. **Project Settings → API**: copy the Project URL and the `anon` public key into `config.js`.
+4. **Authentication → URL Configuration**: Site URL `https://nathan-tran2.github.io/lifter-tiers/`, and add the same URL under Redirect URLs.
+5. Make yourself an admin (lets you add shoes to everyone's rack): sign in once on the site, find your user id under **Authentication → Users**, then run
+   `insert into public.admins (user_id) values ('YOUR-USER-ID');`
 
-## 2. Turn on accounts with Supabase (free)
+Email sign-in works as soon as steps 1–4 are done.
 
-1. Create a project at [supabase.com](https://supabase.com).
-2. Open **SQL Editor → New query**, paste all of `supabase/schema.sql`, and click **Run**.
-3. Open **Authentication → URL Configuration**:
-   - **Site URL:** `https://<your-username>.github.io/lifter-tiers/`
-   - **Redirect URLs:** add the same address.
-4. Open **Settings → API** and copy the **Project URL** and the **anon public** key into `config.js`:
+### Google sign-in
 
-   ```js
-   window.TIER_CONFIG = {
-     supabaseUrl: "https://xxxx.supabase.co",
-     supabaseAnonKey: "eyJ...",
-     googleSignIn: false
-   };
-   ```
+1. In Google Cloud Console: **APIs & Services → Credentials → Create credentials → OAuth client ID → Web application**.
+2. Authorized redirect URI: `https://YOUR-PROJECT.supabase.co/auth/v1/callback` (Supabase shows the exact one on the Google provider page).
+3. Paste the client ID and secret into Supabase **Authentication → Providers → Google**, enable it.
+4. Set `googleSignIn: true` in `config.js`.
 
-   Both values are meant to be public. The row-level security rules in `schema.sql` are what protect the data: anyone can read shoes and lists, signed-in people can add shoes and edit only their own list, and only admins can delete shoes.
-5. Commit `config.js`. The site switches from preview mode to accounts automatically.
+### Sign in with Apple (iCloud)
 
-Sign-in works by emailing a magic link, so nobody needs a password. Supabase's built-in email sender is rate-limited (a few emails an hour); for a bigger crowd, add your own SMTP under **Authentication → Emails**.
+Needs a paid Apple Developer account ($99/year).
 
-### Optional: Google sign-in
+1. In the Apple Developer portal, create an **App ID** with Sign in with Apple, then a **Services ID** (this is the client ID). Under the Services ID, add the domain `YOUR-PROJECT.supabase.co` and return URL `https://YOUR-PROJECT.supabase.co/auth/v1/callback`.
+2. Create a **Key** with Sign in with Apple enabled and download the `.p8` file.
+3. In Supabase **Authentication → Providers → Apple**, enter the Services ID, Team ID, Key ID and the key, and enable it. Supabase's Apple guide walks through generating the secret.
+4. Set `appleSignIn: true` in `config.js`.
 
-Turn on the Google provider under **Authentication → Providers** (it needs a Google Cloud OAuth client), then set `googleSignIn: true` in `config.js`.
+On iPhones, iPads and Macs the Apple button shows first; everywhere else Google does.
 
-### Make yourself an admin
+## Publish changes
 
-Admins can remove shoes and edit any shoe. Sign in on the site once, then run this in the SQL Editor with your email:
-
-```sql
-insert into public.admins (user_id)
-select id from auth.users where email = 'you@example.com'
-on conflict do nothing;
+```
+git add .
+git commit -m "Update tier list"
+git push
 ```
 
-## Tiers
-
-| Tier | Plate | Label |
-| --- | --- | --- |
-| S | 25 kg red | The holy grail |
-| A | 20 kg blue | Goated |
-| B | 15 kg yellow | That's pretty good |
-| C | 10 kg green | Meh |
-| D | 5 kg white | Damn ts ass |
-| F | 2.5 kg black | Ts sucks so fucking bad |
-
-To rename them, edit the `TIERS` list at the top of `app.js`.
-
-## Credits
-
-Product photos come from the Rogue Fitness, TYR, LUXIAOJUN, Nike and WORKOUT.eu product pages. The barefoot photo is CC0 from the [WordPress Photo Directory](https://wordpress.org/photos/photo/78668e5706/).
+GitHub Pages redeploys in about a minute.

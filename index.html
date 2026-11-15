@@ -2,121 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E0D0C">
 <title>Weightlifting Shoe Tier List</title>
-<meta name="description" content="Rank Olympic weightlifting shoes from the holy grail to ts sucks so bad. Save your list and share it.">
+<meta name="description" content="Rank Olympic weightlifting shoes from light weight baby to do you even lift. Post your list, vote, comment.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="eyebrow"><span><b>●</b> Olympic weightlifting</span><span id="stat-count">Loading shoes</span><span id="stat-lists"></span></div>
-    <h1>Weightlifting shoe <span class="kg">tier list</span></h1>
-    <p class="lede">Every shoe starts on the rack. Drag them onto the plates, from the red 25 kg holy grail down to the black 2.5 kg change plate for shoes that are straight-up cooked. Save your list, then send the link to your training group and argue about it.</p>
-  </header>
+<!-- Rotating lift videos behind the whole page -->
+<div class="stage" id="stage" aria-hidden="true"><div class="stage-glow"></div></div>
+<div class="stage-shade" aria-hidden="true"></div>
 
-  <div class="account" id="account" role="status">
-    <span class="dot"></span><p id="account-text">Loading…</p>
-    <span class="save-state" id="save-state"></span>
-    <div class="acct-actions" id="acct-actions"></div>
+<header class="topbar" id="top">
+  <a class="brand" href="#top">Lifter Tiers<span>.</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="#board-sec">Board</a>
+    <a href="#feed-sec">Community</a>
+    <a href="#chart-sec">Heels</a>
+  </nav>
+  <div class="acct" id="acct"></div>
+</header>
+
+<section class="hero" aria-labelledby="hero-h">
+  <p class="badge"><span class="badge-red">Platform</span><span id="stat-count">Loading the rack</span></p>
+  <div class="hero-copy">
+  <h1 id="hero-h">Shoe<br>tier list<span class="dot">.</span></h1>
+  <p class="lede">Every lifter starts on the rack. Drag them onto the plates, from <strong>light weight, baby</strong> down to <strong>do you even lift, bro</strong>. Post your list and let the gym argue about it.</p>
   </div>
 
-  <div class="viewing" id="viewing"><p id="viewing-text"></p><button class="btn" type="button" id="btn-back">Back to my list</button></div>
-
-  <div class="toolbar" id="toolbar">
-    <button class="btn primary" id="btn-add" type="button">+ Add a shoe</button>
-    <button class="btn" id="btn-share" type="button">Share my list</button>
-    <button class="btn" id="btn-reset" type="button">Put everything back on the rack</button>
-    <p class="hint" id="hint">Drag cards onto a plate. On a phone, press and hold to drag, or tap a shoe. With a card focused, press <kbd>S</kbd> <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>F</kbd> or <kbd>R</kbd>, and <kbd>←</kbd> <kbd>→</kbd> to reorder.</p>
+  <div class="now" id="now">
+    <div class="now-head">
+      <span class="now-label">Now lifting</span>
+      <div class="now-ctrls">
+        <button type="button" class="icon-btn" id="v-prev" aria-label="Previous lifter">‹</button>
+        <button type="button" class="icon-btn" id="v-play" aria-label="Pause videos">❚❚</button>
+        <button type="button" class="icon-btn" id="v-next" aria-label="Next lifter">›</button>
+      </div>
+    </div>
+    <p class="now-who" id="v-who">—</p>
+    <p class="now-what" id="v-what"></p>
+    <div class="now-bar"><i id="v-bar"></i></div>
+    <div class="chips-row" id="v-chips" role="tablist" aria-label="Pick a lifter"></div>
+    <p class="now-credit" id="v-credit"></p>
   </div>
+</section>
 
-  <div class="board" id="board" aria-label="Tier board"></div>
+<main class="paper">
+  <div class="account-line" id="account" role="status"><span class="dot-s"></span><p id="account-text">Loading…</p><span class="save-state" id="save-state"></span></div>
 
-  <section aria-labelledby="lists-h">
-    <h2 id="lists-h">Everyone's lists</h2>
-    <p class="sub">Lists other lifters have saved. Open one to see how they ranked the rack.</p>
-    <div class="lists" id="lists"></div>
+  <div class="viewing" id="viewing"><p id="viewing-text"></p><button class="btn ghost" type="button" id="btn-back">Back to my list</button></div>
+
+  <section id="board-sec" aria-labelledby="board-h" class="sec">
+    <div class="sec-head">
+      <div><p class="kicker">Your board</p><h2 id="board-h">Load the bar.</h2></div>
+      <div class="toolbar" id="toolbar">
+        <button class="btn red" id="btn-share" type="button">Share or post</button>
+        <button class="btn" id="btn-add" type="button">+ Add your own shoe</button>
+        <button class="btn ghost" id="btn-reset" type="button">Rack everything</button>
+      </div>
+    </div>
+    <p class="hint" id="hint">Drag shoes onto a plate. On a phone, tap a shoe and pick its plate. Keyboard: focus a card and press <kbd>S</kbd> <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>F</kbd> or <kbd>R</kbd>.</p>
+    <div class="board" id="board" aria-label="Tier board"></div>
+    <div class="social" id="social" hidden></div>
   </section>
 
-  <section aria-labelledby="chart-h">
-    <h2 id="chart-h">Heel height lineup</h2>
+  <section id="feed-sec" aria-labelledby="feed-h" class="sec">
+    <div class="sec-head">
+      <div><p class="kicker">Community</p><h2 id="feed-h">Posted lists.</h2></div>
+      <div class="toolbar"><button class="btn ghost sm" type="button" id="sort-top" aria-pressed="true">Top</button><button class="btn ghost sm" type="button" id="sort-new" aria-pressed="false">New</button></div>
+    </div>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <section id="chart-sec" aria-labelledby="chart-h" class="sec">
+    <div class="sec-head"><div><p class="kicker">Specs</p><h2 id="chart-h">Heel height lineup.</h2></div></div>
     <p class="sub">Effective heel height (heel-to-toe drop) for every shoe with a published number. The red line marks 19 mm, the classic ¾-inch lifter heel. Bars take the color of the plate each shoe sits on in the list you're viewing.</p>
     <div class="chart"><div class="chart-grid" id="chart"></div></div>
   </section>
 
-  <footer>
-    <p>Product photos come from the Rogue Fitness, TYR, LUXIAOJUN, Nike and WORKOUT.eu product pages. The barefoot photo is CC0 from the WordPress Photo Directory. Heel heights and weights come from manufacturer pages and reviewer lab measurements. Prices are US list prices and move a lot with sales, so check before you buy.</p>
-    <ul>
-      <li><a href="https://www.roguefitness.com/shoes/weightlifting-shoes">Rogue weightlifting shoes</a></li>
-      <li><a href="https://luxiaojun.com/collections/shoes/products/luxiaojun-powerpro-i-weightlifting-shoesblack">LUXIAOJUN PowerPro</a></li>
-      <li><a href="https://tyr.com/collections/tyrforce-elite-carbon">TYRFORCE Elite Carbon</a></li>
-      <li><a href="https://www.workout.eu/en/produkty/31776-nike-romaleos-2-weightlifting-shoes-varsity-re.html">Romaleos 2 specs</a></li>
-      <li><a href="https://www.runrepeat.com/reebok-legacy-lifter-iii">RunRepeat lab data</a></li>
-      <li><a href="https://wordpress.org/photos/photo/78668e5706/">Barefoot photo (CC0)</a></li>
-    </ul>
+  <footer class="foot">
+    <p>Background videos play from YouTube: All Things Gym, Weightlifting House, Elite Athletes and Ervin Roznjik. Product photos come from Rogue Fitness, TYR, LUXIAOJUN, Nike, adidas and WORKOUT.eu product pages; the barefoot photo is CC0 from the WordPress Photo Directory. Prices are US list prices and move a lot with sales.</p>
+    <p class="foot-sig">Lifter Tiers<span>.</span> Built by <a href="https://nathan-tran2.github.io/">Nathan Tran</a></p>
   </footer>
-</div>
+</main>
 
-<dialog id="detail" aria-labelledby="d-title"><div class="dlg" id="detail-body"></div></dialog>
+<!-- Shoe detail (a bottom sheet on phones) -->
+<dialog id="detail" class="sheet" aria-labelledby="d-title"><div class="dlg" id="detail-body"></div></dialog>
 
-<dialog id="shoe-dlg" aria-labelledby="f-title">
+<!-- Add or edit a shoe -->
+<dialog id="shoe-dlg" class="sheet" aria-labelledby="f-title">
   <form class="dlg" id="shoe-form" novalidate>
-    <div class="dlg-head"><div class="titles"><h3 id="f-title">Add a shoe</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-    <p class="form-note" id="f-note">New shoes go into the shared database and land on everyone's rack.</p>
+    <div class="dlg-head"><div class="titles"><h3 id="f-title">Add your own shoe</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <p class="form-note" id="f-note">Shoes you add only show on your list and when someone opens your list. Nobody else's rack changes.</p>
+    <label class="check" id="f-everyone-row" hidden><input type="checkbox" id="f-everyone"> Add to everyone's rack (admin)</label>
     <div class="form-row">
-      <label for="f-brand">Brand<input id="f-brand" name="brand" required maxlength="40" placeholder="Risto"></label>
-      <label for="f-model">Model<input id="f-model" name="model" required maxlength="60" placeholder="Custom wood heel"></label>
+      <label for="f-brand">Brand<input id="f-brand" name="brand" required maxlength="40" placeholder="Risto" autocomplete="off"></label>
+      <label for="f-model">Model<input id="f-model" name="model" required maxlength="60" placeholder="Custom wood heel" autocomplete="off"></label>
     </div>
     <div class="form-row">
-      <label for="f-heel">Effective heel (mm)<input id="f-heel" name="heel" type="number" min="0" max="40" step="0.5" placeholder="20"></label>
-      <label for="f-price">List price (USD)<input id="f-price" name="price" type="number" min="0" max="5000" step="1" placeholder="250"></label>
+      <label for="f-heel">Effective heel (mm)<input id="f-heel" name="heel" type="number" inputmode="decimal" min="0" max="40" step="0.5" placeholder="20"></label>
+      <label for="f-price">Price (USD)<input id="f-price" name="price" type="number" inputmode="numeric" min="0" max="5000" step="1" placeholder="250"></label>
     </div>
     <div class="form-row">
-      <label for="f-type">Kind<select id="f-type" name="type"><option value="lifter">Weightlifting shoe</option><option value="trainer">Cross-trainer / flat</option><option value="barefoot">Barefoot / minimalist</option><option value="other">Other</option></select></label>
-      <label for="f-fit">Fit<input id="f-fit" name="fit" maxlength="40" placeholder="Wide toe box"></label>
+      <label for="f-type">Kind<select id="f-type" name="type"><option value="lifter">Weightlifting shoe</option><option value="trainer">Trainer or flat</option><option value="barefoot">Barefoot or minimalist</option><option value="other">Other</option></select></label>
+      <label for="f-fit">Fit<input id="f-fit" name="fit" maxlength="40" placeholder="Wide toe box" autocomplete="off"></label>
     </div>
     <label for="f-notes">Notes<textarea id="f-notes" name="notes" rows="3" maxlength="400" placeholder="How it feels in the catch, fit, durability…"></textarea></label>
-    <label for="f-photo" id="f-photo-label">Photo (a side view works best)<input id="f-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+    <label for="f-photo">Photo (a side view works best)<input id="f-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/heic"></label>
     <img class="preview" id="f-preview" alt="Photo preview">
     <p class="form-err" id="f-err" role="alert"></p>
     <div class="form-actions">
-      <button class="btn" type="button" data-close>Cancel</button>
-      <button class="btn primary" type="submit" id="f-submit">Add to the rack</button>
+      <button class="btn ghost" type="button" data-close>Cancel</button>
+      <button class="btn red" type="submit" id="f-submit">Add to my rack</button>
     </div>
   </form>
 </dialog>
 
-<dialog id="signin-dlg" aria-labelledby="si-title">
+<!-- Sign in -->
+<dialog id="signin-dlg" class="sheet" aria-labelledby="si-title">
   <form class="dlg" id="signin-form" novalidate>
-    <div class="dlg-head"><div class="titles"><h3 id="si-title">Sign in</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-    <p class="form-note">No password. We'll email you a link that signs you in, and your list saves to that account.</p>
-    <button class="btn" type="button" id="btn-google" hidden>Continue with Google</button>
-    <p class="or" id="or-line" hidden>or</p>
-    <label for="si-email">Email<input id="si-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+    <div class="dlg-head"><div class="titles"><p class="kicker">Account</p><h3 id="si-title">Sign in to save.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <p class="form-note" id="si-msg">Save your list, post it, and vote on other people's.</p>
+    <div class="oauth" id="oauth">
+      <button class="btn oauth-btn apple" type="button" id="btn-apple" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.1 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.4-1-2.4-4.2zM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.9-1.4z"/></svg>Continue with Apple</button>
+      <button class="btn oauth-btn google" type="button" id="btn-google" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.5z"/><path fill="#34A853" d="M12 23.5c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.4 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A11.5 11.5 0 0 0 12 23.5z"/><path fill="#FBBC05" d="M5.6 14.2a6.9 6.9 0 0 1 0-4.4v-3H1.8a11.5 11.5 0 0 0 0 10.4l3.8-3z"/><path fill="#EA4335" d="M12 5.1c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.5 11.5 0 0 0 1.8 6.8l3.8 3C6.5 7.1 9 5.1 12 5.1z"/></svg>Continue with Google</button>
+    </div>
+    <p class="or" id="or-line" hidden><span>or use email</span></p>
+    <label for="si-email">Email<input id="si-email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com"></label>
     <p class="form-err" id="si-err" role="alert"></p>
-    <div class="form-actions"><button class="btn primary" type="submit" id="si-submit">Email me a sign-in link</button></div>
+    <div class="form-actions"><button class="btn red wide" type="submit" id="si-submit">Email me a sign-in link</button></div>
   </form>
 </dialog>
 
-<dialog id="name-dlg" aria-labelledby="n-title">
+<!-- Pick a username -->
+<dialog id="name-dlg" class="sheet" aria-labelledby="n-title">
   <form class="dlg" id="name-form" novalidate>
-    <div class="dlg-head"><div class="titles"><h3 id="n-title">What should we call you?</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-    <p class="form-note">This name shows on your list when you share it. You can change it any time.</p>
-    <label for="n-name">Display name<input id="n-name" name="name" maxlength="30" required placeholder="Nathan"></label>
+    <div class="dlg-head"><div class="titles"><p class="kicker">Profile</p><h3 id="n-title">Pick a username.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <p class="form-note">It shows on your posted list and your comments, and your share link uses it. Lowercase letters, numbers and underscores, 3 to 20 characters.</p>
+    <label for="n-user">Username<span class="at-field"><span>@</span><input id="n-user" name="username" maxlength="20" required autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="nathan_lifts"></span></label>
+    <label for="n-name">Display name<input id="n-name" name="name" maxlength="30" placeholder="Nathan"></label>
     <p class="form-err" id="n-err" role="alert"></p>
-    <div class="form-actions"><button class="btn primary" type="submit">Save name</button></div>
+    <div class="form-actions"><button class="btn red wide" type="submit" id="n-submit">Save</button></div>
   </form>
 </dialog>
 
-<dialog id="share-dlg" aria-labelledby="s-title">
+<!-- Share and post -->
+<dialog id="share-dlg" class="sheet" aria-labelledby="s-title">
   <div class="dlg">
-    <div class="dlg-head"><div class="titles"><h3 id="s-title">Share your list</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-    <p class="notes" id="share-note">Anyone with this link sees your list read-only, and can start their own.</p>
+    <div class="dlg-head"><div class="titles"><p class="kicker">Share</p><h3 id="s-title">Send it to the gym.</h3></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div id="post-box">
+      <label class="check"><input type="checkbox" id="s-post"> Post my list to the community feed</label>
+      <label for="s-caption">Caption<input id="s-caption" maxlength="140" placeholder="Romaleos 2 forever. Fight me."></label>
+    </div>
+    <p class="notes" id="share-note"></p>
     <input class="linkbox" id="share-link" readonly aria-label="Share link">
-    <div class="row"><button class="btn primary" type="button" id="btn-copy-link">Copy link</button><button class="btn" type="button" id="btn-copy-text">Copy list as text</button></div>
+    <div class="row">
+      <button class="btn red" type="button" id="btn-native-share" hidden>Share…</button>
+      <button class="btn" type="button" id="btn-copy-link">Copy link</button>
+      <button class="btn ghost" type="button" id="btn-copy-text">Copy as text</button>
+    </div>
   </div>
 </dialog>
 
@@ -124,6 +171,7 @@
 
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="bg.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -172,5 +172,50 @@
   "type": "barefoot",
   "photo": "images/barefoot.jpg",
   "notes": "Zero drop and maximum ground feel. Some deadlifters swear by it; for the snatch and clean you lose the heel that helps you sit upright in the bottom."
+ },
+ {
+  "id": "dowintpu",
+  "brand": "Do-Win",
+  "model": "Weightlifting Shoe",
+  "heel": 19,
+  "heelLabel": "19 mm",
+  "weight": null,
+  "price": 105,
+  "priceLabel": "",
+  "closure": "Laces + 2 straps",
+  "fit": "Wide",
+  "type": "lifter",
+  "photo": "images/dowintpu.jpg",
+  "notes": "Rogue's long-running budget lifter: a ¾-inch plastic heel, two metatarsal straps and a wide profile that suits wide feet."
+ },
+ {
+  "id": "legacy2",
+  "brand": "Reebok",
+  "model": "Legacy Lifter II",
+  "heel": 22,
+  "heelLabel": "",
+  "weight": 612,
+  "price": 200,
+  "priceLabel": "",
+  "closure": "Laces + 1 strap",
+  "fit": "Neutral",
+  "type": "lifter",
+  "photo": "images/legacy2.jpg",
+  "notes": "The previous Legacy: 22 mm TPU heel, one wide strap and a reworked toe box. RunRepeat weighed it at 612 g. Easy to find on sale now that the III is out."
+ },
+ {
+  "id": "thetotal",
+  "brand": "Adidas",
+  "model": "The Total",
+  "heel": 0,
+  "heelLabel": "0 mm",
+  "weight": null,
+  "price": 120,
+  "priceLabel": "",
+  "closure": "Laces + 1 strap",
+  "fit": "Wide toe box",
+  "type": "trainer",
+  "photo": "images/thetotal.jpg",
+  "notes": "A zero-drop deadlift shoe with a wide toe box and a midfoot strap. Great for pulls; the wrong tool for the snatch."
  }
 ]

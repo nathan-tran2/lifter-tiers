@@ -2,7 +2,7 @@
 -- Paste this whole file into Supabase → SQL Editor → New query, then click Run.
 -- It is safe to run more than once.
 
--- ---------- admins (people who can remove shoes) ----------
+-- ---------- admins (people who can change the shared shoe rack) ----------
 create table if not exists public.admins (
   user_id uuid primary key references auth.users (id) on delete cascade
 );
@@ -16,7 +16,7 @@ language sql stable security definer set search_path = public as $$
 $$;
 grant execute on function public.is_admin() to anon, authenticated;
 
--- ---------- shoes (the shared database) ----------
+-- ---------- shoes: the shared rack everyone sees (admins manage it) ----------
 create table if not exists public.shoes (
   id          text primary key check (id ~ '^[a-z0-9-]{2,60}$'),
   brand       text not null check (char_length(brand) between 1 and 40),
@@ -35,48 +35,110 @@ create table if not exists public.shoes (
   created_at  timestamptz not null default now()
 );
 alter table public.shoes enable row level security;
-
 drop policy if exists "shoes are public" on public.shoes;
 create policy "shoes are public" on public.shoes for select using (true);
-
 drop policy if exists "signed-in users add shoes" on public.shoes;
-create policy "signed-in users add shoes" on public.shoes for insert to authenticated
-  with check (added_by = auth.uid());
-
 drop policy if exists "adder or admin edits a shoe" on public.shoes;
-create policy "adder or admin edits a shoe" on public.shoes for update to authenticated
-  using (added_by = auth.uid() or public.is_admin())
-  with check (added_by = auth.uid() or public.is_admin());
-
 drop policy if exists "admin removes shoes" on public.shoes;
-create policy "admin removes shoes" on public.shoes for delete to authenticated using (public.is_admin());
+drop policy if exists "admins add shoes" on public.shoes;
+create policy "admins add shoes" on public.shoes for insert to authenticated with check (public.is_admin());
+drop policy if exists "admins edit shoes" on public.shoes;
+create policy "admins edit shoes" on public.shoes for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "admins remove shoes" on public.shoes;
+create policy "admins remove shoes" on public.shoes for delete to authenticated using (public.is_admin());
 
--- ---------- lists (one per person) ----------
+-- ---------- lists: one per person, with their username and private shoes ----------
 create table if not exists public.lists (
   user_id      uuid primary key default auth.uid() references auth.users (id) on delete cascade,
-  display_name text not null default 'Lifter' check (char_length(display_name) between 1 and 30),
-  tiers        jsonb not null default '{}'::jsonb check (pg_column_size(tiers) < 20000),
-  share_code   text unique check (share_code is null or share_code ~ '^[a-z0-9]{6,16}$'),
+  username     text,
+  display_name text not null default 'Lifter',
+  tiers        jsonb not null default '{}'::jsonb,
+  custom_shoes jsonb not null default '[]'::jsonb,
+  published    boolean not null default false,
+  caption      text,
   updated_at   timestamptz not null default now()
 );
-alter table public.lists enable row level security;
+-- columns added in this version, for databases set up from an earlier file
+alter table public.lists add column if not exists username text;
+alter table public.lists add column if not exists custom_shoes jsonb not null default '[]'::jsonb;
+alter table public.lists add column if not exists published boolean not null default false;
+alter table public.lists add column if not exists caption text;
+alter table public.lists drop column if exists share_code;
+do $$ begin
+  alter table public.lists add constraint lists_username_format check (username is null or username ~ '^[a-z0-9_]{3,20}$');
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.lists add constraint lists_display_name_length check (char_length(display_name) between 1 and 30);
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.lists add constraint lists_caption_length check (caption is null or char_length(caption) <= 140);
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.lists add constraint lists_size check (pg_column_size(tiers) + pg_column_size(custom_shoes) < 60000);
+exception when duplicate_object then null; end $$;
+create unique index if not exists lists_username_key on public.lists (username);
 
+alter table public.lists enable row level security;
 drop policy if exists "lists are public" on public.lists;
 create policy "lists are public" on public.lists for select using (true);
-
 drop policy if exists "people create their own list" on public.lists;
-create policy "people create their own list" on public.lists for insert to authenticated
-  with check (user_id = auth.uid());
-
+create policy "people create their own list" on public.lists for insert to authenticated with check (user_id = auth.uid());
 drop policy if exists "people edit their own list" on public.lists;
 create policy "people edit their own list" on public.lists for update to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
-
 drop policy if exists "owner or admin deletes a list" on public.lists;
 create policy "owner or admin deletes a list" on public.lists for delete to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
--- ---------- photo storage ----------
+-- ---------- likes and dislikes on posted lists ----------
+create table if not exists public.votes (
+  list_id    uuid not null references public.lists (user_id) on delete cascade,
+  voter      uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  value      smallint not null check (value in (-1, 1)),
+  created_at timestamptz not null default now(),
+  primary key (list_id, voter)
+);
+alter table public.votes enable row level security;
+drop policy if exists "votes are public" on public.votes;
+create policy "votes are public" on public.votes for select using (true);
+drop policy if exists "people vote as themselves" on public.votes;
+create policy "people vote as themselves" on public.votes for insert to authenticated with check (voter = auth.uid());
+drop policy if exists "people change their vote" on public.votes;
+create policy "people change their vote" on public.votes for update to authenticated using (voter = auth.uid()) with check (voter = auth.uid());
+drop policy if exists "people take back their vote" on public.votes;
+create policy "people take back their vote" on public.votes for delete to authenticated using (voter = auth.uid());
+
+-- ---------- comments on posted lists ----------
+create table if not exists public.comments (
+  id          bigint generated always as identity primary key,
+  list_id     uuid not null references public.lists (user_id) on delete cascade,
+  author      uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  author_name text,
+  body        text not null check (char_length(body) between 1 and 500),
+  created_at  timestamptz not null default now()
+);
+alter table public.comments enable row level security;
+drop policy if exists "comments are public" on public.comments;
+create policy "comments are public" on public.comments for select using (true);
+drop policy if exists "people comment as themselves" on public.comments;
+create policy "people comment as themselves" on public.comments for insert to authenticated with check (author = auth.uid());
+drop policy if exists "author, list owner or admin deletes a comment" on public.comments;
+create policy "author, list owner or admin deletes a comment" on public.comments for delete to authenticated
+  using (author = auth.uid() or list_id = auth.uid() or public.is_admin());
+
+-- The comment's name always comes from the author's own username, so nobody can post as someone else.
+create or replace function public.set_comment_author() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  new.author := auth.uid();
+  new.author_name := coalesce((select username from public.lists where user_id = auth.uid()), 'lifter');
+  new.created_at := now();
+  return new;
+end $$;
+drop trigger if exists comments_set_author on public.comments;
+create trigger comments_set_author before insert on public.comments for each row execute function public.set_comment_author();
+
+-- ---------- photo storage (shoe photos people upload) ----------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('shoe-photos', 'shoe-photos', true, 2097152, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do update set public = true, file_size_limit = 2097152,
@@ -85,9 +147,11 @@ on conflict (id) do update set public = true, file_size_limit = 2097152,
 drop policy if exists "signed-in users upload shoe photos" on storage.objects;
 create policy "signed-in users upload shoe photos" on storage.objects for insert to authenticated
   with check (bucket_id = 'shoe-photos' and (storage.foldername(name))[1] = auth.uid()::text);
-
 drop policy if exists "uploaders replace their shoe photos" on storage.objects;
 create policy "uploaders replace their shoe photos" on storage.objects for update to authenticated
+  using (bucket_id = 'shoe-photos' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "uploaders delete their shoe photos" on storage.objects;
+create policy "uploaders delete their shoe photos" on storage.objects for delete to authenticated
   using (bucket_id = 'shoe-photos' and (storage.foldername(name))[1] = auth.uid()::text);
 
 -- ---------- starting shoes ----------
@@ -104,9 +168,12 @@ insert into public.shoes (id, brand, model, heel, heel_label, weight, price, pri
   ('powerlift5', 'Adidas', 'Powerlift 5', 15, null, null, 130, null, 'Laces + 1 strap', 'Narrow to neutral', 'lifter', '15 to 16 mm heel on high-density EVA, so it compresses a little under heavy loads. A good first pair, or a squat shoe for powerlifters.', 'images/powerlift5.jpg'),
   ('savaleos', 'Nike', 'Savaleos', 15, null, null, 125, null, 'Laces + 1 strap', 'Neutral', 'lifter', 'Nike''s entry lifter with a 15 mm heel and a flexible forefoot. Fine for learning the lifts; the low heel can feel off if you''re used to Romaleos.', 'images/savaleos.jpg'),
   ('metcon10', 'Nike', 'Metcon 10', null, null, null, 155, null, 'Laces', 'Runs small', 'trainer', 'A flat, stable cross-trainer with a Hyperlift plate under the heel, not a lifter. Great for a WOD; for heavy cleans you give up the heel and the rigid platform.', 'images/metcon10.jpg'),
-  ('barefoot', 'No shoes', 'Barefoot', 0, '0 mm', 0, 0, 'Free', 'None', 'Fits everyone', 'barefoot', 'Zero drop and maximum ground feel. Some deadlifters swear by it; for the snatch and clean you lose the heel that helps you sit upright in the bottom.', 'images/barefoot.jpg')
+  ('barefoot', 'No shoes', 'Barefoot', 0, '0 mm', 0, 0, 'Free', 'None', 'Fits everyone', 'barefoot', 'Zero drop and maximum ground feel. Some deadlifters swear by it; for the snatch and clean you lose the heel that helps you sit upright in the bottom.', 'images/barefoot.jpg'),
+  ('dowintpu', 'Do-Win', 'Weightlifting Shoe', 19, '19 mm', null, 105, null, 'Laces + 2 straps', 'Wide', 'lifter', 'Rogue''s long-running budget lifter: a ¾-inch plastic heel, two metatarsal straps and a wide profile that suits wide feet.', 'images/dowintpu.jpg'),
+  ('legacy2', 'Reebok', 'Legacy Lifter II', 22, null, 612, 200, null, 'Laces + 1 strap', 'Neutral', 'lifter', 'The previous Legacy: 22 mm TPU heel, one wide strap and a reworked toe box. RunRepeat weighed it at 612 g. Easy to find on sale now that the III is out.', 'images/legacy2.jpg'),
+  ('thetotal', 'Adidas', 'The Total', 0, '0 mm', null, 120, null, 'Laces + 1 strap', 'Wide toe box', 'trainer', 'A zero-drop deadlift shoe with a wide toe box and a midfoot strap. Great for pulls; the wrong tool for the snatch.', 'images/thetotal.jpg')
 on conflict (id) do nothing;
 
 -- ---------- make yourself an admin ----------
--- After you sign in on the site once, run this with your email to be able to remove shoes:
+-- After you sign in on the site once, run this with your email so you can add, edit and remove shoes on everyone's rack:
 -- insert into public.admins (user_id) select id from auth.users where email = 'you@example.com' on conflict do nothing;
