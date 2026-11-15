@@ -4,12 +4,12 @@
   // ---------- constants ----------
   var CFG = window.TIER_CONFIG || {};
   var TIERS = [
-    { k: "S", kg: 25, name: "World-record ready" },
-    { k: "A", kg: 20, name: "Meet day" },
-    { k: "B", kg: 15, name: "Training day" },
-    { k: "C", kg: 10, name: "Good enough" },
-    { k: "D", kg: 5, name: "Missed lift" },
-    { k: "F", kg: 2.5, name: "No lift" }
+    { k: "S", kg: 25, name: "The best" },
+    { k: "A", kg: 20, name: "Great" },
+    { k: "B", kg: 15, name: "Good" },
+    { k: "C", kg: 10, name: "Average" },
+    { k: "D", kg: 5, name: "Below average" },
+    { k: "F", kg: 2.5, name: "Avoid" }
   ];
   var TK = TIERS.map(function (t) { return t.k; });
   var ZONES = TK.concat("R");
@@ -156,7 +156,7 @@
     }
     board.innerHTML = html;
     board.classList.toggle("readonly", !editable());
-    renderChart(); renderChrome(); renderSocial(); renderPick();
+    renderChart(); renderChrome(); renderSocial(); renderPick(); renderInsight();
     if (lastFocusId) { var el = board.querySelector('.card[data-id="' + cssEsc(lastFocusId) + '"]'); if (el) el.focus(); lastFocusId = null; }
   }
 
@@ -918,6 +918,161 @@
     if (e.target.id === "c-body" && e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); e.target.form.requestSubmit(); }
   });
 
+  // ---------- taste profile: guess what kind of shoe someone likes from their tiers ----------
+  // Each ranked shoe gets a score (S=5 … F=0). We line those scores up against each shoe's traits
+  // (heel height, weight, price, toe-box width, straps, wood vs TPU heel, classic vs current, brand)
+  // and report the traits that move with the score. Unranked shoes are then scored by similarity to
+  // the shoes this person already ranked (a weighted nearest-neighbour guess).
+  var TIER_SCORE = { S: 5, A: 4, B: 3, C: 2, D: 1, F: 0 };
+  var WOOD_HEEL = { heritage: true, tyrforce: true, tyrforcev2: true };
+  function traitsOf(s) {
+    var fit = (s.fit || "").toLowerCase(), clo = (s.closure || "").toLowerCase();
+    var fitN = null;
+    if (/extra wide/.test(fit)) fitN = 2.5; else if (/wide|roomy|roomier/.test(fit)) fitN = /neutral to wide|neutral, roomier/.test(fit) ? 1.5 : 2;
+    else if (/narrow to neutral/.test(fit)) fitN = 0.5; else if (/narrow/.test(fit)) fitN = 0; else if (/neutral/.test(fit)) fitN = 1;
+    var straps = null;
+    if (/2 (leather )?straps|\+ straps/.test(clo)) straps = 2; else if (/strap/.test(clo)) straps = 1; else if (/lace/.test(clo)) straps = 0;
+    var bare = s.type === "barefoot";
+    return {
+      heel: bare || s.heel == null ? null : s.heel,
+      weight: bare || !s.weight ? null : s.weight,
+      price: bare || !s.price ? null : s.price,
+      fit: bare ? null : fitN, straps: bare ? null : straps,
+      wood: bare ? null : (WOOD_HEEL[s.id] ? 1 : 0),
+      classic: bare ? null : (/discontinued/i.test(s.priceLabel || "") ? 1 : 0),
+      brand: bare ? null : s.brand, bare: bare
+    };
+  }
+  function pearson(xs, ys) {
+    var n = xs.length; if (n < 3) return null;
+    var mx = xs.reduce(function (a, b) { return a + b; }, 0) / n, my = ys.reduce(function (a, b) { return a + b; }, 0) / n;
+    var sxy = 0, sxx = 0, syy = 0;
+    for (var i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) * (xs[i] - mx); syy += (ys[i] - my) * (ys[i] - my); }
+    if (!sxx || !syy) return null;
+    return sxy / Math.sqrt(sxx * syy);
+  }
+  function mean(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; }
+  function analyzeList(list) {
+    var P = pool(list), rows = [];
+    TK.forEach(function (k) { list.tiers[k].forEach(function (id) { if (P[id]) rows.push({ s: P[id], t: traitsOf(P[id]), score: TIER_SCORE[k], tier: k }); }); });
+    var distinct = {}; rows.forEach(function (r) { distinct[r.tier] = 1; });
+    if (rows.length < 3 || Object.keys(distinct).length < 2) return { ok: false, count: rows.length };
+    var lifters = rows.filter(function (r) { return !r.t.bare; });
+    var traits = [];
+    function numeric(key, unit, hi, lo, fmtv) {
+      var xs = [], ys = [];
+      lifters.forEach(function (r) { if (r.t[key] != null) { xs.push(r.t[key]); ys.push(r.score); } });
+      var r = pearson(xs, ys); if (r == null || Math.abs(r) < 0.3) return;
+      var top = [], bot = [], med = mean(ys);
+      xs.forEach(function (x, i) { if (ys[i] > med) top.push(x); else if (ys[i] < med) bot.push(x); });
+      if (!top.length || !bot.length) return;
+      traits.push({ key: key + (r > 0 ? "+" : "-"), strength: Math.abs(r), label: r > 0 ? hi : lo,
+        detail: "Your higher-ranked shoes average " + fmtv(mean(top)) + unit + " vs " + fmtv(mean(bot)) + unit + " for the ones you ranked lower." });
+    }
+    numeric("heel", " mm", "Higher heels", "Lower heels", function (v) { return v.toFixed(1); });
+    numeric("weight", " g", "Heavier, planted shoes", "Lighter shoes", function (v) { return Math.round(v); });
+    numeric("price", "", "Premium price tags", "Budget-friendly picks", function (v) { return "$" + Math.round(v); });
+    (function () {
+      var xs = [], ys = [];
+      lifters.forEach(function (r) { if (r.t.fit != null) { xs.push(r.t.fit); ys.push(r.score); } });
+      var r = pearson(xs, ys); if (r == null || Math.abs(r) < 0.3) return;
+      traits.push({ key: r > 0 ? "fit+" : "fit-", strength: Math.abs(r), label: r > 0 ? "Roomy, wide toe boxes" : "Snug, narrow fits",
+        detail: r > 0 ? "The wider the toe box, the higher you tend to rank it." : "You rank the snugger, narrower shoes higher." });
+    })();
+    (function () {
+      var xs = [], ys = [];
+      lifters.forEach(function (r) { if (r.t.straps != null) { xs.push(r.t.straps); ys.push(r.score); } });
+      var r = pearson(xs, ys); if (r == null || Math.abs(r) < 0.3) return;
+      traits.push({ key: r > 0 ? "straps+" : "straps-", strength: Math.abs(r), label: r > 0 ? "Double-strap lockdown" : "One strap, less fuss",
+        detail: r > 0 ? "Two-strap shoes land higher on your list than single-strap ones." : "Your single-strap shoes outrank the double-strap ones." });
+    })();
+    function groupGap(key, yesLabel, noLabel, yesDetail, noDetail) {
+      var yes = [], no = [];
+      lifters.forEach(function (r) { if (r.t[key] === 1) yes.push(r.score); else if (r.t[key] === 0) no.push(r.score); });
+      if (!yes.length || !no.length) return;
+      var gap = mean(yes) - mean(no); if (Math.abs(gap) < 1) return;
+      traits.push({ key: key + (gap > 0 ? "+" : "-"), strength: Math.min(1, Math.abs(gap) / 3), label: gap > 0 ? yesLabel : noLabel, detail: gap > 0 ? yesDetail : noDetail });
+    }
+    groupGap("wood", "Wood heels", "Modern TPU heels", "Your wood-heel shoes average a full tier or more above the TPU ones.", "You rank TPU heels a tier or more above wood heels.");
+    groupGap("classic", "Classic models", "Current models", "Discontinued classics sit higher on your list than current shoes.", "You rank current shoes above the discontinued classics.");
+    (function () {
+      var by = {}; lifters.forEach(function (r) { (by[r.t.brand] = by[r.t.brand] || []).push(r.score); });
+      var all = mean(lifters.map(function (r) { return r.score; })), best = null;
+      Object.keys(by).forEach(function (b) { if (by[b].length >= 2) { var g = mean(by[b]) - all; if (g >= 0.8 && (!best || g > best.g)) best = { b: b, g: g, n: by[b].length }; } });
+      if (best) traits.push({ key: "brand", brand: best.b, strength: Math.min(1, best.g / 2.5), label: best.b + " fan", detail: "Your " + best.n + " " + best.b + " shoes average almost a tier above the rest of your list." });
+    })();
+    var bareRow = rows.filter(function (r) { return r.t.bare; })[0];
+    if (bareRow && bareRow.score >= 4) traits.push({ key: "bare", strength: 0.35, label: "Barefoot-curious", detail: "You ranked lifting barefoot near the top, so ground feel matters to you." });
+    traits.sort(function (a, b) { return b.strength - a.strength; });
+
+    // "sweet spot" heel: weighted toward the shoes you like most
+    var hw = 0, hs = 0; lifters.forEach(function (r) { if (r.t.heel != null) { var w = Math.pow(r.score + 1, 2); hw += w; hs += w * r.t.heel; } });
+    var sweetHeel = hw ? hs / hw : null;
+
+    var ARCH = {
+      "heel+": ["High-heel squatter", "You want maximum heel lift for depth and an upright torso."],
+      "heel-": ["Low-heel lifter", "You like staying closer to the floor; a modest heel feels more natural to you."],
+      "weight+": ["Planted powerhouse", "Heavy, stiff shoes that feel bolted to the platform are your thing."],
+      "weight-": ["Light and quick", "You'd rather feel nimble than anchored."],
+      "price+": ["Premium buyer", "You think the top-shelf lifters earn their price."],
+      "price-": ["Value hunter", "You rate shoes on performance per dollar, and budget lifters win."],
+      "fit+": ["Wide-foot lifter", "Toe splay and a roomy forefoot rank high for you."],
+      "fit-": ["Locked-in fit", "You like a snug, narrow shoe with no room to shift."],
+      "straps+": ["Lockdown lover", "More straps, more security: you want your foot cinched in."],
+      "straps-": ["Simple and sleek", "A single strap does the job; you don't need extra hardware."],
+      "wood+": ["Old-school purist", "Wood heels and classic construction win you over."],
+      "wood-": ["Modern build", "Molded TPU heels beat the old wood stacks for you."],
+      "classic+": ["Classic collector", "The discontinued legends still top your list."],
+      "classic-": ["New-release chaser", "You rate the current generation above the old classics."],
+      "bare": ["Ground-feel lifter", "You care about feeling the floor more than heel lift."]
+    };
+    var top = traits[0], arch;
+    if (!top) arch = ["All-rounder", "Your list doesn't lean hard on any one trait. You judge shoes case by case."];
+    else if (top.key === "brand") arch = [top.brand + " loyalist", "One brand keeps landing near the top of your list."];
+    else arch = ARCH[top.key];
+
+    // guess how they'd rank the shoes still on their rack
+    var rankedIds = {}; rows.forEach(function (r) { rankedIds[r.s.id] = 1; });
+    function vec(t) { return [t.heel == null ? null : t.heel / 25, t.weight == null ? null : t.weight / 600, t.price == null ? null : t.price / 300, t.fit == null ? null : t.fit / 2.5, t.straps == null ? null : t.straps / 2, t.wood, t.classic]; }
+    function dist(a, b, ta, tb) {
+      var d = 0, n = 0;
+      for (var i = 0; i < a.length; i++) if (a[i] != null && b[i] != null) { d += (a[i] - b[i]) * (a[i] - b[i]); n++; }
+      if (!n) return null;
+      d = d / n; if (ta.brand && ta.brand === tb.brand) d *= 0.6;
+      return d;
+    }
+    var recs = Object.keys(P).filter(function (id) { return !rankedIds[id] && P[id].type !== "barefoot"; }).map(function (id) {
+      var t = traitsOf(P[id]), v = vec(t), num = 0, den = 0;
+      lifters.forEach(function (r) { var d = dist(v, vec(r.t), t, r.t); if (d == null) return; var w = Math.exp(-d / 0.02); num += w * r.score; den += w; });
+      if (!den) return null;
+      var pred = num / den, k = pred >= 4.5 ? "S" : pred >= 3.5 ? "A" : pred >= 2.5 ? "B" : pred >= 1.5 ? "C" : pred >= 0.5 ? "D" : "F";
+      return { s: P[id], pred: pred, tier: k };
+    }).filter(Boolean).sort(function (a, b) { return b.pred - a.pred; });
+
+    var conf = rows.length >= 10 ? "High" : rows.length >= 6 ? "Medium" : "Low";
+    return { ok: true, count: rows.length, arch: arch, traits: traits.slice(0, 5), sweetHeel: sweetHeel, recs: recs, confidence: conf };
+  }
+  function insightHTML(list, whoLabel) {
+    var a = analyzeList(list);
+    if (!a.ok) {
+      return '<div class="ins-empty"><p class="kicker">Shoe taste</p><p>' + (whoLabel ? esc(whoLabel) + " hasn't" : "Rank at least 3 shoes across 2 or more tiers and I'll guess what kind of shoe you like.") + (whoLabel ? " ranked enough shoes to read yet." : "") + "</p></div>";
+    }
+    var recs = a.recs.slice(0, 3);
+    return '<div class="ins-head"><div><p class="kicker">' + (whoLabel ? esc(whoLabel) + "'s shoe taste" : "Your shoe taste") + '</p><h3 class="h3">' + esc(a.arch[0]) + "</h3><p class=\"ins-desc\">" + esc(a.arch[1]) + "</p></div>" +
+      '<span class="ins-conf" title="Based on ' + a.count + ' ranked shoes">' + a.confidence + " confidence · " + a.count + " shoes</span></div>" +
+      (a.traits.length ? '<ul class="ins-traits">' + a.traits.map(function (t) { return "<li><b>" + esc(t.label) + "</b><span>" + esc(t.detail) + "</span></li>"; }).join("") + "</ul>"
+        : '<p class="sub">No single trait stands out yet. Rank more shoes for a sharper read.</p>') +
+      (a.sweetHeel != null ? '<p class="ins-sweet">Heel sweet spot: <b>' + a.sweetHeel.toFixed(1) + " mm</b></p>" : "") +
+      (recs.length ? '<p class="kicker ins-reck">' + (whoLabel ? "They'd probably like" : "Still on your rack: you'd probably like") + '</p><div class="ins-recs">' + recs.map(function (r) {
+        return '<a class="ins-rec" href="#/shoe/' + encodeURIComponent(r.s.id) + '"><span class="t-img">' + pic(r.s) + '</span><span><span class="t-b">' + esc(r.s.brand) + "</span>" + esc(r.s.model) + '</span><span class="plate sm" data-k="' + r.tier + '" title="Predicted tier">' + r.tier + "</span></a>";
+      }).join("") + "</div>" : "");
+  }
+  function renderInsight() {
+    var el = $("insight"); if (!el) return;
+    var list = shown();
+    el.innerHTML = insightHTML(list, view.mode === "shared" ? who(list) : "");
+  }
+
   // ---------- reviews: outside sites + lifters here ----------
   function criticScore(id) {
     var r = (extReviews[id] && extReviews[id].reviews) || [], xs = r.filter(function (x) { return x.kind === "expert" && x.score != null && x.outOf; });
@@ -1169,8 +1324,9 @@
       '<p class="p-handle">' + (mine.username ? "@" + esc(mine.username) : "No username yet") + (userEmail ? " · " + esc(userEmail) : "") + "</p></div></div>" +
       '<div class="p-stats"><div><b>' + ranked(mine) + "</b><span>shoes ranked</span></div><div><b>" + myRev.length + "</b><span>reviews</span></div><div><b>" + (mine.published ? "Posted" : "Private") + "</b><span>your list</span></div></div>" +
       '<div class="row"><button class="btn" type="button" data-act="p-edit">' + (mine.username ? "Edit username & name" : "Pick a username") + '</button><button class="btn" type="button" data-act="p-pass">Change password</button><button class="btn ghost" type="button" data-act="p-out">Sign out</button></div></section>' +
+      '<section class="sec insight">' + insightHTML(mine, "") + "</section>" +
       '<section class="sec"><div class="sec-head"><div><p class="kicker">Your board</p><h3 class="h3">Your list.</h3></div><div class="toolbar"><a class="btn" href="#/">Open board</a><button class="btn red" type="button" data-act="p-share">Share or post</button></div></div>' +
-      (tiersHtml ? '<div class="p-tiers">' + tiersHtml + "</div>" : '<p class="empty-note">Nothing ranked yet. <a href="#/">Load the bar</a>.</p>') + "</section>" +
+      (tiersHtml ? '<div class="p-tiers">' + tiersHtml + "</div>" : '<p class="empty-note">Nothing ranked yet. <a href="#/">Start ranking</a>.</p>') + "</section>" +
       '<section class="sec"><div class="sec-head"><div><p class="kicker">Your reviews</p><h3 class="h3">Shoes you rated.</h3></div></div>' +
       (myRev.length ? '<ul class="rv-list">' + myRev.map(function (r) {
         var s = shoes[r.shoe_id]; if (!s) return "";
